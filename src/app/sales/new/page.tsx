@@ -13,12 +13,18 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { DatePicker } from '@/components/ui/date-picker';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function NewSalePage() {
   const { toast } = useToast();
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+
+  const [quantity, setQuantity] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
     // If auth is still loading, do nothing.
@@ -30,6 +36,21 @@ export default function NewSalePage() {
     }
   }, [auth, router]);
   
+  useEffect(() => {
+    const total = quantity * price;
+    setTotalPrice(total);
+  }, [quantity, price]);
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setQuantity(value);
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value) || 0;
+    setPrice(value);
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     toast({
@@ -71,53 +92,106 @@ export default function NewSalePage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="productName">Product Name</Label>
-                    <Input id="productName" placeholder="e.g., Laptop, T-Shirt" required />
+                    <Label htmlFor="date">날짜</Label>
+                    <DatePicker />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="customerName">Customer Name</Label>
-                    <Input id="customerName" placeholder="e.g., John Doe" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity</Label>
-                    <Input id="quantity" type="number" placeholder="e.g., 2" required min="1" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Price (per item)</Label>
-                    <Input id="price" type="number" placeholder="e.g., 1200" required min="0" step="0.01" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="paymentMethod">Payment Method</Label>
-                      <Select name="paymentMethod" required>
-                          <SelectTrigger>
-                              <SelectValue placeholder="Select a payment method" />
-                          </SelectTrigger>
-                          <SelectContent>
-                              <SelectItem value="credit">Credit</SelectItem>
-                              <SelectItem value="cash">Cash</SelectItem>
-                              <SelectItem value="check">Check</SelectItem>
-                              <SelectItem value="prepayment">Prepayment</SelectItem>
-                          </SelectContent>
-                      </Select>
-                  </div>
-                    <div className="space-y-2">
-                    <Label htmlFor="employee">Employee</Label>
-                      <Select name="employee" required>
-                          <SelectTrigger>
-                              <SelectValue placeholder="Select an employee" />
-                          </SelectTrigger>
-                          <SelectContent>
-                              <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
-                              <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
-                              <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
-                              <SelectItem value="emp-04">Alex Ray (Manager)</SelectItem>
-                          </SelectContent>
-                      </Select>
+                   <div className="space-y-2">
+                    <Label htmlFor="saleOrReturn">매출/리턴</Label>
+                    <RadioGroup defaultValue="sale" id="saleOrReturn" className="flex items-center space-x-4 pt-2">
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="sale" id="sale" />
+                            <Label htmlFor="sale">매출</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="return" id="return" />
+                            <Label htmlFor="return">리턴</Label>
+                        </div>
+                    </RadioGroup>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="productCategory">제품 구분</Label>
+                    <Select name="productCategory" required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="electronics">Electronics</SelectItem>
+                        <SelectItem value="clothing">Clothing</SelectItem>
+                        <SelectItem value="books">Books</SelectItem>
+                        <SelectItem value="home-goods">Home Goods</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="productCode">제품 코드</Label>
+                    <Input id="productCode" placeholder="e.g., E-001" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="productDescription">제품 설명</Label>
+                    <Input id="productDescription" placeholder="e.g., Laptop, T-Shirt" required />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="customerCode">고객 코드</Label>
+                        <Input id="customerCode" placeholder="e.g., C-101" required />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="customerName">고객명</Label>
+                        <Input id="customerName" placeholder="e.g., John Doe" required />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity">수량</Label>
+                    <Input id="quantity" type="number" placeholder="e.g., 2" required min="1" onChange={handleQuantityChange} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">가격</Label>
+                    <Input id="price" type="number" placeholder="e.g., 1200" required min="0" step="0.01" onChange={handlePriceChange} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="totalPrice">총 가격</Label>
+                    <Input id="totalPrice" type="text" value={`$${totalPrice.toFixed(2)}`} readOnly className="bg-muted" />
+                  </div>
+                </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="paymentMethod">결제방법</Label>
+                        <Select name="paymentMethod" required>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a payment method" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="credit">Credit</SelectItem>
+                                <SelectItem value="cash">Cash</SelectItem>
+                                <SelectItem value="check">Check</SelectItem>
+                                <SelectItem value="prepayment">Prepayment</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="employee">직원</Label>
+                        <Select name="employee" required>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select an employee" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
+                                <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
+                                <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
+                                <SelectItem value="emp-04">Alex Ray (Manager)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
                     <Button type="button" variant="outline" onClick={handleCancel}>
                       Cancel
                   </Button>
