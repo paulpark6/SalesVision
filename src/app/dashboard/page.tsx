@@ -1,3 +1,4 @@
+'use client';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Header } from '@/components/header';
 import { OverviewCards } from '@/components/dashboard/overview-cards';
@@ -8,12 +9,30 @@ import { SalesTrendAnalysisCard } from '@/components/dashboard/sales-trend-analy
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    // In a real app, you would get the user's role from your auth context/session.
+    // For simulation, we'll assume the 'owner' is accessing this page.
+    // If we wanted to protect this route, we'd check the role here and redirect if not 'owner'.
+    const simulatedRole = 'owner';
+    setRole(simulatedRole);
+
+    // This is a simple protection mechanism for this simulation.
+    // An 'admin' who logs in is directed to /admin and should not see /dashboard.
+    // If they try to navigate here, we could redirect them.
+    // For now, we will just control UI elements.
+  }, [router]);
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar />
+        <AppSidebar role="owner" />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <SidebarInset>
             <Header />

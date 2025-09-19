@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/tooltip';
 
 
-export function AppSidebar() {
+export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
   return (
     <>
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -47,7 +47,7 @@ export function AppSidebar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="/dashboard"
+                href={role === 'owner' ? "/dashboard" : "/admin"}
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <Home className="h-5 w-5" />
@@ -56,18 +56,20 @@ export function AppSidebar() {
             </TooltipTrigger>
             <TooltipContent side="right">Dashboard</TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/admin"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <User className="h-5 w-5" />
-                <span className="sr-only">Admin View</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Admin View</TooltipContent>
-          </Tooltip>
+          {role === 'owner' && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/admin"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Admin View</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">Admin View</TooltipContent>
+            </Tooltip>
+          )}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -154,26 +156,28 @@ export function AppSidebar() {
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="/dashboard"
+              href={role === 'owner' ? "/dashboard" : "/admin"}
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <LineChart className="h-5 w-5 transition-all group-hover:scale-110" />
               <span className="sr-only">SalesVision</span>
             </Link>
             <Link
-              href="/dashboard"
+              href={role === 'owner' ? "/dashboard" : "/admin"}
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <Home className="h-5 w-5" />
               Dashboard
             </Link>
-             <Link
-              href="/admin"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <User className="h-5 w-5" />
-              Admin View
-            </Link>
+             {role === 'owner' && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <User className="h-5 w-5" />
+                Admin View
+              </Link>
+            )}
             <Link
               href="#"
               className="flex items-center gap-4 px-2.5 text-foreground"

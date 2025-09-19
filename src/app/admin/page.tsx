@@ -1,3 +1,4 @@
+'use client';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Header } from '@/components/header';
 import { OverviewCards } from '@/components/dashboard/overview-cards';
@@ -9,10 +10,11 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar />
+        <AppSidebar role="admin" />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <SidebarInset>
           <Header />
@@ -22,9 +24,6 @@ export default function AdminDashboardPage() {
                 <div className="flex gap-2">
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>
-                    </Button>
-                    <Button asChild variant="outline">
-                        <Link href="/dashboard">Back to Owner View</Link>
                     </Button>
                 </div>
             </div>

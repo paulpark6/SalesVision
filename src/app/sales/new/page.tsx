@@ -11,10 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function NewSalePage() {
   const { toast } = useToast();
   const router = useRouter();
+  const [role, setRole] = useState('owner'); // Default role
+
+  useEffect(() => {
+    // In a real app, you would get this from your auth system.
+    // For now, we'll just keep it simple.
+  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,21 +31,27 @@ export default function NewSalePage() {
       title: 'Sale Recorded',
       description: 'The new sale has been successfully recorded.',
     });
-    router.push('/dashboard'); // Redirect to dashboard after submission
+    const redirectPath = role === 'owner' ? '/dashboard' : '/admin';
+    router.push(redirectPath); 
+  };
+  
+  const handleCancel = () => {
+    const redirectPath = role === 'owner' ? '/dashboard' : '/admin';
+    router.push(redirectPath);
   };
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar />
+        <AppSidebar role={role as 'owner' | 'admin'} />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <SidebarInset>
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex justify-between items-center">
                  <h1 className="text-2xl font-semibold">Record a New Sale</h1>
-                <Button asChild variant="outline">
-                    <Link href="/dashboard">Back to Dashboard</Link>
+                <Button type="button" variant="outline" onClick={handleCancel}>
+                    Back to Dashboard
                 </Button>
             </div>
             <Card>
@@ -94,8 +107,8 @@ export default function NewSalePage() {
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                     <Button type="button" variant="outline" asChild>
-                        <Link href="/dashboard">Cancel</Link>
+                     <Button type="button" variant="outline" onClick={handleCancel}>
+                        Cancel
                     </Button>
                     <Button type="submit">Save Sale</Button>
                   </div>

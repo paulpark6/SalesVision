@@ -14,13 +14,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LineChart } from 'lucide-react';
 import Link from 'next/link';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [role, setRole] = React.useState('owner');
 
   const handleLogin = () => {
     // Simulate a successful login
-    router.push('/dashboard');
+    if (role === 'owner') {
+      router.push('/dashboard');
+    } else {
+      router.push('/admin');
+    }
   };
 
   return (
@@ -39,11 +46,23 @@ export default function LoginPage() {
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required />
+            <Input id="email" type="email" placeholder="m@example.com" required defaultValue="owner@example.com" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required />
+            <Input id="password" type="password" required defaultValue="password" />
+          </div>
+           <div className="grid gap-2">
+            <Label htmlFor="role">Role</Label>
+            <Select name="role" value={role} onValueChange={setRole} required>
+                <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="owner">Owner</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
         </CardContent>
         <CardFooter className="flex-col">
