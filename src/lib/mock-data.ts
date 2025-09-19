@@ -1,3 +1,4 @@
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -15,6 +16,12 @@ export const salesTargetChartData = [
   { name: '당월', sales: 45231.89, target: 50000 },
   { name: '전년 동월', sales: 42100.5, target: 40000 },
 ];
+
+export const cumulativeSalesTargetChartData = [
+    { name: '당해년도', sales: 294000.5, target: 350000 },
+    { name: '전년', sales: 273653.25, target: 300000 },
+];
+
 
 export type DuePayment = {
   customer: {
