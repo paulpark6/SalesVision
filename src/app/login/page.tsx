@@ -21,13 +21,13 @@ import { useAuth } from '@/hooks/use-auth';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = React.useState('owner');
+  const [role, setRole] = React.useState('admin');
   const { login, auth } = useAuth();
 
   useEffect(() => {
     // If the user is already logged in, redirect them to their dashboard
     if (auth?.role) {
-      if (auth.role === 'owner') {
+      if (auth.role === 'admin') {
         router.push('/dashboard');
       } else {
         router.push('/admin');
@@ -36,8 +36,8 @@ export default function LoginPage() {
   }, [auth, router]);
 
   const handleLogin = () => {
-    login(role); // Save role to localStorage
-    if (role === 'owner') {
+    login(role as 'admin' | 'employee'); // Save role to localStorage
+    if (role === 'admin') {
       router.push('/dashboard');
     } else {
       router.push('/admin');
@@ -65,7 +65,7 @@ export default function LoginPage() {
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required defaultValue="owner@example.com" />
+            <Input id="email" type="email" placeholder="m@example.com" required defaultValue="admin@example.com" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
@@ -78,8 +78,8 @@ export default function LoginPage() {
                     <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="owner">Owner</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="employee">Employee</SelectItem>
                 </SelectContent>
             </Select>
           </div>

@@ -32,13 +32,14 @@ import {
 import { SidebarTrigger } from './ui/sidebar';
 
 
-export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
+export function AppSidebar({ role }: { role: 'admin' | 'employee' }) {
+  const dashboardUrl = role === 'admin' ? '/dashboard' : '/admin';
   return (
     <>
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
-          href="/dashboard"
+          href={dashboardUrl}
           className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
         >
           <LineChart className="h-4 w-4 transition-all group-hover:scale-110" />
@@ -48,7 +49,7 @@ export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href={role === 'owner' ? "/dashboard" : "/admin"}
+                href={dashboardUrl}
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <Home className="h-5 w-5" />
@@ -57,20 +58,6 @@ export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
             </TooltipTrigger>
             <TooltipContent side="right">Dashboard</TooltipContent>
           </Tooltip>
-          {role === 'owner' && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/admin"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                >
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">Admin View</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Admin View</TooltipContent>
-            </Tooltip>
-          )}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -95,42 +82,46 @@ export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
             </TooltipTrigger>
             <TooltipContent side="right">Products</TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <Users className="h-5 w-5" />
-                <span className="sr-only">Customers</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Customers</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <CreditCard className="h-5 w-5" />
-                <span className="sr-only">Credit Sales</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Credit Sales</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <LineChart className="h-5 w-5" />
-                <span className="sr-only">Analytics</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Analytics</TooltipContent>
-          </Tooltip>
+           {role === 'admin' && (
+            <>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="#"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  >
+                    <Users className="h-5 w-5" />
+                    <span className="sr-only">Customers</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">Customers</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="#"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  >
+                    <CreditCard className="h-5 w-5" />
+                    <span className="sr-only">Credit Sales</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">Credit Sales</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="#"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  >
+                    <LineChart className="h-5 w-5" />
+                    <span className="sr-only">Analytics</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="right">Analytics</TooltipContent>
+              </Tooltip>
+            </>
+           )}
         </TooltipProvider>
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -154,28 +145,19 @@ export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href={role === 'owner' ? "/dashboard" : "/admin"}
+              href={dashboardUrl}
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <LineChart className="h-5 w-5 transition-all group-hover:scale-110" />
               <span className="sr-only">SalesVision</span>
             </Link>
             <Link
-              href={role === 'owner' ? "/dashboard" : "/admin"}
+              href={dashboardUrl}
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <Home className="h-5 w-5" />
               Dashboard
             </Link>
-             {role === 'owner' && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <User className="h-5 w-5" />
-                Admin View
-              </Link>
-            )}
             <Link
               href="#"
               className="flex items-center gap-4 px-2.5 text-foreground"
@@ -190,27 +172,31 @@ export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
               <Package className="h-5 w-5" />
               Products
             </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <Users className="h-5 w-5" />
-              Customers
-            </Link>
-             <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <CreditCard className="h-5 w-5" />
-              Credit Sales
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-            >
-              <LineChart className="h-5 w-5" />
-              Analytics
-            </Link>
+            {role === 'admin' && (
+              <>
+                <Link
+                  href="#"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <Users className="h-5 w-5" />
+                  Customers
+                </Link>
+                 <Link
+                  href="#"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <CreditCard className="h-5 w-5" />
+                  Credit Sales
+                </Link>
+                <Link
+                  href="#"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <LineChart className="h-5 w-5" />
+                  Analytics
+                </Link>
+              </>
+            )}
              <div className="mt-auto p-4">
               <Card>
                 <CardHeader className="p-2 pt-0 md:p-4">

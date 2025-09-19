@@ -22,33 +22,30 @@ export default function DashboardPage() {
     // If auth is still loading, do nothing.
     if (auth === undefined) return;
 
-    // If user is not logged in or is not an owner, redirect to login.
-    if (!auth || auth.role !== 'owner') {
+    // If user is not logged in or is not an admin, redirect to login.
+    if (!auth || auth.role !== 'admin') {
       router.push('/login');
     }
   }, [auth, router]);
 
   // Render nothing or a loading spinner while checking auth
-  if (!role || role !== 'owner') {
+  if (!role || role !== 'admin') {
     return null; // or a loading component
   }
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar role="owner" />
+        <AppSidebar role="admin" />
         <div className="flex flex-col sm:pl-14">
           <SidebarInset>
             <Header />
             <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
               <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-semibold">Owner Dashboard</h1>
+                  <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
                   <div className="flex gap-2">
                       <Button asChild>
                           <Link href="/sales/new">Add Sale</Link>
-                      </Button>
-                      <Button asChild variant="outline">
-                          <Link href="/admin">Go to Admin View</Link>
                       </Button>
                   </div>
               </div>

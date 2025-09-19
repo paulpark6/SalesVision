@@ -12,24 +12,22 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function AdminDashboardPage() {
+export default function EmployeeDashboardPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
 
   useEffect(() => {
-    // If auth is still loading, do nothing.
     if (auth === undefined) return;
     
-    // An admin can be an "admin" or an "owner". Owners can see everything.
-    if (!auth || !['admin', 'owner'].includes(auth.role)) {
+    // Employees should only see this page.
+    if (!auth || auth.role !== 'employee') {
       router.push('/login');
     }
   }, [auth, router]);
   
-  // Render nothing or a loading spinner while checking auth
-  if (!role || !['admin', 'owner'].includes(role)) {
-    return null; // or a loading component
+  if (!role || role !== 'employee') {
+    return null;
   }
 
   return (
@@ -41,16 +39,11 @@ export default function AdminDashboardPage() {
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Admin Dashboard (My Sales)</h1>
+                <h1 className="text-2xl font-semibold">Employee Dashboard (My Sales)</h1>
                 <div className="flex gap-2">
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>
                     </Button>
-                     {role === 'owner' && (
-                        <Button asChild variant="outline">
-                            <Link href="/dashboard">Back to Owner View</Link>
-                        </Button>
-                    )}
                 </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">

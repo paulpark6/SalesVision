@@ -37,12 +37,12 @@ export default function NewSalePage() {
       description: 'The new sale has been successfully recorded.',
     });
     // Redirect based on the user's role.
-    const redirectPath = role === 'owner' ? '/dashboard' : '/admin';
+    const redirectPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(redirectPath); 
   };
   
   const handleCancel = () => {
-    const redirectPath = role === 'owner' ? '/dashboard' : '/admin';
+    const redirectPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(redirectPath);
   };
   
@@ -55,7 +55,7 @@ export default function NewSalePage() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar role={role as 'owner' | 'admin'} />
+        <AppSidebar role={role as 'admin' | 'employee'} />
         <div className="flex flex-col sm:pl-14">
         <SidebarInset>
           <Header />
@@ -111,9 +111,9 @@ export default function NewSalePage() {
                                 <SelectValue placeholder="Select an employee" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="emp-01">John Doe (Owner)</SelectItem>
-                                <SelectItem value="emp-02">Jane Smith (Admin)</SelectItem>
-                                <SelectItem value="emp-03">Peter Jones (Admin)</SelectItem>
+                                <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
+                                <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
+                                <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
