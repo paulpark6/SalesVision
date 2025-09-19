@@ -9,7 +9,6 @@ import {
   PanelLeft,
   Search,
   CreditCard,
-  ChevronRight,
 } from 'lucide-react';
 
 import {
@@ -17,7 +16,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
@@ -28,7 +26,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { UserNav } from '@/components/user-nav';
-import { Badge } from './ui/badge';
 import { SidebarTrigger } from './ui/sidebar';
 
 export function Header() {

@@ -5,7 +5,6 @@ import { SalesTargetChart } from '@/components/dashboard/sales-target-chart';
 import { DuePaymentsTable } from '@/components/dashboard/due-payments-table';
 import { RecentSalesTable } from '@/components/dashboard/recent-sales-table';
 import { SalesTrendAnalysisCard } from '@/components/dashboard/sales-trend-analysis-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -13,7 +12,7 @@ import Link from 'next/link';
 export default function DashboardPage() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col bg-muted/40">
+      <div className="flex min-h-screen w-full flex-col">
         <AppSidebar />
         <SidebarInset>
           <Header />

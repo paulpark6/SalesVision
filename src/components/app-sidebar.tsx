@@ -7,12 +7,9 @@ import {
   ShoppingCart,
   Users,
   CreditCard,
-  Settings,
   User,
 } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -28,13 +25,13 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-  SidebarTrigger,
   SidebarMenuBadge,
 } from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-r bg-muted/40" collapsible="icon">
+    <Sidebar className="border-r" collapsible="icon">
       <SidebarContent className="flex flex-col">
         <SidebarHeader className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
