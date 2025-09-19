@@ -8,6 +8,7 @@ import {
   Users,
   CreditCard,
   Settings,
+  User,
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -45,9 +46,15 @@ export function AppSidebar() {
         </SidebarHeader>
         <SidebarMenu className="flex-1">
           <SidebarMenuItem>
-            <SidebarMenuButton href="#" isActive>
+            <SidebarMenuButton href="/" isActive>
               <Home className="h-4 w-4" />
               Dashboard
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+           <SidebarMenuItem>
+            <SidebarMenuButton href="/admin">
+              <User className="h-4 w-4" />
+              Admin View
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
