@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import {
   Card,
   CardContent,
@@ -15,7 +16,6 @@ import { handleAnalyzeSalesTrends, FormState } from '@/app/actions';
 import { salesTrendCsvData } from '@/lib/mock-data';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Lightbulb, TriangleAlert } from 'lucide-react';
-import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 function SubmitButton() {
@@ -29,7 +29,7 @@ function SubmitButton() {
 
 export function SalesTrendAnalysisCard() {
   const initialState: FormState = { message: '' };
-  const [state, formAction] = useFormState(handleAnalyzeSalesTrends, initialState);
+  const [state, formAction] = useActionState(handleAnalyzeSalesTrends, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
