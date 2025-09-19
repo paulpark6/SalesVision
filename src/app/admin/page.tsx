@@ -8,14 +8,35 @@ import { RecentSalesTable } from '@/components/dashboard/recent-sales-table';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  const { auth } = useAuth();
+  const role = auth?.role;
+
+  useEffect(() => {
+    // If auth is still loading, do nothing.
+    if (auth === undefined) return;
+    
+    // An admin can be an "admin" or an "owner". Owners can see everything.
+    if (!auth || !['admin', 'owner'].includes(auth.role)) {
+      router.push('/login');
+    }
+  }, [auth, router]);
+  
+  // Render nothing or a loading spinner while checking auth
+  if (!role || !['admin', 'owner'].includes(role)) {
+    return null; // or a loading component
+  }
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar role="admin" />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <AppSidebar role={role} />
+        <div className="flex flex-col sm:pl-14">
         <SidebarInset>
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -25,6 +46,11 @@ export default function AdminDashboardPage() {
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>
                     </Button>
+                     {role === 'owner' && (
+                        <Button asChild variant="outline">
+                            <Link href="/dashboard">Back to Owner View</Link>
+                        </Button>
+                    )}
                 </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">

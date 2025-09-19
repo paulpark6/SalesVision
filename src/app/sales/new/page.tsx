@@ -12,25 +12,31 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function NewSalePage() {
   const { toast } = useToast();
   const router = useRouter();
-  const [role, setRole] = useState('owner'); // Default role
+  const { auth } = useAuth();
+  const role = auth?.role;
 
   useEffect(() => {
-    // In a real app, you would get this from your auth system.
-    // For now, we'll just keep it simple.
-  }, []);
-
+    // If auth is still loading, do nothing.
+    if (auth === undefined) return;
+    
+    // Anyone logged in can record a sale. If not logged in, redirect.
+    if (!auth) {
+      router.push('/login');
+    }
+  }, [auth, router]);
+  
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically handle form submission,
-    // e.g., send data to a server.
     toast({
       title: 'Sale Recorded',
       description: 'The new sale has been successfully recorded.',
     });
+    // Redirect based on the user's role.
     const redirectPath = role === 'owner' ? '/dashboard' : '/admin';
     router.push(redirectPath); 
   };
@@ -39,12 +45,18 @@ export default function NewSalePage() {
     const redirectPath = role === 'owner' ? '/dashboard' : '/admin';
     router.push(redirectPath);
   };
+  
+  // Render nothing or a loading spinner while checking auth
+  if (!role) {
+    return null; // or a loading component
+  }
+
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <AppSidebar role={role as 'owner' | 'admin'} />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <div className="flex flex-col sm:pl-14">
         <SidebarInset>
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

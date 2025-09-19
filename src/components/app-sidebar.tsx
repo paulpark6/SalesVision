@@ -29,6 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { SidebarTrigger } from './ui/sidebar';
 
 
 export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
@@ -148,10 +149,7 @@ export function AppSidebar({ role }: { role: 'owner' | 'admin' }) {
     </aside>
     <Sheet>
         <SheetTrigger asChild>
-          <Button size="icon" variant="outline" className="sm:hidden fixed top-4 left-4 z-20">
-            <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
-          </Button>
+          <SidebarTrigger className="sm:hidden fixed top-4 left-4 z-20" />
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 text-lg font-medium">

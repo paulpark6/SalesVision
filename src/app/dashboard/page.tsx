@@ -10,30 +10,34 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [role, setRole] = useState<string | null>(null);
+  const { auth } = useAuth();
+  const role = auth?.role;
 
   useEffect(() => {
-    // In a real app, you would get the user's role from your auth context/session.
-    // For simulation, we'll assume the 'owner' is accessing this page.
-    // If we wanted to protect this route, we'd check the role here and redirect if not 'owner'.
-    const simulatedRole = 'owner';
-    setRole(simulatedRole);
+    // If auth is still loading, do nothing.
+    if (auth === undefined) return;
 
-    // This is a simple protection mechanism for this simulation.
-    // An 'admin' who logs in is directed to /admin and should not see /dashboard.
-    // If they try to navigate here, we could redirect them.
-    // For now, we will just control UI elements.
-  }, [router]);
+    // If user is not logged in or is not an owner, redirect to login.
+    if (!auth || auth.role !== 'owner') {
+      router.push('/login');
+    }
+  }, [auth, router]);
+
+  // Render nothing or a loading spinner while checking auth
+  if (!role || role !== 'owner') {
+    return null; // or a loading component
+  }
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <AppSidebar role="owner" />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <div className="flex flex-col sm:pl-14">
           <SidebarInset>
             <Header />
             <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

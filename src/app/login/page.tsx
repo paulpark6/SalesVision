@@ -15,20 +15,39 @@ import { Label } from '@/components/ui/label';
 import { LineChart } from 'lucide-react';
 import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import React from 'react';
+import React,
+{ useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function LoginPage() {
   const router = useRouter();
   const [role, setRole] = React.useState('owner');
+  const { login, auth } = useAuth();
+
+  useEffect(() => {
+    // If the user is already logged in, redirect them to their dashboard
+    if (auth?.role) {
+      if (auth.role === 'owner') {
+        router.push('/dashboard');
+      } else {
+        router.push('/admin');
+      }
+    }
+  }, [auth, router]);
 
   const handleLogin = () => {
-    // Simulate a successful login
+    login(role); // Save role to localStorage
     if (role === 'owner') {
       router.push('/dashboard');
     } else {
       router.push('/admin');
     }
   };
+
+  // If auth is loading, show a blank screen to prevent flashing the login page
+  if (auth === undefined) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted/40">

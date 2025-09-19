@@ -13,13 +13,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useAuth } from '@/hooks/use-auth';
 
 export function UserNav() {
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar');
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    // In a real app, you'd also clear the user's session/token here
+    logout();
     router.push('/login');
   };
 
