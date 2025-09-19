@@ -28,11 +28,13 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarTrigger,
+  SidebarMenuBadge,
 } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   return (
-    <Sidebar className="hidden border-r bg-muted/40 md:block">
+    <Sidebar className="border-r bg-muted/40" collapsible="icon">
       <SidebarContent className="flex flex-col">
         <SidebarHeader className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -46,48 +48,46 @@ export function AppSidebar() {
         </SidebarHeader>
         <SidebarMenu className="flex-1">
           <SidebarMenuItem>
-            <SidebarMenuButton href="/" isActive>
+            <SidebarMenuButton href="/" isActive tooltip="Dashboard">
               <Home className="h-4 w-4" />
-              Dashboard
+              <span>Dashboard</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
            <SidebarMenuItem>
-            <SidebarMenuButton href="/admin">
+            <SidebarMenuButton href="/admin" tooltip="Admin View">
               <User className="h-4 w-4" />
-              Admin View
+              <span>Admin View</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="#">
+            <SidebarMenuButton href="#" tooltip="Sales">
               <ShoppingCart className="h-4 w-4" />
-              Sales
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                6
-              </Badge>
+              <span>Sales</span>
+              <SidebarMenuBadge>6</SidebarMenuBadge>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="#">
+            <SidebarMenuButton href="#" tooltip="Products">
               <Package className="h-4 w-4" />
-              Products
+              <span>Products</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="#">
+            <SidebarMenuButton href="#" tooltip="Customers">
               <Users className="h-4 w-4" />
-              Customers
+              <span>Customers</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="#">
+            <SidebarMenuButton href="#" tooltip="Credit Sales">
               <CreditCard className="h-4 w-4" />
-              Credit Sales
+              <span>Credit Sales</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="#">
+            <SidebarMenuButton href="#" tooltip="Analytics">
               <LineChart className="h-4 w-4" />
-              Analytics
+              <span>Analytics</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
