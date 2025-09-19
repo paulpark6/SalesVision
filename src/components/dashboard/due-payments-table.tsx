@@ -28,27 +28,29 @@ import { cn } from '@/lib/utils';
 import { differenceInDays, parseISO } from 'date-fns';
 
 export function DuePaymentsTable() {
-    const getStatus = (dueDate: string): 'overdue' | 'due' => {
+    const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
         const due = parseISO(dueDate);
         const today = new Date();
         const daysDiff = differenceInDays(due, today);
 
         if (daysDiff < 0) return 'overdue';
         if (daysDiff <= 14) return 'due';
-        return 'due'; // Defaulting 'nearing' to 'due' as per new logic
+        return 'nearing';
     };
 
-    const getStatusVariant = (status: 'due' | 'overdue') => {
+    const getStatusVariant = (status: 'due' | 'overdue' | 'nearing') => {
         switch (status) {
         case 'overdue':
             return 'destructive';
         case 'due':
+            return 'default';
+        case 'nearing':
         default:
             return 'secondary';
         }
     };
     
-    const getStatusRowClass = (status: 'due' | 'overdue') => {
+    const getStatusRowClass = (status: 'due' | 'overdue' | 'nearing') => {
         switch (status) {
         case 'overdue':
             return 'bg-destructive/10 hover:bg-destructive/20';
@@ -59,12 +61,14 @@ export function DuePaymentsTable() {
         }
     };
 
-    const getStatusText = (status: 'due' | 'overdue') => {
+    const getStatusText = (status: 'due' | 'overdue' | 'nearing') => {
         switch (status) {
             case 'overdue':
                 return '연체';
             case 'due':
-                return '만기 도래';
+                return '만기 임박';
+            case 'nearing':
+                return '정상';
         }
     }
 
