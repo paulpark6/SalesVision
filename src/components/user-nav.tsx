@@ -14,11 +14,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useAuth } from '@/hooks/use-auth';
+import { Badge } from './ui/badge';
 
 export function UserNav() {
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar');
   const router = useRouter();
-  const { logout } = useAuth();
+  const { auth, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -37,11 +38,16 @@ export function UserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              john.doe@example.com
-            </p>
+          <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">John Doe</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                john.doe@example.com
+                </p>
+            </div>
+            {auth?.role && (
+                <Badge variant="outline" className="w-fit capitalize">{auth.role}</Badge>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
