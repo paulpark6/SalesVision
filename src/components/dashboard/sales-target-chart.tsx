@@ -22,11 +22,11 @@ export function SalesTargetChart() {
 
   const chartConfig = {
     sales: {
-      label: 'Sales',
+      label: '매출',
       color: 'hsl(var(--chart-1))',
     },
     target: {
-      label: 'Target',
+      label: '목표',
       color: 'hsl(var(--chart-2))',
     },
   };
@@ -34,30 +34,30 @@ export function SalesTargetChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sales Target</CardTitle>
+        <CardTitle>매출 목표</CardTitle>
         <CardDescription>
-          Monthly sales target achievement. Current month and last year comparison.
+          월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">This Month's Achievement</span>
+            <span className="text-sm font-medium">당월 달성률</span>
             <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
           </div>
           <Progress value={achievementRate} />
           <div className="text-xs text-muted-foreground">
-            Target: ${salesTargetData.target.toLocaleString()}
+            목표: ${salesTargetData.target.toLocaleString()}
           </div>
         </div>
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">Last Year's Achievement</span>
+            <span className="text-sm font-medium">전년 동월 달성률</span>
             <span className="text-sm font-medium">{lastYearAchievementRate.toFixed(1)}%</span>
           </div>
           <Progress value={lastYearAchievementRate} className="[&>div]:bg-secondary-foreground/50" />
            <div className="text-xs text-muted-foreground">
-            Target: $40,000.00
+            목표: $40,000.00
           </div>
         </div>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
@@ -81,8 +81,8 @@ export function SalesTargetChart() {
                 cursor={{ fill: 'hsl(var(--background))' }}
                 content={<ChartTooltipContent />}
               />
-              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
+              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>

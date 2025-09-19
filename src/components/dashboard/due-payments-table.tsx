@@ -25,56 +25,76 @@ import {
 } from '@/components/ui/table';
 import { duePaymentsData } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
+import { differenceInDays, parseISO } from 'date-fns';
 
 export function DuePaymentsTable() {
-  const getStatusVariant = (status: 'due' | 'overdue' | 'nearing') => {
-    switch (status) {
-      case 'overdue':
-        return 'destructive';
-      case 'due':
-        return 'secondary';
-      case 'nearing':
-      default:
-        return 'outline';
+    const getStatus = (dueDate: string): 'overdue' | 'due' => {
+        const due = parseISO(dueDate);
+        const today = new Date();
+        const daysDiff = differenceInDays(due, today);
+
+        if (daysDiff < 0) return 'overdue';
+        if (daysDiff <= 14) return 'due';
+        return 'due'; // Defaulting 'nearing' to 'due' as per new logic
+    };
+
+    const getStatusVariant = (status: 'due' | 'overdue') => {
+        switch (status) {
+        case 'overdue':
+            return 'destructive';
+        case 'due':
+        default:
+            return 'secondary';
+        }
+    };
+    
+    const getStatusRowClass = (status: 'due' | 'overdue') => {
+        switch (status) {
+        case 'overdue':
+            return 'bg-destructive/10 hover:bg-destructive/20';
+        case 'due':
+            return 'bg-yellow-100/50 dark:bg-yellow-900/50';
+        default:
+            return '';
+        }
+    };
+
+    const getStatusText = (status: 'due' | 'overdue') => {
+        switch (status) {
+            case 'overdue':
+                return '연체';
+            case 'due':
+                return '만기 도래';
+        }
     }
-  };
-  
-  const getStatusRowClass = (status: 'due' | 'overdue' | 'nearing') => {
-    switch (status) {
-      case 'overdue':
-        return 'bg-destructive/10 hover:bg-destructive/20';
-      case 'due':
-        return 'bg-secondary/50';
-      default:
-        return '';
-    }
-  };
 
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Credit Sales Management</CardTitle>
+        <CardTitle>신용 판매 관리</CardTitle>
         <CardDescription>
-          Monitor and manage upcoming and overdue credit payments.
+          다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead className="hidden md:table-cell">Due Date</TableHead>
-              <TableHead className="hidden md:table-cell">Status</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>고객</TableHead>
+              <TableHead className="hidden md:table-cell">만기일</TableHead>
+              <TableHead className="hidden md:table-cell">상태</TableHead>
+              <TableHead className="text-right">금액</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {duePaymentsData.map((payment, index) => (
-              <TableRow key={index} className={cn(getStatusRowClass(payment.status))}>
+            {duePaymentsData.map((payment, index) => {
+                const status = getStatus(payment.dueDate);
+              return (
+              <TableRow key={index} className={cn(getStatusRowClass(status))}>
                 <TableCell>
                   <div className="font-medium">{payment.customer.name}</div>
                   <div className="hidden text-sm text-muted-foreground md:inline">
@@ -86,10 +106,10 @@ export function DuePaymentsTable() {
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   <Badge
-                    variant={getStatusVariant(payment.status)}
+                    variant={getStatusVariant(status)}
                     className="capitalize"
                   >
-                    {payment.status}
+                    {getStatusText(status)}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
@@ -112,7 +132,7 @@ export function DuePaymentsTable() {
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
-            ))}
+            )})}
           </TableBody>
         </Table>
       </CardContent>

@@ -14,8 +14,8 @@ export function RecentSalesTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Sales</CardTitle>
-        <CardDescription>You made 265 sales this month.</CardDescription>
+        <CardTitle>최근 판매</CardTitle>
+        <CardDescription>이번 달에 265건의 판매를 올렸습니다.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-8">
         {recentSalesData.map((sale, index) => (
