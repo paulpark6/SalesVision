@@ -24,20 +24,21 @@ export default function NewSalePage() {
       title: 'Sale Recorded',
       description: 'The new sale has been successfully recorded.',
     });
-    router.push('/'); // Redirect to dashboard after submission
+    router.push('/dashboard'); // Redirect to dashboard after submission
   };
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col">
+      <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <AppSidebar />
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <SidebarInset>
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex justify-between items-center">
                  <h1 className="text-2xl font-semibold">Record a New Sale</h1>
                 <Button asChild variant="outline">
-                    <Link href="/">Back to Dashboard</Link>
+                    <Link href="/dashboard">Back to Dashboard</Link>
                 </Button>
             </div>
             <Card>
@@ -94,7 +95,7 @@ export default function NewSalePage() {
                   </div>
                   <div className="flex justify-end gap-2">
                      <Button type="button" variant="outline" asChild>
-                        <Link href="/">Cancel</Link>
+                        <Link href="/dashboard">Cancel</Link>
                     </Button>
                     <Button type="submit">Save Sale</Button>
                   </div>
@@ -103,6 +104,7 @@ export default function NewSalePage() {
             </Card>
           </main>
         </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );

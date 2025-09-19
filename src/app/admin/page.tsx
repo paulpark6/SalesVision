@@ -11,8 +11,9 @@ import Link from 'next/link';
 export default function AdminDashboardPage() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col">
+      <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <AppSidebar />
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <SidebarInset>
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -23,7 +24,7 @@ export default function AdminDashboardPage() {
                         <Link href="/sales/new">Add Sale</Link>
                     </Button>
                     <Button asChild variant="outline">
-                        <Link href="/">Back to Owner View</Link>
+                        <Link href="/dashboard">Back to Owner View</Link>
                     </Button>
                 </div>
             </div>
@@ -41,6 +42,7 @@ export default function AdminDashboardPage() {
             </div>
           </main>
         </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );
