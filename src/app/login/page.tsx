@@ -36,7 +36,7 @@ export default function LoginPage() {
   }, [auth, router]);
 
   const handleLogin = () => {
-    login(role as 'admin' | 'employee'); // Save role to localStorage
+    login(role as 'admin' | 'employee' | 'manager'); // Save role to localStorage
     if (role === 'admin') {
       router.push('/dashboard');
     } else {
@@ -80,6 +80,7 @@ export default function LoginPage() {
                 <SelectContent>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="employee">Employee</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
                 </SelectContent>
             </Select>
           </div>

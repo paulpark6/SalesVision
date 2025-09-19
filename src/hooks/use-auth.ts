@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 const AUTH_KEY = 'salesvision_auth';
 
 type AuthState = {
-  role: 'admin' | 'employee';
+  role: 'admin' | 'employee' | 'manager';
 } | null;
 
 // undefined means we haven't checked localStorage yet
@@ -30,7 +30,7 @@ export function useAuth() {
     }
   }, []);
 
-  const login = useCallback((role: 'admin' | 'employee') => {
+  const login = useCallback((role: 'admin' | 'employee' | 'manager') => {
     const newAuth = { role };
     localStorage.setItem(AUTH_KEY, JSON.stringify(newAuth));
     setAuth(newAuth);

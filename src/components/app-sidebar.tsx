@@ -32,7 +32,7 @@ import {
 import { SidebarTrigger } from './ui/sidebar';
 
 
-export function AppSidebar({ role }: { role: 'admin' | 'employee' }) {
+export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' }) {
   const dashboardUrl = role === 'admin' ? '/dashboard' : '/admin';
   return (
     <>

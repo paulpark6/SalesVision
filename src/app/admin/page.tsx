@@ -20,13 +20,13 @@ export default function EmployeeDashboardPage() {
   useEffect(() => {
     if (auth === undefined) return;
     
-    // Employees should only see this page.
-    if (!auth || auth.role !== 'employee') {
+    // Employees and managers should only see this page.
+    if (!auth || (auth.role !== 'employee' && auth.role !== 'manager')) {
       router.push('/login');
     }
   }, [auth, router]);
   
-  if (!role || role !== 'employee') {
+  if (!role || (role !== 'employee' && role !== 'manager')) {
     return null;
   }
 
@@ -39,7 +39,7 @@ export default function EmployeeDashboardPage() {
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Employee Dashboard (My Sales)</h1>
+                <h1 className="text-2xl font-semibold">Dashboard (My Sales)</h1>
                 <div className="flex gap-2">
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>

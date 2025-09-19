@@ -55,7 +55,7 @@ export default function NewSalePage() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar role={role as 'admin' | 'employee'} />
+        <AppSidebar role={role} />
         <div className="flex flex-col sm:pl-14">
         <SidebarInset>
           <Header />
@@ -114,6 +114,7 @@ export default function NewSalePage() {
                                 <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
                                 <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
                                 <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
+                                <SelectItem value="emp-04">Alex Ray (Manager)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
