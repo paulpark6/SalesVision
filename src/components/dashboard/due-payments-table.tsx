@@ -33,7 +33,7 @@ export function DuePaymentsTable() {
         const today = new Date();
         const daysDiff = differenceInDays(due, today);
 
-        if (daysDiff < 0) return 'overdue';
+        if (daysDiff < -14) return 'overdue';
         if (daysDiff <= 14) return 'due';
         return 'nearing';
     };
@@ -78,7 +78,7 @@ export function DuePaymentsTable() {
       <CardHeader>
         <CardTitle>신용 판매 관리</CardTitle>
         <CardDescription>
-          다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다.
+          다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
         </CardDescription>
       </CardHeader>
       <CardContent>
