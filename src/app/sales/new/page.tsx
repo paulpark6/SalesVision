@@ -54,84 +54,80 @@ export default function NewSalePage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <AppSidebar role={role} />
-        <div className="flex flex-col sm:pl-14">
-        <SidebarInset>
-          <Header />
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-             <div className="flex justify-between items-center">
-                 <h1 className="text-2xl font-semibold">Record a New Sale</h1>
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                    Back to Dashboard
-                </Button>
-            </div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Sale Details</CardTitle>
-                <CardDescription>Fill out the form to add a new sale.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="productName">Product Name</Label>
-                      <Input id="productName" placeholder="e.g., Laptop, T-Shirt" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="customerName">Customer Name</Label>
-                      <Input id="customerName" placeholder="e.g., John Doe" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="quantity">Quantity</Label>
-                      <Input id="quantity" type="number" placeholder="e.g., 2" required min="1" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="price">Price (per item)</Label>
-                      <Input id="price" type="number" placeholder="e.g., 1200" required min="0" step="0.01" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="paymentMethod">Payment Method</Label>
-                       <Select name="paymentMethod" required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a payment method" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="credit">Credit</SelectItem>
-                                <SelectItem value="cash">Cash</SelectItem>
-                                <SelectItem value="check">Check</SelectItem>
-                                <SelectItem value="prepayment">Prepayment</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                     <div className="space-y-2">
-                      <Label htmlFor="employee">Employee</Label>
-                       <Select name="employee" required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select an employee" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
-                                <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
-                                <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
-                                <SelectItem value="emp-04">Alex Ray (Manager)</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+      <AppSidebar role={role} />
+      <SidebarInset>
+        <Header />
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-semibold">Record a New Sale</h1>
+              <Button type="button" variant="outline" onClick={handleCancel}>
+                  Back to Dashboard
+              </Button>
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Sale Details</CardTitle>
+              <CardDescription>Fill out the form to add a new sale.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="productName">Product Name</Label>
+                    <Input id="productName" placeholder="e.g., Laptop, T-Shirt" required />
                   </div>
-                  <div className="flex justify-end gap-2">
-                     <Button type="button" variant="outline" onClick={handleCancel}>
-                        Cancel
-                    </Button>
-                    <Button type="submit">Save Sale</Button>
+                  <div className="space-y-2">
+                    <Label htmlFor="customerName">Customer Name</Label>
+                    <Input id="customerName" placeholder="e.g., John Doe" required />
                   </div>
-                </form>
-              </CardContent>
-            </Card>
-          </main>
-        </SidebarInset>
-        </div>
-      </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity">Quantity</Label>
+                    <Input id="quantity" type="number" placeholder="e.g., 2" required min="1" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Price (per item)</Label>
+                    <Input id="price" type="number" placeholder="e.g., 1200" required min="0" step="0.01" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentMethod">Payment Method</Label>
+                      <Select name="paymentMethod" required>
+                          <SelectTrigger>
+                              <SelectValue placeholder="Select a payment method" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value="credit">Credit</SelectItem>
+                              <SelectItem value="cash">Cash</SelectItem>
+                              <SelectItem value="check">Check</SelectItem>
+                              <SelectItem value="prepayment">Prepayment</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="employee">Employee</Label>
+                      <Select name="employee" required>
+                          <SelectTrigger>
+                              <SelectValue placeholder="Select an employee" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
+                              <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
+                              <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
+                              <SelectItem value="emp-04">Alex Ray (Manager)</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={handleCancel}>
+                      Cancel
+                  </Button>
+                  <Button type="submit">Save Sale</Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

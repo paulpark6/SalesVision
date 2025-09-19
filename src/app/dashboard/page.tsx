@@ -35,37 +35,33 @@ export default function DashboardPage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <AppSidebar role="admin" />
-        <div className="flex flex-col sm:pl-14">
-          <SidebarInset>
-            <Header />
-            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-              <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-                  <div className="flex gap-2">
-                      <Button asChild>
-                          <Link href="/sales/new">Add Sale</Link>
-                      </Button>
-                  </div>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-                <OverviewCards />
-              </div>
-              <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-                <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-                  <SalesTargetChart />
-                  <DuePaymentsTable />
+        <SidebarInset>
+          <Header />
+          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+                <div className="flex gap-2">
+                    <Button asChild>
+                        <Link href="/sales/new">Add Sale</Link>
+                    </Button>
                 </div>
-                <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                  <RecentSalesTable />
-                  <SalesTrendAnalysisCard />
-                </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+              <OverviewCards />
+            </div>
+            <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
+              <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
+                <SalesTargetChart />
+                <DuePaymentsTable />
               </div>
-            </main>
-          </SidebarInset>
-        </div>
-      </div>
+              <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+                <RecentSalesTable />
+                <SalesTrendAnalysisCard />
+              </div>
+            </div>
+          </main>
+        </SidebarInset>
     </SidebarProvider>
   );
 }
