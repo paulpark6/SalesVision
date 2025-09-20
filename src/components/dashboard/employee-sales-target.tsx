@@ -21,7 +21,7 @@ export function EmployeeSalesTarget() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>팀원별 매출 목표</CardTitle>
+        <CardTitle>팀원별 매출 실적</CardTitle>
         <CardDescription>
           팀원별 월간 매출 목표 달성 현황입니다.
         </CardDescription>

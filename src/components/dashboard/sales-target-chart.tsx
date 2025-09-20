@@ -26,7 +26,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   const lastYearAchievementRate = (lastYearTotalSales / lastYearTarget) * 100;
 
 
-  const cardTitle = isTeamData ? '팀 매출 목표' : '매출 목표';
+  const cardTitle = isTeamData ? '누적 매출 현황' : '매출 목표';
   const cardDescription = isTeamData 
     ? '팀 전체의 월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.'
     : '월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.';
@@ -90,9 +90,9 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
               {isTeamData && <Legend />}
               {isTeamData ? (
                 <>
-                  <Bar dataKey="jane" fill="hsl(var(--chart-3))" stackId="a" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="alex" fill="hsl(var(--chart-4))" stackId="a" />
-                  <Bar dataKey="john" fill="hsl(var(--chart-5))" stackId="a" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="jane" fill="hsl(var(--chart-3))" stackId="a" radius={[4, 4, 0, 0]} name="Jane 누적" />
+                  <Bar dataKey="alex" fill="hsl(var(--chart-4))" stackId="a" name="Alex 누적" />
+                  <Bar dataKey="john" fill="hsl(var(--chart-5))" stackId="a" radius={[4, 4, 0, 0]} name="John 누적" />
                 </>
               ) : (
                 <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
