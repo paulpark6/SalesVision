@@ -7,6 +7,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -400,7 +401,7 @@ export const customerData: Customer[] = [
     customerName: 'Noah Williams',
     customerCode: 'C-110',
     customerGrade: 'A',
-    customerType: 'own',
+    customerType: 'pending',
     monthlySales: [
         { month: 8, actual: 8940.00, average: 8500.00 },
         { month: 9, actual: 9200.00, average: 8600.00 },
