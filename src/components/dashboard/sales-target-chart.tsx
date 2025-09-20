@@ -17,19 +17,23 @@ import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/li
 import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
-    const { x, y, width, height, value, payload } = props;
+    const { x, y, width, height, value, name, payload } = props;
 
-    if (!payload || value === undefined || height < 20) {
+    // Don't render label if the segment is too small
+    if (height < 20 || !value) {
         return null;
     }
 
     const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+    
+    // Capitalize the first letter of the name
+    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
 
     return (
         <g>
-            <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`$${(value / 1000).toFixed(0)}K (${percentage}%)`}
+            <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-semibold">
+                {`${displayName}: $${(value / 1000).toFixed(0)}K (${percentage}%)`}
             </text>
         </g>
     );
@@ -97,32 +101,15 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                   axisLine={false}
                   tickFormatter={(value) => `$${value / 1000}K`}
                 />
-                <Tooltip
-                  cursor={{ fill: 'hsl(var(--background))' }}
-                  content={
-                    <ChartTooltipContent
-                      formatter={(value, name, item) => {
-                        const payload = item.payload;
-                        const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
-                        const pct = total > 0 ? ((value as number) / total) * 100 : 0;
-                        return (
-                          <div className="flex flex-col items-start">
-                            <span className="text-sm">{`${name}: ${value.toLocaleString()} (${pct.toFixed(1)}%)`}</span>
-                          </div>
-                        );
-                      }}
-                    />
-                  }
-                />
                 <Legend />
                 <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}>
-                   <LabelList dataKey="jane" content={<CustomLabel />} />
+                   <LabelList dataKey="jane" content={<CustomLabel name="jane" />} />
                 </Bar>
                 <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex">
-                   <LabelList dataKey="alex" content={<CustomLabel />} />
+                   <LabelList dataKey="alex" content={<CustomLabel name="alex" />} />
                 </Bar>
                 <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}>
-                   <LabelList dataKey="john" content={<CustomLabel />} />
+                   <LabelList dataKey="john" content={<CustomLabel name="john" />} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
