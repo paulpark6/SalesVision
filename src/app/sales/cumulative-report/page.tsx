@@ -85,9 +85,9 @@ export default function CumulativeReportPage() {
   const totalYoyGrowth = totalLastYear > 0 ? ((totalActual - totalLastYear) / totalLastYear) * 100 : (totalActual > 0 ? 100 : 0);
   
   const chartConfig = {
-      actual: { label: '당해년도 실적', color: 'hsl(var(--chart-1))' },
-      target: { label: '당해년도 목표', color: 'hsl(var(--chart-2))' },
-      lastYear: { label: '전년동기간 실적', color: 'hsl(var(--chart-3))' },
+      cumulativeActual: { label: '누적 실적', color: 'hsl(var(--chart-1))' },
+      cumulativeTarget: { label: '누적 목표', color: 'hsl(var(--chart-2))' },
+      cumulativeLastYear: { label: '전년동기 누적', color: 'hsl(var(--chart-3))' },
   };
   
   const handleMonthClick = (month: string) => {
@@ -138,9 +138,9 @@ export default function CumulativeReportPage() {
                             />
                             <Tooltip content={<ChartTooltipContent />} />
                             <Legend />
-                            <Bar dataKey="cumulativeTarget" fill="var(--color-target)" radius={[4, 4, 0, 0]} name="누적 목표" />
-                            <Bar dataKey="cumulativeActual" fill="var(--color-actual)" radius={[4, 4, 0, 0]} name="누적 실적" />
-                            <Bar dataKey="cumulativeLastYear" fill="var(--color-lastYear)" radius={[4, 4, 0, 0]} name="전년동기 누적" />
+                            <Bar dataKey="cumulativeTarget" fill="var(--color-cumulativeTarget)" radius={[4, 4, 0, 0]} name="누적 목표" />
+                            <Bar dataKey="cumulativeActual" fill="var(--color-cumulativeActual)" radius={[4, 4, 0, 0]} name="누적 실적" />
+                            <Bar dataKey="cumulativeLastYear" fill="var(--color-cumulativeLastYear)" radius={[4, 4, 0, 0]} name="전년동기 누적" />
                         </BarChart>
                     </ResponsiveContainer>
                 </ChartContainer>
