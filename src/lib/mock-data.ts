@@ -117,3 +117,24 @@ export const salesTrendCsvData = `Date,Product Category,Product Code,Description
 2023-11-01,Clothing,C-015,Winter Jacket,John Doe,C-101,A,1,200,200,Credit,EMP-01,INV-1006
 2023-12-20,Electronics,E-004,Gaming Console,Jane Smith,C-102,B,1,500,500,Credit,EMP-02,INV-1007
 `;
+
+export const products = [
+    { value: 'e-001', label: 'Laptop' },
+    { value: 'e-002', label: 'Smartphone' },
+    { value: 'e-003', label: 'Tablet' },
+    { value: 'e-004', label: 'Gaming Console' },
+    { value: 'c-005', label: 'T-Shirt' },
+    { value: 'c-008', label: 'Jeans' },
+    { value: 'c-015', label: 'Winter Jacket' },
+    { value: 'b-010', label: 'Science Fiction Novel' },
+    { value: 'b-012', label: 'Cookbook' },
+    { value: 'h-003', label: 'Coffee Maker' },
+];
+
+export const customers = [
+    { value: 'c-101', label: 'John Doe' },
+    { value: 'c-102', label: 'Jane Smith' },
+    { value: 'c-103', label: 'Peter Jones' },
+    { value: 'c-104', label: 'Alice Williams' },
+    { value: 'c-105', label: 'Michael Brown' },
+];

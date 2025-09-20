@@ -15,6 +15,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { DatePicker } from '@/components/ui/date-picker';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Combobox } from '@/components/ui/combobox';
+import { customers, products } from '@/lib/mock-data';
 
 export default function NewSalePage() {
   const { toast } = useToast();
@@ -25,6 +27,8 @@ export default function NewSalePage() {
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [productDescription, setProductDescription] = useState('');
+  const [customerName, setCustomerName] = useState('');
 
   useEffect(() => {
     // If auth is still loading, do nothing.
@@ -132,7 +136,14 @@ export default function NewSalePage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="productDescription">제품 설명</Label>
-                    <Input id="productDescription" placeholder="e.g., Laptop, T-Shirt" required />
+                    <Combobox
+                        items={products}
+                        placeholder="Select product..."
+                        searchPlaceholder="Search products..."
+                        noResultsMessage="No product found."
+                        value={productDescription}
+                        onValueChange={setProductDescription}
+                    />
                   </div>
                 </div>
 
@@ -143,7 +154,14 @@ export default function NewSalePage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="customerName">고객명</Label>
-                        <Input id="customerName" placeholder="e.g., John Doe" required />
+                        <Combobox
+                            items={customers}
+                            placeholder="Select customer..."
+                            searchPlaceholder="Search customers..."
+                            noResultsMessage="No customer found."
+                            value={customerName}
+                            onValueChange={setCustomerName}
+                        />
                     </div>
                 </div>
 
