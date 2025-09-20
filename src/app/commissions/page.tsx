@@ -132,7 +132,8 @@ export default function CommissionsPage() {
             <CardHeader>
               <CardTitle>Commission Overview</CardTitle>
               <CardDescription>
-                Review commission earnings for each employee for the current period based on sales type and margins.
+                Review commission earnings for each employee for the current period. 
+                Imported products are those entered by Admins, and local purchases are those entered by Managers.
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -337,6 +337,9 @@ export const customerData = [
   },
 ];
 
+// Commission data includes sales records for commission calculation.
+// '수입' (Imported) products are registered by Admins.
+// '현지' (Local) products are registered by Managers.
 export const commissionData = [
   {
     employeeId: 'emp-01',
