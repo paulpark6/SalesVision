@@ -271,75 +271,75 @@ export default function CustomersPage() {
                       const isOpen = openCollapsible === customer.customerCode;
                       return (
                       <Fragment key={customer.customerCode}>
-                          <Collapsible asChild open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
-                            <TableRow>
-                              <TableCell>{customer.employee}</TableCell>
-                              <TableCell>
-                                <CollapsibleTrigger asChild>
-                                  <div className="flex items-center gap-2 cursor-pointer">
-                                    <span>{customer.customerName}</span>
-                                    <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
-                                    <div className="text-sm text-muted-foreground ml-auto">{customer.customerCode}</div>
+                        <Collapsible asChild open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                          <TableRow>
+                            <TableCell>{customer.employee}</TableCell>
+                            <TableCell>
+                              <CollapsibleTrigger asChild>
+                                <div className="flex items-center gap-2 cursor-pointer">
+                                  <span>{customer.customerName}</span>
+                                  <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                                  <div className="text-sm text-muted-foreground ml-auto">{customer.customerCode}</div>
+                                </div>
+                              </CollapsibleTrigger>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{customer.customerGrade}</Badge>
+                            </TableCell>
+                            <TableCell>
+                                {role === 'admin' ? (
+                                    <Select
+                                        value={customer.customerType}
+                                        onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
+                                    >
+                                        <SelectTrigger className="h-8 w-[100px]">
+                                            <SelectValue placeholder="Select Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="own">Own</SelectItem>
+                                            <SelectItem value="transfer">Transfer</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                ) : (
+                                    <Badge variant={customer.customerType === 'own' ? 'default' : 'secondary'}>
+                                        {customer.customerType === 'own' ? 'Own' : 'Transfer'}
+                                    </Badge>
+                                )}
+                            </TableCell>
+                            <TableCell className="text-right">{monthlySales.actual}</TableCell>
+                            <TableCell className="text-right">{monthlySales.average}</TableCell>
+                            <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
+                          </TableRow>
+                        </Collapsible>
+                        <CollapsibleContent asChild>
+                            <tr className="bg-muted/50">
+                              <TableCell colSpan={8}>
+                                  <div className="grid grid-cols-2 gap-4 p-4">
+                                      <Card>
+                                          <CardHeader>
+                                              <CardTitle className="text-base">Contact Point</CardTitle>
+                                          </CardHeader>
+                                          <CardContent className="text-sm space-y-2">
+                                              <p><span className="font-semibold">Name:</span> {customer.contact.name}</p>
+                                              <p><span className="font-semibold">Position:</span> {customer.contact.position}</p>
+                                              <p><span className="font-semibold">Phone:</span> {customer.contact.phone}</p>
+                                              <p><span className="font-semibold">Address:</span> {customer.contact.address}</p>
+                                              {customer.contact.email && <p><span className="font-semibold">Email:</span> {customer.contact.email}</p>}
+                                          </CardContent>
+                                      </Card>
+                                      <Card>
+                                          <CardHeader>
+                                              <CardTitle className="text-base">Company Overview</CardTitle>
+                                          </CardHeader>
+                                          <CardContent className="text-sm">
+                                              {customer.companyOverview}
+                                          </CardContent>
+                                      </Card>
                                   </div>
-                                </CollapsibleTrigger>
                               </TableCell>
-                              <TableCell>
-                                <Badge variant="outline">{customer.customerGrade}</Badge>
-                              </TableCell>
-                              <TableCell>
-                                  {role === 'admin' ? (
-                                      <Select
-                                          value={customer.customerType}
-                                          onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
-                                      >
-                                          <SelectTrigger className="h-8 w-[100px]">
-                                              <SelectValue placeholder="Select Type" />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                              <SelectItem value="own">Own</SelectItem>
-                                              <SelectItem value="transfer">Transfer</SelectItem>
-                                          </SelectContent>
-                                      </Select>
-                                  ) : (
-                                      <Badge variant={customer.customerType === 'own' ? 'default' : 'secondary'}>
-                                          {customer.customerType === 'own' ? 'Own' : 'Transfer'}
-                                      </Badge>
-                                  )}
-                              </TableCell>
-                              <TableCell className="text-right">{monthlySales.actual}</TableCell>
-                              <TableCell className="text-right">{monthlySales.average}</TableCell>
-                              <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
-                              <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
-                            </TableRow>
-                          </Collapsible>
-                          <CollapsibleContent asChild>
-                              <tr className="bg-muted/50">
-                                <TableCell colSpan={8}>
-                                    <div className="grid grid-cols-2 gap-4 p-4">
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="text-base">Contact Point</CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="text-sm space-y-2">
-                                                <p><span className="font-semibold">Name:</span> {customer.contact.name}</p>
-                                                <p><span className="font-semibold">Position:</span> {customer.contact.position}</p>
-                                                <p><span className="font-semibold">Phone:</span> {customer.contact.phone}</p>
-                                                <p><span className="font-semibold">Address:</span> {customer.contact.address}</p>
-                                                {customer.contact.email && <p><span className="font-semibold">Email:</span> {customer.contact.email}</p>}
-                                            </CardContent>
-                                        </Card>
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="text-base">Company Overview</CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="text-sm">
-                                                {customer.companyOverview}
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </TableCell>
-                              </tr>
-                          </CollapsibleContent>
+                            </tr>
+                        </CollapsibleContent>
                       </Fragment>
                   )})}
                 </TableBody>
@@ -351,4 +351,3 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
-
