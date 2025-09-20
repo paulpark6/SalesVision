@@ -11,6 +11,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -666,4 +667,24 @@ export const checkPaymentsData: CheckPayment[] = [
     { id: 'chk-2', receiptDate: '2024-09-02', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, issuingBank: 'Chase', checkNumber: '67890', depositDate: '2024-09-12', notes: 'Full payment for INV-1009' },
     { id: 'chk-3', receiptDate: '2024-09-03', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 1000.00, issuingBank: 'Wells Fargo', checkNumber: '101112', depositDate: '2024-09-15', notes: '' },
     { id: 'chk-4', receiptDate: '2024-09-04', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, issuingBank: 'Citibank', checkNumber: '131415', depositDate: '2024-09-11', notes: 'Payment for overdue balance' },
+];
+
+export type CreditNote = {
+    id: string;
+    salesDate: string;
+    salesperson: string;
+    customerName: string;
+    amount: number;
+    dueDate: string;
+};
+
+export const creditNoteData: CreditNote[] = [
+    { id: 'cn-001', salesDate: '2024-08-15', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 250.00, dueDate: '2024-09-14' },
+    { id: 'cn-002', salesDate: '2024-08-20', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, dueDate: '2024-09-19' },
+    { id: 'cn-003', salesDate: '2024-07-25', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 350.00, dueDate: '2024-08-24' }, // 1-30 days overdue
+    { id: 'cn-004', salesDate: '2024-06-15', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, dueDate: '2024-07-15' }, // 31-60 days overdue
+    { id: 'cn-005', salesDate: '2024-05-10', salesperson: 'Alex Ray', customerName: 'Ava Jones', amount: 550.00, dueDate: '2024-06-09' }, // 61-90 days overdue
+    { id: 'cn-006', salesDate: '2024-03-01', salesperson: 'John Doe', customerName: 'James Wilson', amount: 200.00, dueDate: '2024-03-31' }, // > 90 days overdue
+    { id: 'cn-007', salesDate: '2024-07-30', salesperson: 'Jane Smith', customerName: 'Tech Innovators', amount: 1200.00, dueDate: '2024-08-29' }, // 1-30 days overdue
+    { id: 'cn-008', salesDate: '2024-08-25', salesperson: 'Alex Ray', customerName: 'Global Exports', amount: 3200.00, dueDate: '2024-09-24' },
 ];
