@@ -9,7 +9,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  ChartContainer
+  ChartContainer,
+  ChartTooltipContent,
+  ChartTooltip
 } from '@/components/ui/chart';
 
 import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/lib/mock-data';
@@ -23,10 +25,12 @@ const CustomLabel = (props: any) => {
         return null;
     }
     
+    // The `payload` here is the data object for the entire bar for that specific X-axis tick.
+    // e.g., { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 }
     const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
     
-    // Capitalize the first letter of the name
+    // The `name` prop passed from LabelList's parent Bar component.
     const displayName = name.charAt(0).toUpperCase() + name.slice(1);
 
     return (
