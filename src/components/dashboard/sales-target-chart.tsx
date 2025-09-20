@@ -105,13 +105,17 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                         const payload = item.payload;
                         const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
                         const pct = total > 0 ? ((value as number) / total) * 100 : 0;
-                        return `${(value as number).toLocaleString()} (${pct.toFixed(1)}%)`;
+                        return (
+                          <div className="flex flex-col items-start">
+                            <span className="text-sm">{`${name}: ${value.toLocaleString()} (${pct.toFixed(1)}%)`}</span>
+                          </div>
+                        );
                       }}
                     />
                   }
                 />
                 <Legend />
-                <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}>
                    <LabelList dataKey="jane" content={<CustomLabel />} />
                 </Bar>
                 <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex">
