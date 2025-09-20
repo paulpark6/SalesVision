@@ -1,6 +1,6 @@
 
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, LabelList } from 'recharts';
 import {
   Card,
   CardContent,
@@ -9,8 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  ChartContainer,
-  ChartTooltipContent,
+  ChartContainer
 } from '@/components/ui/chart';
 
 import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/lib/mock-data';
@@ -20,7 +19,7 @@ const CustomLabel = (props: any) => {
     const { x, y, width, height, value, name, payload } = props;
 
     // Don't render label if the segment is too small
-    if (height < 20 || !value) {
+    if (height < 20 || !value || !payload) {
         return null;
     }
 
@@ -189,10 +188,6 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => `$${value / 1000}K`}
-              />
-              <Tooltip
-                cursor={{ fill: 'hsl(var(--background))' }}
-                content={<ChartTooltipContent />}
               />
               <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" >
                  <LabelList dataKey="sales" content={<SingleCustomLabel />} />
