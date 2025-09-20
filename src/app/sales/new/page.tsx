@@ -182,7 +182,7 @@ export default function NewSalePage() {
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="productCode">제품 코드</Label>
-                    <Input id="productCode" value={productCode} readOnly placeholder="e.g., E-001" required />
+                    <Input id="productCode" value={productCode} onChange={(e) => setProductCode(e.target.value)} placeholder="e.g., E-001" required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="productDescription">제품 설명</Label>
@@ -209,7 +209,7 @@ export default function NewSalePage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="customerCode">고객 코드</Label>
-                        <Input id="customerCode" value={customerCode} readOnly placeholder="e.g., C-101" required />
+                        <Input id="customerCode" value={customerCode} onChange={(e) => setCustomerCode(e.target.value)} placeholder="e.g., C-101" required />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="customerName">고객명</Label>
