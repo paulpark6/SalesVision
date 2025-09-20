@@ -118,7 +118,6 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   // Default chart for individual employee
   const { current, target } = salesTargetData;
   const achievementRate = (current / target) * 100;
-  const yoyGrowth = ((salesTargetChartData[0].sales - salesTargetChartData[1].sales) / salesTargetChartData[1].sales) * 100;
   
   const chartConfig = {
     sales: { label: '매출', color: 'hsl(var(--chart-1))' },
@@ -130,7 +129,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     <Card>
       <CardHeader>
         <CardTitle>9월 매출 현황</CardTitle>
-        <CardDescription>월간 매출 목표 달성률. 9월과 작년 실적을 비교합니다.</CardDescription>
+        <CardDescription>월간 매출 목표와 실적을 비교합니다.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -141,18 +140,6 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           <Progress value={achievementRate} />
           <div className="text-xs text-muted-foreground">
             실적: ${current.toLocaleString()} / 목표: ${target.toLocaleString()}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">전년 동월 대비</span>
-            <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
-            </span>
-          </div>
-           <div className="text-xs text-muted-foreground flex justify-between">
-            <span>올해: ${salesTargetChartData[0].sales.toLocaleString()}</span>
-            <span>작년: ${salesTargetChartData[1].sales.toLocaleString()}</span>
           </div>
         </div>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">

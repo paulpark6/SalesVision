@@ -2,6 +2,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -23,7 +24,6 @@ export const teamSalesTargetData = {
 
 export const salesTargetChartData = [
   { name: '9월', sales: 45231.89, target: 50000 },
-  { name: '전년 동월', sales: 42100.5, target: 40000 },
 ];
 
 export const salesComparisonData = [
