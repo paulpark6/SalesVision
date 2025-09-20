@@ -180,7 +180,7 @@ export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,
 
 export const customerUploadCsvData = `CustomerCode,CustomerName,Employee,Grade,CustomerType
 C-101,John Doe,EMP-01,A,own
-C-102,Jane Smith,EMP-02,transfer
+C-102,Jane Smith,EMP-02,B,transfer
 `;
 
 const getLatestPrice = (history: { date: string; price: number }[]) => {
@@ -442,5 +442,3 @@ export const commissionData = [
     ],
   },
 ];
-
-    

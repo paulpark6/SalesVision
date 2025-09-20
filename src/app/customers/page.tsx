@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { AppSidebar } from '@/components/app-sidebar';
@@ -93,7 +91,7 @@ export default function CustomersPage() {
   }
   
   const currentYear = new Date().getFullYear();
-  const availableYears = Array.from({ length: currentYear - 2018 }, (_, i) => currentYear - i);
+  const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
   const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
 
