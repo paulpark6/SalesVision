@@ -12,7 +12,7 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { cumulativeSalesTargetChartData, overviewData, salesTargetData, teamCumulativeSalesTargetChartData } from '@/lib/mock-data';
+import { cumulativeSalesTargetChartData, teamCumulativeSalesTargetChartData } from '@/lib/mock-data';
 
 export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
   const chartConfig = {
@@ -27,8 +27,10 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
   };
   
   const chartData = isTeamData ? teamCumulativeSalesTargetChartData : cumulativeSalesTargetChartData;
-  const cardTitle = isTeamData ? '팀 연간 누적 매출 목표' : '연간 누적 매출 목표';
-  const cardDescription = isTeamData ? '팀 전체의 연간 누적 매출과 목표를 비교합니다.' : '연간 누적 매출과 목표를 비교합니다.';
+  const cardTitle = isTeamData ? '팀 9월 누적 매출 현황' : '9월 누적 매출 현황';
+  const cardDescription = isTeamData 
+    ? '9월까지의 팀 전체 누적 매출과 연간 목표를 비교합니다.' 
+    : '9월까지의 누적 매출과 연간 목표를 비교합니다.';
 
 
   return (
