@@ -175,8 +175,9 @@ export const employees = [
 ];
 
 export const employeeCustomerSales = [
-  { id: 'cus-1', customerName: 'John Doe', salesCount: 5, totalRevenue: 15800 },
-  { id: 'cus-2', customerName: 'Jane Smith', salesCount: 8, totalRevenue: 9500 },
-  { id: 'cus-3', customerName: 'Alice Williams', salesCount: 3, totalRevenue: 5400 },
-  { id: 'cus-4', customerName: 'Peter Jones', salesCount: 2, totalRevenue: 3200 },
+  { id: 'cus-1', customerName: 'John Doe', salesTarget: 10000, salesAmount: 12500 },
+  { id: 'cus-2', customerName: 'Jane Smith', salesTarget: 8000, salesAmount: 7500 },
+  { id: 'cus-3', customerName: 'Alice Williams', salesTarget: 5000, salesAmount: 6000 },
+  { id: 'cus-4', customerName: 'Peter Jones', salesTarget: 3000, salesAmount: 2000 },
+  { id: 'cus-5', customerName: 'Michael Brown', salesTarget: 15000, salesAmount: 17231.89 },
 ];

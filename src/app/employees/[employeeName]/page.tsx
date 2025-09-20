@@ -18,6 +18,7 @@ import { ArrowLeft, DollarSign, Target, Users, MoreHorizontal } from 'lucide-rea
 import { salesTargetData, salesTargetChartData, employeeCustomerSales } from '@/lib/mock-data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Progress } from '@/components/ui/progress';
 
 export default function EmployeeDetailPage() {
   const router = useRouter();
@@ -127,20 +128,29 @@ export default function EmployeeDetailPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>고객명</TableHead>
-                                    <TableHead className="text-center">매출 건수</TableHead>
-                                    <TableHead className="text-right">총 매출액</TableHead>
+                                    <TableHead className='w-[120px]'>고객명</TableHead>
+                                    <TableHead className="text-right">매출 목표</TableHead>
+                                    <TableHead className="text-right">매출액</TableHead>
+                                    <TableHead className='w-[150px]'>달성률</TableHead>
                                     <TableHead>
                                         <span className="sr-only">Actions</span>
                                     </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {employeeCustomerSales.map((sale) => (
+                                {employeeCustomerSales.map((sale) => {
+                                    const achievementRate = (sale.salesAmount / sale.salesTarget) * 100;
+                                    return (
                                     <TableRow key={sale.id}>
                                         <TableCell className="font-medium">{sale.customerName}</TableCell>
-                                        <TableCell className="text-center">{sale.salesCount}</TableCell>
-                                        <TableCell className="text-right">${sale.totalRevenue.toLocaleString()}</TableCell>
+                                        <TableCell className="text-right">${sale.salesTarget.toLocaleString()}</TableCell>
+                                        <TableCell className="text-right">${sale.salesAmount.toLocaleString()}</TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <Progress value={achievementRate} className="h-2" />
+                                                <span className="text-xs text-muted-foreground">{achievementRate.toFixed(1)}%</span>
+                                            </div>
+                                        </TableCell>
                                         <TableCell>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -156,7 +166,7 @@ export default function EmployeeDetailPage() {
                                             </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
-                                ))}
+                                )})}
                             </TableBody>
                         </Table>
                     </CardContent>
