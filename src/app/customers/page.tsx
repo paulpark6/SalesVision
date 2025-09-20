@@ -213,9 +213,6 @@ export default function CustomersPage() {
                             </span>
                         </Link>
                     </Button>
-                    <Button type="button" variant="outline" onClick={handleBack}>
-                        Back to Dashboard
-                    </Button>
                     {(role === 'manager' || role === 'admin') && (
                         <>
                              <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
@@ -239,6 +236,9 @@ export default function CustomersPage() {
                             />
                         </>
                     )}
+                    <Button type="button" variant="outline" onClick={handleBack}>
+                        Back to Dashboard
+                    </Button>
                 </div>
             </div>
           <Card>
