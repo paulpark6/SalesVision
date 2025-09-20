@@ -27,9 +27,12 @@ import { customerData as initialCustomerData, customerUploadCsvData, employees }
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Download, Upload, Users } from 'lucide-react';
+import { Download, Upload, Users, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
+
 
 type Customer = typeof initialCustomerData[0];
 
@@ -44,11 +47,12 @@ export default function CustomersPage() {
   const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
   const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
   const [showMyCustomers, setShowMyCustomers] = useState(role === 'employee');
+  const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
 
   const loggedInEmployee = useMemo(() => {
-      if (!auth?.role) return null;
-      return employees.find(e => e.role === auth.role);
-  },[auth?.role]);
+    if (!auth?.role) return null;
+    return employees.find(e => e.role === auth.role) || employees.find(e => e.name === auth.name);
+  },[auth]);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -131,11 +135,11 @@ export default function CustomersPage() {
   };
 
   const filteredCustomerData = useMemo(() => {
-    if (showMyCustomers && loggedInEmployee) {
+    if ((role === 'employee' || showMyCustomers) && loggedInEmployee) {
       return customerData.filter(customer => customer.employee === loggedInEmployee.name);
     }
     return customerData;
-  }, [customerData, showMyCustomers, loggedInEmployee]);
+  }, [customerData, showMyCustomers, loggedInEmployee, role]);
   
   if (!role) {
     return null;
@@ -213,16 +217,16 @@ export default function CustomersPage() {
                     </Select>
                     </div>
                 </div>
-                {role !== 'admin' && (
-                    <div className="flex items-center space-x-2">
-                        <Users className="h-4 w-4" />
-                        <Label htmlFor="my-customers-filter">내 고객만 보기</Label>
-                        <Switch
-                            id="my-customers-filter"
-                            checked={showMyCustomers}
-                            onCheckedChange={setShowMyCustomers}
-                        />
-                    </div>
+                {role === 'manager' && (
+                  <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <Label htmlFor="my-customers-filter">내 고객만 보기</Label>
+                      <Switch
+                          id="my-customers-filter"
+                          checked={showMyCustomers}
+                          onCheckedChange={setShowMyCustomers}
+                      />
+                  </div>
                 )}
               </div>
             </CardHeader>
@@ -243,53 +247,91 @@ export default function CustomersPage() {
                 <TableBody>
                   {filteredCustomerData.map((customer) => {
                       const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
+                      const isOpen = openCollapsible === customer.customerCode;
                       return (
-                      <TableRow key={customer.customerCode}>
-                        <TableCell>
-                           <div className="font-medium">{customer.employee}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">{customer.customerName}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {customer.customerCode}
-                          </div>
-                        </TableCell>
-                         <TableCell>
-                          <Badge variant="secondary">{customer.customerGrade}</Badge>
-                        </TableCell>
-                        <TableCell>
-                            {role === 'admin' ? (
-                                <Select 
-                                    value={customer.customerType} 
-                                    onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
-                                >
-                                    <SelectTrigger className="w-[120px]">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="own">Own</SelectItem>
-                                        <SelectItem value="transfer">Transfer</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            ) : (
-                                <Badge variant={customer.customerType === 'own' ? 'default' : 'outline'}>
-                                    {customer.customerType === 'own' ? 'Own' : 'Transfer'}
-                                </Badge>
-                            )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {monthlySales.actual}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {monthlySales.average}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {getYearlySales(customer, parseInt(selectedYear))}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">
-                          {formatCurrency(customer.creditBalance)}
-                        </TableCell>
-                      </TableRow>
+                      <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                        <>
+                          <TableRow className="cursor-pointer">
+                            <TableCell>
+                              <div className="font-medium">{customer.employee}</div>
+                            </TableCell>
+                            <TableCell>
+                              <CollapsibleTrigger className='w-full'>
+                                <div className="flex items-center gap-2 text-left">
+                                  <div className="font-medium">{customer.customerName}</div>
+                                  <div className="text-sm text-muted-foreground">
+                                    {customer.customerCode}
+                                  </div>
+                                  <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                                </div>
+                              </CollapsibleTrigger>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">{customer.customerGrade}</Badge>
+                            </TableCell>
+                            <TableCell>
+                                {role === 'admin' ? (
+                                    <Select 
+                                        value={customer.customerType} 
+                                        onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
+                                    >
+                                        <SelectTrigger className="w-[120px]">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="own">Own</SelectItem>
+                                            <SelectItem value="transfer">Transfer</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                ) : (
+                                    <Badge variant={customer.customerType === 'own' ? 'default' : 'outline'}>
+                                        {customer.customerType === 'own' ? 'Own' : 'Transfer'}
+                                    </Badge>
+                                )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {monthlySales.actual}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {monthlySales.average}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {getYearlySales(customer, parseInt(selectedYear))}
+                            </TableCell>
+                            <TableCell className="text-right font-semibold">
+                              {formatCurrency(customer.creditBalance)}
+                            </TableCell>
+                          </TableRow>
+                          <CollapsibleContent asChild>
+                              <TableRow>
+                                  <TableCell colSpan={8}>
+                                      <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50">
+                                          <Card>
+                                              <CardHeader>
+                                                  <CardTitle className='text-base'>Contact Point</CardTitle>
+                                              </CardHeader>
+                                              <CardContent className="text-sm space-y-2">
+                                                  <p><span className="font-semibold">Name:</span> {customer.contact.name}</p>
+                                                  <p><span className="font-semibold">Position:</span> {customer.contact.position}</p>
+                                                  <p><span className="font-semibold">Phone:</span> {customer.contact.phone}</p>
+                                                  <p><span className="font-semibold">Address:</span> {customer.contact.address}</p>
+                                                  {customer.contact.email && <p><span className="font-semibold">Email:</span> {customer.contact.email}</p>}
+                                              </CardContent>
+                                          </Card>
+                                          <Card>
+                                              <CardHeader>
+                                                  <CardTitle className='text-base'>Company Overview</CardTitle>
+                                              </CardHeader>
+                                              <CardContent className="text-sm">
+                                                  {customer.companyOverview}
+                                              </CardContent>
+                                          </Card>
+                                      </div>
+                                  </TableCell>
+                              </TableRow>
+                          </CollapsibleContent>
+                        </>
+                      </Collapsible>
                   )})}
                 </TableBody>
               </Table>
@@ -300,3 +342,4 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
+
