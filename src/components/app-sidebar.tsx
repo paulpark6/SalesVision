@@ -107,7 +107,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </NavLink>
                     {(role === 'admin' || role === 'manager') && (
                         <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                            Monthly Sales Target
+                            당월 매출 목표
                         </NavLink>
                     )}
                 </NavCollapsible>
