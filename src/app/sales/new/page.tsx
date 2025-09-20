@@ -60,22 +60,22 @@ export default function NewSalePage() {
 
   useEffect(() => {
     const selectedProduct = products.find(p => p.value === productCode);
-    if (selectedProduct && customerGrade && quantity > 0) {
+    if (selectedProduct && customerGrade) {
       const basePrice = selectedProduct.basePrice;
       const discount = getDiscount(customerGrade);
       const finalPrice = basePrice * (1 - discount);
       setAutoCalculatedPrice(finalPrice);
-      setPrice(finalPrice);
-      setTotalPrice(finalPrice * quantity);
+      setPrice(finalPrice); // Set initial price
     } else {
         setAutoCalculatedPrice(0);
+        setPrice(0);
     }
-  }, [productCode, customerGrade, quantity]);
+  }, [productCode, customerGrade]);
   
   useEffect(() => {
     const total = quantity * price;
     setTotalPrice(total);
-    if (price < autoCalculatedPrice && autoCalculatedPrice > 0) {
+    if (autoCalculatedPrice > 0 && price < autoCalculatedPrice) {
         setNeedsApproval(true);
     } else {
         setNeedsApproval(false);
@@ -84,7 +84,7 @@ export default function NewSalePage() {
 
   useEffect(() => {
     if (productDescription) {
-        const selectedProduct = products.find(p => p.value === productDescription);
+        const selectedProduct = products.find(p => p.value.toLowerCase() === productDescription.toLowerCase());
         setProductCode(selectedProduct ? selectedProduct.value : '');
     } else {
         setProductCode('');
@@ -93,7 +93,7 @@ export default function NewSalePage() {
 
   useEffect(() => {
     if (customerName) {
-        const selectedCustomer = customers.find(c => c.value === customerName);
+        const selectedCustomer = customers.find(c => c.value.toLowerCase() === customerName.toLowerCase());
         if (selectedCustomer) {
             setCustomerCode(selectedCustomer.value);
             setCustomerGrade(selectedCustomer.grade);
@@ -143,7 +143,6 @@ export default function NewSalePage() {
     return null;
   }
 
-
   return (
     <SidebarProvider>
       <AppSidebar role={role} />
@@ -180,6 +179,10 @@ export default function NewSalePage() {
                             <Label htmlFor="return">리턴</Label>
                         </div>
                     </RadioGroup>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="invoiceNumber">인보이스 넘버</Label>
+                    <Input id="invoiceNumber" placeholder="Optional"/>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
