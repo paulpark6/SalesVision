@@ -84,28 +84,6 @@ export default function NewSalePage() {
     }
   }, [quantity, price, autoCalculatedPrice]);
 
-  useEffect(() => {
-    if (productDescription) {
-        const selectedProduct = products.find(p => p.label.toLowerCase() === productDescription.toLowerCase());
-        setProductCode(selectedProduct ? selectedProduct.value : '');
-    } else {
-        setProductCode('');
-    }
-  }, [productDescription]);
-
-  useEffect(() => {
-    if (customerName) {
-        const selectedCustomer = customers.find(c => c.label.toLowerCase() === customerName.toLowerCase());
-        if (selectedCustomer) {
-            setCustomerCode(selectedCustomer.value);
-            setCustomerGrade(selectedCustomer.grade);
-        }
-    } else {
-        setCustomerCode('');
-        setCustomerGrade('');
-    }
-  }, [customerName]);
-
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
     setQuantity(value);
@@ -215,8 +193,14 @@ export default function NewSalePage() {
                         noResultsMessage="No product found."
                         value={productDescription}
                         onValueChange={(value) => {
-                            const selectedItem = products.find(item => item.value.toLowerCase() === value.toLowerCase());
-                            setProductDescription(selectedItem ? selectedItem.label : '');
+                            const selectedProduct = products.find(p => p.label.toLowerCase() === value.toLowerCase());
+                            if (selectedProduct) {
+                                setProductDescription(selectedProduct.label);
+                                setProductCode(selectedProduct.value);
+                            } else {
+                                setProductDescription(value);
+                                setProductCode('');
+                            }
                         }}
                     />
                   </div>
@@ -236,8 +220,16 @@ export default function NewSalePage() {
                             noResultsMessage="No customer found."
                             value={customerName}
                             onValueChange={(value) => {
-                                const selectedItem = customers.find(item => item.value.toLowerCase() === value.toLowerCase());
-                                setCustomerName(selectedItem ? selectedItem.label : '');
+                                const selectedCustomer = customers.find(c => c.label.toLowerCase() === value.toLowerCase());
+                                if (selectedCustomer) {
+                                    setCustomerName(selectedCustomer.label);
+                                    setCustomerCode(selectedCustomer.value);
+                                    setCustomerGrade(selectedCustomer.grade);
+                                } else {
+                                    setCustomerName(value);
+                                    setCustomerCode('');
+                                    setCustomerGrade('');
+                                }
                             }}
                         />
                     </div>

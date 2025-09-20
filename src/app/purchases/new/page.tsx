@@ -38,15 +38,6 @@ export default function NewPurchasePage() {
   }, [auth, router, role]);
 
   useEffect(() => {
-    if (productDescription) {
-        const selectedProduct = products.find(p => p.label.toLowerCase() === productDescription.toLowerCase());
-        setProductCode(selectedProduct ? selectedProduct.value : '');
-    } else {
-        setProductCode('');
-    }
-  }, [productDescription]);
-
-  useEffect(() => {
     const total = quantity * purchasePrice;
     setTotalPurchasePrice(total);
   }, [quantity, purchasePrice]);
@@ -135,7 +126,16 @@ export default function NewPurchasePage() {
                         searchPlaceholder="Search products..."
                         noResultsMessage="No product found. You can type a new one."
                         value={productDescription}
-                        onValueChange={setProductDescription}
+                        onValueChange={(value) => {
+                            const selectedProduct = products.find(p => p.label.toLowerCase() === value.toLowerCase());
+                            if (selectedProduct) {
+                                setProductDescription(selectedProduct.label);
+                                setProductCode(selectedProduct.value);
+                            } else {
+                                setProductDescription(value);
+                                setProductCode('');
+                            }
+                        }}
                     />
                   </div>
                 </div>
