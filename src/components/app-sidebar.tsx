@@ -8,7 +8,8 @@ import {
   ShoppingCart,
   Users,
   CreditCard,
-  User,
+  Truck,
+  BadgePercent,
 } from 'lucide-react';
 import {
   Card,
@@ -59,6 +60,15 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     <Package className="h-4 w-4" />
                     Products
                 </Link>
+                {(role === 'admin' || role === 'manager') && (
+                     <Link
+                        href="/imports/new"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                        <Truck className="h-4 w-4" />
+                        Imports
+                    </Link>
+                )}
                 {role === 'admin' && (
                     <>
                         <Link
@@ -75,14 +85,25 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                             <CreditCard className="h-4 w-4" />
                             Credit Sales
                         </Link>
-                        <Link
-                            href="#"
-                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                        >
-                            <LineChart className="h-4 w-4" />
-                            Analytics
-                        </Link>
                     </>
+                )}
+                {(role === 'admin' || role === 'manager') && (
+                     <Link
+                        href="/commissions"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                        <BadgePercent className="h-4 w-4" />
+                        Commissions
+                    </Link>
+                )}
+                 {role === 'admin' && (
+                    <Link
+                        href="#"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                        <LineChart className="h-4 w-4" />
+                        Analytics
+                    </Link>
                 )}
             </nav>
         </div>
