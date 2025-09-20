@@ -39,7 +39,11 @@ export default function NewSalePage() {
   const [employee, setEmployee] = useState('');
   const [needsApproval, setNeedsApproval] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('');
+
+  const [cashAmount, setCashAmount] = useState<number | undefined>();
+  const [creditAmount, setCreditAmount] = useState<number | undefined>();
   
+  const isMixedPayment = paymentMethod.startsWith('mixed-');
   const showDueDate = paymentMethod.includes('credit') || paymentMethod.includes('check');
 
   useEffect(() => {
@@ -100,6 +104,18 @@ export default function NewSalePage() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isMixedPayment) {
+        const sum = (cashAmount || 0) + (creditAmount || 0);
+        if (sum !== totalPrice) {
+            toast({
+                title: '금액 불일치',
+                description: `총 가격(${totalPrice.toFixed(2)})과 결제 금액의 합(${sum.toFixed(2)})이 일치하지 않습니다.`,
+                variant: 'destructive'
+            });
+            return;
+        }
+    }
     
     if (needsApproval) {
         toast({
@@ -262,7 +278,7 @@ export default function NewSalePage() {
                     <Input id="totalPrice" type="text" value={`$${totalPrice.toFixed(2)}`} readOnly className="bg-muted" />
                   </div>
                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     <div className="space-y-2">
                         <Label htmlFor="paymentMethod">결제방법</Label>
                         <Select name="paymentMethod" required onValueChange={setPaymentMethod}>
@@ -277,17 +293,11 @@ export default function NewSalePage() {
                                 <SelectItem value="mixed-cash-credit">Cash + Credit (현금+신용)</SelectItem>
                                 <SelectItem value="mixed-cash-check">Cash + Check (현금+수표)</SelectItem>
                                 <SelectItem value="mixed-check-credit">Check + Credit (수표+신용)</SelectItem>
-                                <SelectItem value="mixed">Mixed (기타 혼합)</SelectItem>
+                                <SelectItem value="mixed-other">Mixed (기타 혼합)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
-                    {showDueDate && (
-                      <div className="space-y-2">
-                          <Label htmlFor="dueDate">결제 예정일</Label>
-                          <DatePicker />
-                      </div>
-                    )}
-                    <div className="space-y-2">
+                     <div className="space-y-2">
                         <Label htmlFor="employee">직원</Label>
                         <Select name="employee" value={employee} onValueChange={setEmployee} required disabled>
                             <SelectTrigger>
@@ -303,6 +313,40 @@ export default function NewSalePage() {
                         </Select>
                     </div>
                 </div>
+                 {isMixedPayment && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                      {paymentMethod.includes('cash') && (
+                          <div className="space-y-2">
+                              <Label htmlFor="cashAmount">현금 금액</Label>
+                              <Input id="cashAmount" type="number" placeholder="e.g., 1000" min="0" step="0.01" 
+                                onChange={(e) => setCashAmount(parseFloat(e.target.value) || 0)}
+                              />
+                          </div>
+                      )}
+                      {(paymentMethod.includes('credit') || paymentMethod.includes('check')) && (
+                          <div className="space-y-2">
+                              <Label htmlFor="creditAmount">신용/수표 금액</Label>
+                              <Input id="creditAmount" type="number" placeholder="e.g., 200" min="0" step="0.01" 
+                                onChange={(e) => setCreditAmount(parseFloat(e.target.value) || 0)}
+                              />
+                          </div>
+                      )}
+                      {showDueDate && (
+                        <div className="space-y-2">
+                            <Label htmlFor="dueDate">결제 예정일</Label>
+                            <DatePicker />
+                        </div>
+                      )}
+                  </div>
+                )}
+                {!isMixedPayment && showDueDate && (
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="dueDate">결제 예정일</Label>
+                            <DatePicker />
+                        </div>
+                     </div>
+                )}
                 <div className="flex justify-end gap-2 pt-4">
                     <Button type="button" variant="outline" onClick={handleCancel}>
                       Cancel
