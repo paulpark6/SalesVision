@@ -138,3 +138,9 @@ export const customers = [
     { value: 'c-104', label: 'Alice Williams', grade: 'A' },
     { value: 'c-105', label: 'Michael Brown', grade: 'B' },
 ];
+
+export const employees = [
+    { value: 'admin', label: 'John Doe (Admin)', role: 'admin' },
+    { value: 'manager', label: 'Alex Ray (Manager)', role: 'manager' },
+    { value: 'employee', label: 'Jane Smith (Employee)', role: 'employee' },
+];

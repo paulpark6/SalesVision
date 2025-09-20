@@ -16,7 +16,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { DatePicker } from '@/components/ui/date-picker';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Combobox } from '@/components/ui/combobox';
-import { customers, products } from '@/lib/mock-data';
+import { customers, products, employees } from '@/lib/mock-data';
 
 export default function NewSalePage() {
   const { toast } = useToast();
@@ -24,19 +24,27 @@ export default function NewSalePage() {
   const { auth } = useAuth();
   const role = auth?.role;
 
+  // Form state
+  const [productDescription, setProductDescription] = useState('');
+  const [productCode, setProductCode] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerCode, setCustomerCode] = useState('');
+  const [customerGrade, setCustomerGrade] = useState('');
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [productDescription, setProductDescription] = useState('');
-  const [customerName, setCustomerName] = useState('');
+  const [employee, setEmployee] = useState('');
 
   useEffect(() => {
-    // If auth is still loading, do nothing.
     if (auth === undefined) return;
-    
-    // Anyone logged in can record a sale. If not logged in, redirect.
     if (!auth) {
       router.push('/login');
+    } else {
+      // Set the employee based on the logged-in user's role
+      const loggedInEmployee = employees.find(e => e.role === auth.role);
+      if (loggedInEmployee) {
+          setEmployee(loggedInEmployee.value);
+      }
     }
   }, [auth, router]);
   
@@ -44,6 +52,30 @@ export default function NewSalePage() {
     const total = quantity * price;
     setTotalPrice(total);
   }, [quantity, price]);
+
+  useEffect(() => {
+    if (productDescription) {
+        const selectedProduct = products.find(p => p.value === productDescription);
+        if (selectedProduct) {
+            setProductCode(selectedProduct.value);
+        }
+    } else {
+        setProductCode('');
+    }
+  }, [productDescription]);
+
+  useEffect(() => {
+    if (customerName) {
+        const selectedCustomer = customers.find(c => c.value === customerName);
+        if (selectedCustomer) {
+            setCustomerCode(selectedCustomer.value);
+            setCustomerGrade(selectedCustomer.grade);
+        }
+    } else {
+        setCustomerCode('');
+        setCustomerGrade('');
+    }
+  }, [customerName]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
@@ -61,7 +93,6 @@ export default function NewSalePage() {
       title: 'Sale Recorded',
       description: 'The new sale has been successfully recorded.',
     });
-    // Redirect based on the user's role.
     const redirectPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(redirectPath); 
   };
@@ -71,9 +102,8 @@ export default function NewSalePage() {
     router.push(redirectPath);
   };
   
-  // Render nothing or a loading spinner while checking auth
   if (!role) {
-    return null; // or a loading component
+    return null;
   }
 
 
@@ -130,9 +160,9 @@ export default function NewSalePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                   <div className="space-y-2">
                     <Label htmlFor="productCode">제품 코드</Label>
-                    <Input id="productCode" placeholder="e.g., E-001" required />
+                    <Input id="productCode" value={productCode} readOnly placeholder="e.g., E-001" required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="productDescription">제품 설명</Label>
@@ -150,7 +180,7 @@ export default function NewSalePage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="customerCode">고객 코드</Label>
-                        <Input id="customerCode" placeholder="e.g., C-101" required />
+                        <Input id="customerCode" value={customerCode} readOnly placeholder="e.g., C-101" required />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="customerName">고객명</Label>
@@ -165,16 +195,7 @@ export default function NewSalePage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="customerGrade">고객 등급</Label>
-                        <Select name="customerGrade" required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a grade" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="A">A</SelectItem>
-                                <SelectItem value="B">B</SelectItem>
-                                <SelectItem value="C">C</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input id="customerGrade" value={customerGrade} readOnly required />
                     </div>
                 </div>
 
@@ -209,15 +230,16 @@ export default function NewSalePage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="employee">직원</Label>
-                        <Select name="employee" required>
+                        <Select name="employee" value={employee} onValueChange={setEmployee} required disabled>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select an employee" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="emp-01">John Doe (Admin)</SelectItem>
-                                <SelectItem value="emp-02">Jane Smith (Employee)</SelectItem>
-                                <SelectItem value="emp-03">Peter Jones (Employee)</SelectItem>
-                                <SelectItem value="emp-04">Alex Ray (Manager)</SelectItem>
+                                {employees.map((emp) => (
+                                  <SelectItem key={emp.value} value={emp.value}>
+                                    {emp.label}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
