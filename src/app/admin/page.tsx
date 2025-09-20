@@ -39,7 +39,7 @@ export default function EmployeeDashboardPage() {
           <Header />
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Dashboard (My Sales)</h1>
+                <h1 className="text-2xl font-semibold">{role === 'manager' ? 'Manager Dashboard' : 'My Sales Dashboard'}</h1>
                 <div className="flex gap-2">
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>
