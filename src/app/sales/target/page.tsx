@@ -13,7 +13,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -44,10 +43,10 @@ export default function SalesTargetPage() {
 
   useEffect(() => {
     if (auth === undefined) return;
-    if (!auth || (role !== 'admin' && role !== 'manager')) {
+    if (!auth) { // All roles can access this page
       router.push('/login');
     }
-  }, [auth, router, role]);
+  }, [auth, router]);
   
   const handleTargetChange = (customerCode: string, newTarget: number) => {
     setSalesData(prevData => 
@@ -76,7 +75,7 @@ export default function SalesTargetPage() {
     }).format(amount);
   }
   
-  if (!role || (role !== 'admin' && role !== 'manager')) {
+  if (!role) {
     return null;
   }
 
@@ -92,16 +91,18 @@ export default function SalesTargetPage() {
                     <Button type="button" variant="outline" onClick={handleBack}>
                     Back to Dashboard
                 </Button>
-                <Button onClick={handleSubmitForApproval}>
-                    Submit for Approval
-                </Button>
+                { (role === 'employee' || role === 'manager') &&
+                    <Button onClick={handleSubmitForApproval}>
+                        Submit for Approval
+                    </Button>
+                }
             </div>
           </div>
           <Card>
             <CardHeader>
                 <CardTitle>고객별 매출 목표 설정</CardTitle>
                 <CardDescription>
-                    지난 3개월간의 매출 실적을 바탕으로 다음 달(10월)의 매출 목표를 설정합니다.
+                    지난 3개월간의 매출 실적을 바탕으로 다음 달(10월)의 매출 목표를 설정합니다. 신규 고객은 목록에 추가하여 목표를 설정할 수 있습니다.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -173,3 +174,4 @@ export default function SalesTargetPage() {
     </SidebarProvider>
   );
 }
+
