@@ -9,9 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  ChartContainer,
-  ChartTooltipContent,
-  ChartTooltip
+  ChartContainer
 } from '@/components/ui/chart';
 
 import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/lib/mock-data';
@@ -30,7 +28,7 @@ const CustomLabel = (props: any) => {
     const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
     
-    // The `name` prop passed from LabelList's parent Bar component.
+    // Capitalize the first letter of the name
     const displayName = name.charAt(0).toUpperCase() + name.slice(1);
 
     return (
