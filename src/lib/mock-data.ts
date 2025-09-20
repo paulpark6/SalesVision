@@ -1,7 +1,6 @@
 
 
 
-
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -518,3 +517,21 @@ export const salesTargetHistoryData = [
     }
 ];
 
+const calculateTotalTarget = (data: typeof salesTargetHistoryData) => {
+    return data.reduce((total, customer) => {
+        const customerTotal = customer.nextMonthTarget.reduce((sum, product) => sum + product.targetAmount, 0);
+        return total + customerTotal;
+    }, 0);
+};
+
+const calculateCurrentSales = (data: typeof salesTargetHistoryData) => {
+    return data.reduce((total, customer) => {
+        const septemberSales = customer.monthlySales.find(s => s.month === '9월');
+        return total + (septemberSales?.amount || 0);
+    }, 0);
+};
+
+export const monthlySalesData = {
+    target: calculateTotalTarget(salesTargetHistoryData),
+    current: calculateCurrentSales(salesTargetHistoryData),
+};

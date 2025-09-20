@@ -17,7 +17,7 @@ import { CumulativeSalesTargetChart } from '@/components/dashboard/cumulative-sa
 import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { DollarSign, Target } from 'lucide-react';
-import { salesTargetData } from '@/lib/mock-data';
+import { monthlySalesData } from '@/lib/mock-data';
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
@@ -72,7 +72,7 @@ export default function EmployeeDashboardPage() {
                                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">${salesTargetData.current.toLocaleString()}</div>
+                                <div className="text-2xl font-bold">${monthlySalesData.current.toLocaleString()}</div>
                                 <p className="text-xs text-muted-foreground">전월 대비 +15%</p>
                             </CardContent>
                         </Card>
@@ -82,8 +82,8 @@ export default function EmployeeDashboardPage() {
                                 <Target className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{((salesTargetData.current / salesTargetData.target) * 100).toFixed(1)}%</div>
-                                <p className="text-xs text-muted-foreground">목표: ${salesTargetData.target.toLocaleString()}</p>
+                                <div className="text-2xl font-bold">{((monthlySalesData.current / monthlySalesData.target) * 100).toFixed(1)}%</div>
+                                <p className="text-xs text-muted-foreground">목표: ${monthlySalesData.target.toLocaleString()}</p>
                             </CardContent>
                         </Card>
                     </>
