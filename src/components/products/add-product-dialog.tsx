@@ -130,7 +130,7 @@ export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onPro
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="localPrice" className="text-right">
-                Local Price
+                구매가
               </Label>
               <Input id="localPrice" name="localPrice" type="number" placeholder="e.g., 22.00" className="col-span-3" required />
             </div>
