@@ -43,23 +43,26 @@ export default function CustomersPage() {
   const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
   const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
   const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
-  const [showMyCustomers, setShowMyCustomers] = useState(false);
+  const [showMyCustomers, setShowMyCustomers] = useState(role === 'employee');
 
-  const loggedInEmployee = useMemo(() => employees.find(e => e.role === role), [role]);
+  const loggedInEmployee = useMemo(() => {
+      if (!auth?.role) return null;
+      return employees.find(e => e.role === auth.role);
+  },[auth?.role]);
 
   useEffect(() => {
     if (auth === undefined) return;
-    if (!auth || (role !== 'admin' && role !== 'manager')) {
+    if (!auth) {
       router.push('/login');
     }
-  }, [auth, router, role]);
+  }, [auth, router]);
 
   const handleBack = () => {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(dashboardPath);
   };
   
-  if (!role || (role !== 'admin' && role !== 'manager')) {
+  if (!role) {
     return null;
   }
 
