@@ -121,6 +121,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 </NavCollapsible>
                 {(role === 'admin' || role === 'manager') && (
                     <>
+                        <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
+                            Products
+                        </NavLink>
                         <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
                             Inventory
                         </NavLink>
