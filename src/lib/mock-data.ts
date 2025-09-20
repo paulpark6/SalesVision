@@ -6,6 +6,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -541,6 +542,67 @@ export const salesReportData = [
     { employeeName: 'John Doe', customerName: 'Noah Williams', customerCode: 'C-110', target: 9000, actual: 9200.00 },
     { employeeName: 'John Doe', customerName: 'James Wilson', customerCode: 'C-111', target: 1000, actual: 1000.00 },
 ];
+
+export type MonthlyDetail = {
+    month: string;
+    details: {
+        customerName: string;
+        products: {
+            productName: string;
+            target: number;
+            actual: number;
+        }[];
+    }[];
+};
+
+export const monthlyDetailReportData: MonthlyDetail[] = [
+    {
+        month: '9월',
+        details: [
+            {
+                customerName: 'Liam Johnson',
+                products: [
+                    { productName: 'Laptop', target: 2000, actual: 2100 },
+                    { productName: 'T-Shirt', target: 500, actual: 500 },
+                ],
+            },
+            {
+                customerName: 'Emma Brown',
+                products: [
+                    { productName: 'Jeans', target: 4000, actual: 3800 },
+                    { productName: 'Gaming Console', target: 2500, actual: 2300 },
+                ],
+            },
+            {
+                customerName: 'Noah Williams',
+                products: [
+                    { productName: 'Smartphone', target: 9000, actual: 9200 },
+                ],
+            },
+        ],
+    },
+    // Add more months as needed
+    {
+        month: '8월',
+        details: [
+            {
+                customerName: 'Liam Johnson',
+                products: [
+                    { productName: 'Smartphone', target: 2500, actual: 2450.50 },
+                ],
+            },
+            {
+                customerName: 'Emma Brown',
+                products: [
+                    { productName: 'Jeans', target: 3000, actual: 3200 },
+                    { productName: 'T-Shirt', target: 1000, actual: 1200 },
+                    { productName: 'Cookbook', target: 1500, actual: 1490 },
+                ],
+            },
+        ],
+    },
+];
+
 
 
 const calculateTotalTarget = (data: typeof salesTargetHistoryData) => {

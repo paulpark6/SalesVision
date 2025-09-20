@@ -6,7 +6,7 @@ import { Header } from '@/components/header';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -24,7 +24,7 @@ import {
   TableRow,
   TableFooter,
 } from '@/components/ui/table';
-import { cumulativeReportData } from '@/lib/mock-data';
+import { cumulativeReportData, monthlyDetailReportData } from '@/lib/mock-data';
 import { Progress } from '@/components/ui/progress';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip, CartesianGrid } from 'recharts';
 import {
@@ -33,11 +33,14 @@ import {
 } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
 import { ArrowDown, ArrowUp } from 'lucide-react';
+import { MonthlySalesDetailDialog } from '@/components/dashboard/monthly-sales-detail-dialog';
+import type { MonthlyDetail } from '@/lib/mock-data';
 
 export default function CumulativeReportPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const [selectedMonth, setSelectedMonth] = useState<MonthlyDetail | null>(null);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -86,6 +89,13 @@ export default function CumulativeReportPage() {
       target: { label: '당해년도 목표', color: 'hsl(var(--chart-2))' },
       lastYear: { label: '전년동기간 실적', color: 'hsl(var(--chart-3))' },
   };
+  
+  const handleMonthClick = (month: string) => {
+    const monthData = monthlyDetailReportData.find(d => d.month === month);
+    if(monthData) {
+      setSelectedMonth(monthData);
+    }
+  };
 
   if (!role) {
     return null;
@@ -107,7 +117,7 @@ export default function CumulativeReportPage() {
             <CardHeader>
               <CardTitle>월별 누적 실적 비교</CardTitle>
               <CardDescription>
-                당해년도 누적 목표, 누적 실적, 전년 동기간 누적 실적을 월별로 비교합니다.
+                당해년도 누적 목표, 누적 실적, 전년 동기간 누적 실적을 월별로 비교합니다. 각 월을 클릭하여 상세 내역을 확인하세요.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -151,7 +161,7 @@ export default function CumulativeReportPage() {
                     const achievementRate = data.cumulativeTarget > 0 ? (data.cumulativeActual / data.cumulativeTarget) * 100 : 0;
                     const yoyGrowth = data.cumulativeLastYear > 0 ? ((data.cumulativeActual - data.cumulativeLastYear) / data.cumulativeLastYear) * 100 : (data.cumulativeActual > 0 ? 100 : 0);
                     return (
-                      <TableRow key={data.month}>
+                      <TableRow key={data.month} onClick={() => handleMonthClick(data.month)} className="cursor-pointer">
                         <TableCell className="font-medium">{data.month}</TableCell>
                         <TableCell className="text-right">{formatCurrency(data.cumulativeTarget)}</TableCell>
                         <TableCell className="text-right font-medium">{formatCurrency(data.cumulativeActual)}</TableCell>
@@ -206,6 +216,13 @@ export default function CumulativeReportPage() {
             </CardContent>
           </Card>
         </main>
+        {selectedMonth && (
+          <MonthlySalesDetailDialog
+            isOpen={!!selectedMonth}
+            onOpenChange={() => setSelectedMonth(null)}
+            monthData={selectedMonth}
+          />
+        )}
       </SidebarInset>
     </SidebarProvider>
   );
