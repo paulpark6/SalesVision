@@ -35,7 +35,7 @@ import {
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
-function NavLink({ href, children, icon }: { href: string; children: React.ReactNode, icon: React.ReactNode }) {
+function NavLink({ href, children, icon, className }: { href: string; children: React.ReactNode, icon: React.ReactNode, className?: string }) {
     const pathname = usePathname();
     const isActive = pathname === href;
 
@@ -44,7 +44,8 @@ function NavLink({ href, children, icon }: { href: string; children: React.React
             href={href}
             className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                isActive && "bg-muted text-primary"
+                isActive && "bg-muted text-primary",
+                className
             )}
             >
             {icon}
@@ -121,7 +122,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 </NavCollapsible>
                 {(role === 'admin' || role === 'manager') && (
                     <>
-                        <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
+                        <NavLink href="/products" icon={<Package className="h-4 w-4" />} className="text-red-500">
                             Products
                         </NavLink>
                         <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
