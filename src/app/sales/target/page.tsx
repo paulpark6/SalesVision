@@ -15,6 +15,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import {
   Table,
@@ -23,6 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { salesTargetHistoryData as initialData } from '@/lib/mock-data';
@@ -37,6 +39,7 @@ type TargetProduct = {
 
 type MonthlySale = {
     month: string;
+    quantity: number;
     amount: number;
     products: string[];
 };
@@ -123,6 +126,33 @@ export default function SalesTargetPage() {
   const calculateTotalTarget = (targets: TargetProduct[]) => {
     return targets.reduce((sum, current) => sum + current.targetAmount, 0);
   };
+
+  const totals = useMemo(() => {
+    return salesData.map(customer => {
+      const total3MonthQuantity = customer.monthlySales.reduce((sum, sale) => sum + sale.quantity, 0);
+      const total3MonthAmount = customer.monthlySales.reduce((sum, sale) => sum + sale.amount, 0);
+      return {
+        customerCode: customer.customerCode,
+        total3MonthQuantity,
+        total3MonthAmount
+      };
+    });
+  }, [salesData]);
+
+  const grandTotals = useMemo(() => {
+    const totalQuantities = salesData[0].monthlySales.map((_, i) =>
+        salesData.reduce((sum, customer) => sum + customer.monthlySales[i].quantity, 0)
+    );
+    const totalAmounts = salesData[0].monthlySales.map((_, i) =>
+        salesData.reduce((sum, customer) => sum + customer.monthlySales[i].amount, 0)
+    );
+    const total3MonthQuantity = totals.reduce((sum, t) => sum + t.total3MonthQuantity, 0);
+    const total3MonthAmount = totals.reduce((sum, t) => sum + t.total3MonthAmount, 0);
+    const totalSeptemberTarget = salesData.reduce((sum, customer) => sum + calculateTotalTarget(customer.nextMonthTarget), 0);
+
+    return { totalQuantities, totalAmounts, total3MonthQuantity, total3MonthAmount, totalSeptemberTarget };
+  }, [salesData, totals]);
+
   
   if (!role) {
     return null;
@@ -158,17 +188,29 @@ export default function SalesTargetPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[250px]">고객명</TableHead>
-                            <TableHead className="text-right">6월 매출</TableHead>
-                            <TableHead className="text-right">7월 매출</TableHead>
-                            <TableHead className="text-right">8월 매출</TableHead>
-                            <TableHead className="w-[200px] text-right">9월 목표 총액</TableHead>
+                            <TableHead rowSpan={2} className="align-bottom">고객명</TableHead>
+                            <TableHead colSpan={2} className="text-center">6월 매출</TableHead>
+                            <TableHead colSpan={2} className="text-center">7월 매출</TableHead>
+                            <TableHead colSpan={2} className="text-center">8월 매출</TableHead>
+                            <TableHead colSpan={2} className="text-center">3개월 총계</TableHead>
+                            <TableHead rowSpan={2} className="align-bottom text-right w-[200px]">9월 목표 총액</TableHead>
+                        </TableRow>
+                         <TableRow>
+                            <TableHead className="text-right">수량</TableHead>
+                            <TableHead className="text-right">금액</TableHead>
+                            <TableHead className="text-right">수량</TableHead>
+                            <TableHead className="text-right">금액</TableHead>
+                            <TableHead className="text-right">수량</TableHead>
+                            <TableHead className="text-right">금액</TableHead>
+                            <TableHead className="text-right">수량</TableHead>
+                            <TableHead className="text-right">금액</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {salesData.map((data) => {
                             const isOpen = openCollapsible === data.customerCode;
                             const totalTarget = calculateTotalTarget(data.nextMonthTarget);
+                            const customerTotals = totals.find(t => t.customerCode === data.customerCode);
                             return (
                                 <Fragment key={data.customerCode}>
                                     <TableRow className="cursor-pointer" onClick={() => setOpenCollapsible(isOpen ? null : data.customerCode)}>
@@ -180,17 +222,20 @@ export default function SalesTargetPage() {
                                             </div>
                                         </TableCell>
                                         {data.monthlySales.map(sale => (
-                                            <TableCell key={sale.month} className="text-right">
-                                                {formatCurrency(sale.amount)}
-                                            </TableCell>
+                                           <Fragment key={sale.month}>
+                                             <TableCell className="text-right">{sale.quantity}</TableCell>
+                                             <TableCell className="text-right">{formatCurrency(sale.amount)}</TableCell>
+                                           </Fragment>
                                         ))}
+                                        <TableCell className="text-right font-medium">{customerTotals?.total3MonthQuantity}</TableCell>
+                                        <TableCell className="text-right font-medium">{formatCurrency(customerTotals?.total3MonthAmount || 0)}</TableCell>
                                         <TableCell className="text-right font-semibold">
                                             {formatCurrency(totalTarget)}
                                         </TableCell>
                                     </TableRow>
                                     {isOpen && (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="p-0">
+                                            <TableCell colSpan={11} className="p-0">
                                                 <div className="bg-muted/50 p-4 space-y-4">
                                                     <div>
                                                         <h4 className="font-semibold mb-2 text-base">지난 3개월 판매 제품</h4>
@@ -244,6 +289,20 @@ export default function SalesTargetPage() {
                             )
                         })}
                     </TableBody>
+                     <TableFooter>
+                        <TableRow>
+                            <TableCell className="font-bold">총계</TableCell>
+                            <TableCell className="text-right font-bold">{grandTotals.totalQuantities[0]}</TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalAmounts[0])}</TableCell>
+                            <TableCell className="text-right font-bold">{grandTotals.totalQuantities[1]}</TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalAmounts[1])}</TableCell>
+                            <TableCell className="text-right font-bold">{grandTotals.totalQuantities[2]}</TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalAmounts[2])}</TableCell>
+                            <TableCell className="text-right font-bold">{grandTotals.total3MonthQuantity}</TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.total3MonthAmount)}</TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalSeptemberTarget)}</TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </CardContent>
           </Card>
@@ -252,4 +311,3 @@ export default function SalesTargetPage() {
     </SidebarProvider>
   );
 }
-
