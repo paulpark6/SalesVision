@@ -28,8 +28,8 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
 
   const cardTitle = isTeamData ? '누적 매출 현황' : '매출 목표';
   const cardDescription = isTeamData 
-    ? '팀 전체의 월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.'
-    : '월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.';
+    ? '팀 전체의 9월 매출 목표 달성률. 9월과 작년 실적을 비교합니다.'
+    : '월간 매출 목표 달성률. 9월과 작년 실적을 비교합니다.';
 
   const chartConfig = {
     sales: { label: '매출', color: 'hsl(var(--chart-1))' },
@@ -48,7 +48,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">당월 달성률</span>
+            <span className="text-sm font-medium">9월 달성률</span>
             <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
           </div>
           <Progress value={achievementRate} />

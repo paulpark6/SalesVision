@@ -19,12 +19,12 @@ export const teamSalesTargetData = {
 };
 
 export const salesTargetChartData = [
-  { name: '당월', sales: 45231.89, target: 50000 },
+  { name: '9월', sales: 45231.89, target: 50000 },
   { name: '전년 동월', sales: 42100.5, target: 40000 },
 ];
 
 export const teamSalesTargetChartData = [
-  { name: '당월', jane: 38000, alex: 52000, john: 41000, target: 135000 },
+  { name: '9월', jane: 38000, alex: 52000, john: 41000, target: 135000 },
   { name: '전년 동월', jane: 35000, alex: 48000, john: 42000, target: 120000 },
 ];
 
