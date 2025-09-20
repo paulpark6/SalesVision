@@ -38,8 +38,8 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
   }];
 
   const chartConfig = {
-    '실적': { label: '실적', color: 'hsl(var(--chart-1))' },
-    '목표': { label: '목표', color: 'hsl(var(--chart-2))' },
+    '실적': { label: '실적', color: 'hsl(var(--chart-2))' },
+    '목표': { label: '목표', color: 'hsl(var(--chart-1))' },
     '전년실적': { label: '전년실적', color: 'hsl(var(--chart-3))' },
   };
 
@@ -74,16 +74,16 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
               <Tooltip cursor={{ fill: 'transparent' }} content={<ChartTooltipContent hideLabel />} />
               <Legend />
               <Bar
-                dataKey="실적"
-                fill="var(--color-실적)"
-                radius={[4, 4, 0, 0]}
-                name="실적"
-              />
-              <Bar
                 dataKey="목표"
                 fill="var(--color-목표)"
                 radius={[4, 4, 0, 0]}
                 name="목표"
+              />
+              <Bar
+                dataKey="실적"
+                fill="var(--color-실적)"
+                radius={[4, 4, 0, 0]}
+                name="실적"
               />
                <Bar
                 dataKey="전년실적"

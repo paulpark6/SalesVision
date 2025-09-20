@@ -85,8 +85,8 @@ export default function CumulativeReportPage() {
   const totalYoyGrowth = totalLastYear > 0 ? ((totalActual - totalLastYear) / totalLastYear) * 100 : (totalActual > 0 ? 100 : 0);
   
   const chartConfig = {
-      cumulativeActual: { label: '실적', color: 'hsl(var(--chart-1))' },
-      cumulativeTarget: { label: '목표', color: 'hsl(var(--chart-2))' },
+      cumulativeActual: { label: '실적', color: 'hsl(var(--chart-2))' },
+      cumulativeTarget: { label: '목표', color: 'hsl(var(--chart-1))' },
       cumulativeLastYear: { label: '전년실적', color: 'hsl(var(--chart-3))' },
   };
   
