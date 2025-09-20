@@ -1,4 +1,5 @@
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -153,18 +154,24 @@ export const salesTrendCsvData = `Date,Product Category,Product Code,Description
 2023-12-20,Electronics,E-004,Gaming Console,Jane Smith,C-102,B,1,500,500,Credit,EMP-02,INV-1007
 `;
 
+const getLatestPrice = (history: { date: string; price: number }[]) => {
+    if (!history || history.length === 0) return 0;
+    return [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0].price;
+};
+
 export const products = [
-    { value: 'e-001', label: 'Laptop', basePrice: 1200 },
-    { value: 'e-002', label: 'Smartphone', basePrice: 800 },
-    { value: 'e-003', label: 'Tablet', basePrice: 450 },
-    { value: 'e-004', label: 'Gaming Console', basePrice: 500 },
-    { value: 'c-005', label: 'T-Shirt', basePrice: 25 },
-    { value: 'c-008', label: 'Jeans', basePrice: 75 },
-    { value: 'c-015', label: 'Winter Jacket', basePrice: 200 },
-    { value: 'b-010', label: 'Science Fiction Novel', basePrice: 15 },
-    { value: 'b-012', label: 'Cookbook', basePrice: 30 },
-    { value: 'h-003', label: 'Coffee Maker', basePrice: 100 },
-];
+    { value: 'e-001', label: 'Laptop', priceHistory: [{ date: '2023-01-15', price: 1200 }, { date: '2023-05-25', price: 1250 }] },
+    { value: 'e-002', label: 'Smartphone', priceHistory: [{ date: '2023-02-10', price: 800 }] },
+    { value: 'e-003', label: 'Tablet', priceHistory: [{ date: '2023-08-30', price: 450 }] },
+    { value: 'e-004', label: 'Gaming Console', priceHistory: [{ date: '2023-12-20', price: 500 }] },
+    { value: 'c-005', label: 'T-Shirt', priceHistory: [{ date: '2023-01-20', price: 25 }, { date: '2023-07-22', price: 20 }] },
+    { value: 'c-008', label: 'Jeans', priceHistory: [{ date: '2023-04-12', price: 75 }] },
+    { value: 'c-015', label: 'Winter Jacket', priceHistory: [{ date: '2023-11-01', price: 200 }] },
+    { value: 'b-010', label: 'Science Fiction Novel', priceHistory: [{ date: '2023-03-05', price: 15 }] },
+    { value: 'b-012', label: 'Cookbook', priceHistory: [{ date: '2023-09-14', price: 30 }] },
+    { value: 'h-003', label: 'Coffee Maker', priceHistory: [{ date: '2023-06-18', price: 100 }] },
+].map(p => ({ ...p, basePrice: getLatestPrice(p.priceHistory) }));
+
 
 export const customers = [
     { value: 'c-101', label: 'John Doe', grade: 'A' },

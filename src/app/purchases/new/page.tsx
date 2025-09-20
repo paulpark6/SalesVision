@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { AppSidebar } from '@/components/app-sidebar';
@@ -77,10 +78,11 @@ export default function NewPurchasePage() {
     setIsAddProductDialogOpen(true);
   };
   
-  const handleProductAdded = (newProduct: {label: string, value: string}) => {
+  const handleProductAdded = (newProduct: {label: string, value: string, basePrice: number}) => {
     setProducts(prev => [...prev, newProduct]);
     setProductDescription(newProduct.label);
     setProductCode(newProduct.value);
+    setPurchasePrice(newProduct.basePrice);
   };
 
   if (!role || role !== 'manager') {
@@ -149,9 +151,11 @@ export default function NewPurchasePage() {
                             if (selectedProduct) {
                                 setProductDescription(selectedProduct.label);
                                 setProductCode(selectedProduct.value);
+                                setPurchasePrice(selectedProduct.basePrice);
                             } else {
                                 setProductDescription(value);
                                 setProductCode('');
+                                setPurchasePrice(0);
                             }
                         }}
                         onAddNew={handleAddNewProduct}
@@ -165,7 +169,7 @@ export default function NewPurchasePage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="purchasePrice">구매액</Label>
-                    <Input id="purchasePrice" type="number" placeholder="e.g., 950" required min="0" step="0.01" onChange={handlePriceChange} />
+                    <Input id="purchasePrice" type="number" value={purchasePrice} placeholder="e.g., 950" required min="0" step="0.01" onChange={handlePriceChange} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="totalPurchasePrice">총 구매액</Label>
