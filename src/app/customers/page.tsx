@@ -54,6 +54,11 @@ export default function CustomersPage() {
     });
   };
 
+  const getYearlySales = (customer: typeof customerData[0], year: number) => {
+    const sale = customer.yearlySales.find(s => s.year === year);
+    return sale ? formatCurrency(sale.amount) : '-';
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar role={role} />
@@ -80,8 +85,10 @@ export default function CustomersPage() {
                     <TableHead>담당 직원</TableHead>
                     <TableHead>고객명</TableHead>
                     <TableHead>등급</TableHead>
-                    <TableHead className="text-right">월 매출</TableHead>
-                    <TableHead className="text-right">연 매출</TableHead>
+                    <TableHead className="text-right">실제 월 매출</TableHead>
+                    <TableHead className="text-right">월 평균 매출</TableHead>
+                    <TableHead className="text-right">연 매출 (2024)</TableHead>
+                    <TableHead className="text-right">연 매출 (2023)</TableHead>
                     <TableHead className="text-right">신용 잔액</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -101,10 +108,16 @@ export default function CustomersPage() {
                           <Badge variant="secondary">{customer.customerGrade}</Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(customer.monthlySales)}
+                          {formatCurrency(customer.monthlySales.actual)}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(customer.yearlySales)}
+                          {formatCurrency(customer.monthlySales.average)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {getYearlySales(customer, 2024)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {getYearlySales(customer, 2023)}
                         </TableCell>
                         <TableCell className="text-right font-semibold">
                           {formatCurrency(customer.creditBalance)}
@@ -120,3 +133,5 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
+
+    
