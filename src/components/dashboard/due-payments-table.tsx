@@ -1,6 +1,6 @@
 
 'use client';
-import { MoreHorizontal, ChevronDown } from 'lucide-react';
+import { MoreHorizontal, ChevronDown, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +31,7 @@ import { differenceInDays, parseISO } from 'date-fns';
 import { useState, Fragment } from 'react';
 import { CollectionPlanDialog } from './collection-plan-dialog';
 import { useToast } from '@/hooks/use-toast';
+import Papa from 'papaparse';
 
 export function DuePaymentsTable() {
     const { toast } = useToast();
@@ -99,15 +100,59 @@ export function DuePaymentsTable() {
         });
     };
 
+    const handleExportOverdue = () => {
+        const overduePayments = sortedPayments
+            .filter(p => getStatus(p.dueDate) === 'overdue')
+            .map(p => ({
+                '담당자': p.employee,
+                '고객명': p.customer.name,
+                '고객 이메일': p.customer.email,
+                '만기일': p.dueDate,
+                '금액': p.amount,
+                '수금 계획': p.collectionPlan || '없음',
+            }));
+
+        if (overduePayments.length === 0) {
+            toast({
+                title: '연체 내역 없음',
+                description: '내보낼 연체된 결제 항목이 없습니다.',
+            });
+            return;
+        }
+
+        const csv = Papa.unparse(overduePayments);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'overdue_payments.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        toast({
+            title: '다운로드 시작',
+            description: '연체 내역 CSV 파일이 다운로드됩니다.',
+        });
+    };
+
 
   return (
     <>
     <Card>
-      <CardHeader>
-        <CardTitle>미수금 현황</CardTitle>
-        <CardDescription>
-          다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>미수금 현황</CardTitle>
+          <CardDescription>
+            매주 다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
+          </CardDescription>
+        </div>
+        <Button size="sm" variant="outline" className="ml-auto gap-1" onClick={handleExportOverdue}>
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Export Overdue as CSV</span>
+            <span className="inline sm:hidden">Export</span>
+        </Button>
       </CardHeader>
       <CardContent>
         <Table>
