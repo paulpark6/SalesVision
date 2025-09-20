@@ -1,6 +1,6 @@
 
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip, LabelList } from 'recharts';
 import {
   Card,
   CardContent,
@@ -92,8 +92,13 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                       formatter={(value, name, item) => {
                         const total = item.payload.total;
                         const percentage = total > 0 ? ((value as number / total) * 100) : 0;
-                        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
-                        return `${capitalizedName}: $${(value as number).toLocaleString()} (${percentage.toFixed(1)}%)`;
+                        const capitalizedName = (name as string).charAt(0).toUpperCase() + (name as string).slice(1);
+                        return (
+                          <div className="flex items-center gap-2">
+                            <span style={{ color: item.color }} className="font-semibold">{capitalizedName}:</span>
+                            <span>${(value as number).toLocaleString()} ({percentage.toFixed(1)}%)</span>
+                          </div>
+                        )
                       }}
                     />
                   }
