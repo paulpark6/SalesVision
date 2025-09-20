@@ -132,9 +132,9 @@ export const products = [
 ];
 
 export const customers = [
-    { value: 'c-101', label: 'John Doe' },
-    { value: 'c-102', label: 'Jane Smith' },
-    { value: 'c-103', label: 'Peter Jones' },
-    { value: 'c-104', label: 'Alice Williams' },
-    { value: 'c-105', label: 'Michael Brown' },
+    { value: 'c-101', label: 'John Doe', grade: 'A' },
+    { value: 'c-102', label: 'Jane Smith', grade: 'B' },
+    { value: 'c-103', label: 'Peter Jones', grade: 'C' },
+    { value: 'c-104', label: 'Alice Williams', grade: 'A' },
+    { value: 'c-105', label: 'Michael Brown', grade: 'B' },
 ];

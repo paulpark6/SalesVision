@@ -147,7 +147,7 @@ export default function NewSalePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="customerCode">고객 코드</Label>
                         <Input id="customerCode" placeholder="e.g., C-101" required />
@@ -162,6 +162,19 @@ export default function NewSalePage() {
                             value={customerName}
                             onValueChange={setCustomerName}
                         />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="customerGrade">고객 등급</Label>
+                        <Select name="customerGrade" required>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a grade" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="A">A</SelectItem>
+                                <SelectItem value="B">B</SelectItem>
+                                <SelectItem value="C">C</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
