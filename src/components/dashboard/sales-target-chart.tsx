@@ -20,14 +20,8 @@ const CustomLabel = (props: any) => {
     const { x, y, width, height, value, dataKey } = props;
     const { payload } = props;
 
-    if (!payload) return null;
+    if (!payload || height < 20) return null;
     
-    // The target is always in the first entry of salesComparisonData
-    const targetPayload = salesComparisonData[0];
-    const targetValue = targetPayload[dataKey as keyof typeof targetPayload] as number || 0;
-
-    if (height < 20) return null;
-
     if (dataKey === 'jane') {
         const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
         const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
@@ -39,17 +33,9 @@ const CustomLabel = (props: any) => {
             </g>
         );
     }
-
-    return (
-        <g>
-            <text x={x + width / 2} y={y + height / 2 - 8} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`목표: $${(targetValue / 1000).toFixed(0)}K`}
-            </text>
-            <text x={x + width / 2} y={y + height / 2 + 8} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`실적: $${(value / 1000).toFixed(0)}K`}
-            </text>
-        </g>
-    );
+    
+    // For other employees, don't show any label to highlight Jane's data
+    return null;
 };
 
 
