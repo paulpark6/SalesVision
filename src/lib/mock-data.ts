@@ -4,6 +4,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -518,6 +519,16 @@ export const salesTargetHistoryData = [
         ]
     }
 ];
+
+export const salesReportData = [
+    { employeeName: 'Jane Smith', customerName: 'Liam Johnson', customerCode: 'C-106', target: 2500, actual: 2600.00 },
+    { employeeName: 'Jane Smith', customerName: 'Emma Brown', customerCode: 'C-107', target: 6500, actual: 6100.00 },
+    { employeeName: 'Alex Ray', customerName: 'Olivia Smith', customerCode: 'C-108', target: 1800, actual: 1700.00 },
+    { employeeName: 'Alex Ray', customerName: 'Ava Jones', customerCode: 'C-109', target: 1000, actual: 810.00 },
+    { employeeName: 'John Doe', customerName: 'Noah Williams', customerCode: 'C-110', target: 9000, actual: 9200.00 },
+    { employeeName: 'John Doe', customerName: 'James Wilson', customerCode: 'C-111', target: 1000, actual: 1000.00 },
+];
+
 
 const calculateTotalTarget = (data: typeof salesTargetHistoryData) => {
     return data.reduce((total, customer) => {

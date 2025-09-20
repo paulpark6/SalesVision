@@ -70,7 +70,7 @@ export default function EmployeeDashboardPage() {
                         <EmployeeSalesTarget />
                     </>
                  )}
-                 <Link href="/sales/target" className="cursor-pointer">
+                 <Link href="/sales/report" className="cursor-pointer">
                     <SalesTargetChart isTeamData={role === 'manager'} />
                  </Link>
                  {role === 'employee' && (
