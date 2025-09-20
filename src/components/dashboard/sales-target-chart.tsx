@@ -59,7 +59,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     return (
       <Card>
         <CardHeader>
-          <CardTitle>9월 매출 종합 비교</CardTitle>
+          <CardTitle>9월 누적 매출 종합 비교</CardTitle>
           <CardDescription>팀의 9월 목표, 실적, 전년 동기 실적을 비교합니다.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -197,3 +197,4 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     
 
     
+
