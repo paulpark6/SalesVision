@@ -16,18 +16,12 @@ import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/li
 import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
-    const { x, y, width, height, value, name, payload } = props;
+    const { x, y, width, height, value, name, total } = props;
 
     // Don't render label if the segment is too small, or if critical data is missing
-    if (height < 20 || !value || !payload) {
+    if (height < 20 || !value) {
         return null;
     }
-
-    // The `payload` here is the data object for the entire bar for that specific X-axis tick.
-    // e.g., { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 }
-    const total = Object.keys(payload)
-      .filter(key => typeof payload[key] === 'number')
-      .reduce((acc, key) => acc + payload[key], 0);
       
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
     
@@ -58,6 +52,14 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
       alex: { label: 'Alex', color: 'hsl(var(--chart-4))' },
       john: { label: 'John', color: 'hsl(var(--chart-5))' },
     };
+
+    const processedData = salesComparisonData.map(item => {
+        const total = (item.jane || 0) + (item.alex || 0) + (item.john || 0);
+        return {
+            ...item,
+            total,
+        };
+    });
 
     return (
       <Card>
@@ -90,7 +92,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           </div>
           <ChartContainer config={chartConfig} className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={salesComparisonData} margin={{ top: 20 }}>
+              <BarChart data={processedData} margin={{ top: 20 }}>
                 <XAxis
                   dataKey="name"
                   stroke="#888888"
@@ -107,13 +109,13 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 />
                 <Legend />
                 <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}>
-                   <LabelList dataKey="jane" content={<CustomLabel name="jane" />} />
+                   <LabelList dataKey="jane" content={(props) => <CustomLabel {...props} name="jane" total={props.payload.total} />} />
                 </Bar>
                 <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex">
-                   <LabelList dataKey="alex" content={<CustomLabel name="alex" />} />
+                   <LabelList dataKey="alex" content={(props) => <CustomLabel {...props} name="alex" total={props.payload.total} />} />
                 </Bar>
                 <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}>
-                   <LabelList dataKey="john" content={<CustomLabel name="john" />} />
+                   <LabelList dataKey="john" content={(props) => <CustomLabel {...props} name="john" total={props.payload.total} />} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
