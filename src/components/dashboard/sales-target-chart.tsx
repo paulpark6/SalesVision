@@ -22,10 +22,13 @@ const CustomLabel = (props: any) => {
     if (height < 20 || !value || !payload) {
         return null;
     }
-    
+
     // The `payload` here is the data object for the entire bar for that specific X-axis tick.
     // e.g., { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 }
-    const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
+    const total = Object.keys(payload)
+      .filter(key => typeof payload[key] === 'number')
+      .reduce((acc, key) => acc + payload[key], 0);
+      
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
     
     // Capitalize the first letter of the name
