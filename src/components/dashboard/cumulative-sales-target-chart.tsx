@@ -58,18 +58,20 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
       </CardHeader>
       <CardContent>
         <div className="relative mb-4">
-            <div className="flex justify-around text-center text-xs sm:text-sm font-bold h-8">
-                <div className="w-1/2 flex justify-end pr-8 sm:pr-12">
+            <div className="flex justify-around text-center text-xs sm:text-sm font-bold h-12">
+                <div className="w-1/2 flex justify-center pr-4">
                     <div className="flex flex-col items-center">
                         <span>목표 대비</span>
                         <span>{achievementRate.toFixed(1)}%</span>
                     </div>
                 </div>
-                <div className="w-1/2 flex justify-end">
-                     <div className={cn("flex items-center gap-1", yoyGrowth >= 0 ? "text-green-600" : "text-red-600")}>
+                <div className="w-1/2 flex justify-center pl-4">
+                     <div className={cn("flex flex-col items-center", yoyGrowth >= 0 ? "text-green-600" : "text-red-600")}>
                         <span>전년 대비 달성율</span>
-                        {yoyGrowth >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-                        <span>{yoyGrowth.toFixed(1)}%</span>
+                        <div className="flex items-center gap-1">
+                            {yoyGrowth >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+                            <span>{yoyGrowth.toFixed(1)}%</span>
+                        </div>
                     </div>
                 </div>
             </div>
