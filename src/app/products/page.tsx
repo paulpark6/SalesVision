@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { initialProducts, productUploadCsvData } from '@/lib/mock-data';
+import { products as initialProducts, productUploadCsvData } from '@/lib/mock-data';
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, Upload, Download } from 'lucide-react';
 import {
