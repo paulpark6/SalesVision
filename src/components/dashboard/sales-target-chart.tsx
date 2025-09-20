@@ -16,14 +16,14 @@ import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/li
 import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
-    const { x, y, width, height, value, name, total } = props;
+    const { x, y, width, height, value, name, payload } = props;
 
-    // Don't render label if the segment is too small, or if critical data is missing
-    if (height < 20 || !value) {
+    // Don't render if the segment is too small, value is 0, or critical data is missing
+    if (height < 20 || !value || !payload || !payload.total) {
         return null;
     }
       
-    const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+    const percentage = (value / payload.total) * 100;
     
     // Capitalize the first letter of the name
     const displayName = name.charAt(0).toUpperCase() + name.slice(1);
@@ -31,7 +31,7 @@ const CustomLabel = (props: any) => {
     return (
         <g>
             <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-semibold">
-                {`${displayName}: $${(value / 1000).toFixed(0)}K (${percentage}%)`}
+                {`${displayName}: $${(value / 1000).toFixed(0)}K (${percentage.toFixed(0)}%)`}
             </text>
         </g>
     );
@@ -109,13 +109,13 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 />
                 <Legend />
                 <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}>
-                   <LabelList dataKey="jane" content={(props) => <CustomLabel {...props} name="jane" total={props.payload.total} />} />
+                   <LabelList dataKey="jane" content={(props) => <CustomLabel {...props} name="jane" />} />
                 </Bar>
                 <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex">
-                   <LabelList dataKey="alex" content={(props) => <CustomLabel {...props} name="alex" total={props.payload.total} />} />
+                   <LabelList dataKey="alex" content={(props) => <CustomLabel {...props} name="alex" />} />
                 </Bar>
                 <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}>
-                   <LabelList dataKey="john" content={(props) => <CustomLabel {...props} name="john" total={props.payload.total} />} />
+                   <LabelList dataKey="john" content={(props) => <CustomLabel {...props} name="john" />} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
