@@ -166,6 +166,11 @@ export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,
 2024-08-02,Fashion Forward,Clothing,c-008,Jeans,200,45
 `;
 
+export const customerUploadCsvData = `CustomerCode,CustomerName,Employee,Grade,CustomerType
+C-101,John Doe,EMP-01,A,self-developed
+C-102,Jane Smith,EMP-02,B,transferred
+`;
+
 const getLatestPrice = (history: { date: string; price: number }[]) => {
     if (!history || history.length === 0) return 0;
     return [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0].price;
@@ -250,6 +255,7 @@ export const customerData = [
     customerName: 'Liam Johnson',
     customerCode: 'C-106',
     customerGrade: 'B',
+    customerType: 'self-developed' as const,
     monthlySales: [
         { month: 8, actual: 2450.50, average: 2350.00 },
         { month: 9, actual: 2600.00, average: 2400.00 },
@@ -265,6 +271,7 @@ export const customerData = [
     customerName: 'Emma Brown',
     customerCode: 'C-107',
     customerGrade: 'A',
+    customerType: 'transferred' as const,
     monthlySales: [
         { month: 8, actual: 5890.00, average: 5500.00 },
         { month: 9, actual: 6100.00, average: 5600.00 },
@@ -280,6 +287,7 @@ export const customerData = [
     customerName: 'Olivia Smith',
     customerCode: 'C-108',
     customerGrade: 'B',
+    customerType: 'self-developed' as const,
     monthlySales: [
         { month: 8, actual: 1530.25, average: 1600.00 },
         { month: 9, actual: 1700.00, average: 1650.00 },
@@ -295,6 +303,7 @@ export const customerData = [
     customerName: 'Ava Jones',
     customerCode: 'C-109',
     customerGrade: 'C',
+    customerType: 'transferred' as const,
     monthlySales: [
         { month: 8, actual: 780.00, average: 820.00 },
         { month: 9, actual: 810.00, average: 815.00 },
@@ -310,6 +319,7 @@ export const customerData = [
     customerName: 'Noah Williams',
     customerCode: 'C-110',
     customerGrade: 'A',
+    customerType: 'self-developed' as const,
     monthlySales: [
         { month: 8, actual: 8940.00, average: 8500.00 },
         { month: 9, actual: 9200.00, average: 8600.00 },
@@ -325,6 +335,7 @@ export const customerData = [
     customerName: 'James Wilson',
     customerCode: 'C-111',
     customerGrade: 'C',
+    customerType: 'self-developed' as const,
     monthlySales: [
         { month: 8, actual: 950.00, average: 900.00 },
         { month: 9, actual: 1000.00, average: 925.00 },

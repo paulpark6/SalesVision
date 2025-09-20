@@ -21,17 +21,25 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { customerData } from '@/lib/mock-data';
+import { customerData as initialCustomerData, customerUploadCsvData } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Download, Upload } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+type Customer = typeof initialCustomerData[0];
 
 export default function CustomersPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
   const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
   const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
 
@@ -58,12 +66,12 @@ export default function CustomersPage() {
     });
   };
 
-  const getYearlySales = (customer: typeof customerData[0], year: number) => {
+  const getYearlySales = (customer: Customer, year: number) => {
     const sale = customer.yearlySales.find(s => s.year === year);
     return sale ? formatCurrency(sale.amount) : '-';
   }
 
-  const getMonthlySales = (customer: typeof customerData[0], month: number) => {
+  const getMonthlySales = (customer: Customer, month: number) => {
     const sale = customer.monthlySales.find(s => s.month === month);
     return sale ? { actual: formatCurrency(sale.actual), average: formatCurrency(sale.average) } : { actual: '-', average: '-' };
   }
@@ -71,6 +79,53 @@ export default function CustomersPage() {
   const currentYear = new Date().getFullYear();
   const availableYears = Array.from({ length: currentYear - 2019 + 1 }, (_, i) => currentYear - i);
   const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
+
+  const handleCustomerTypeChange = (customerCode: string, newType: 'self-developed' | 'transferred') => {
+    setCustomerData(prevData =>
+      prevData.map(customer =>
+        customer.customerCode === customerCode
+          ? { ...customer, customerType: newType }
+          : customer
+      )
+    );
+    toast({
+        title: '고객 유형 변경',
+        description: `고객(${customerCode})의 유형이 ${newType === 'self-developed' ? '자체 개발' : '인계'}로 변경되었습니다.`
+    });
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      toast({
+        title: 'File Selected',
+        description: `Selected file: ${file.name}. Processing would start here.`,
+      });
+      event.target.value = '';
+    }
+  };
+
+  const handleDownloadSample = () => {
+    const blob = new Blob([customerUploadCsvData], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.href) {
+      URL.revokeObjectURL(link.href);
+    }
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', 'sample-customers.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+        title: "Sample File Downloading",
+        description: "sample-customers.csv has started downloading.",
+    })
+  };
 
 
   return (
@@ -81,15 +136,40 @@ export default function CustomersPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">고객 관리</h1>
-                <Button type="button" variant="outline" onClick={handleBack}>
-                  Back to Dashboard
-                </Button>
+                <div className="flex items-center gap-2">
+                    {role === 'manager' && (
+                        <>
+                             <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
+                                <Download className="h-3.5 w-3.5" />
+                                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                                    Download Sample
+                                </span>
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleUploadClick}>
+                                <Upload className="h-3.5 w-3.5" />
+                                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                                    Upload File
+                                </span>
+                            </Button>
+                             <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                className="hidden"
+                                accept=".csv"
+                            />
+                        </>
+                    )}
+                    <Button type="button" variant="outline" onClick={handleBack}>
+                        Back to Dashboard
+                    </Button>
+                </div>
             </div>
           <Card>
             <CardHeader>
               <CardTitle>고객 목록</CardTitle>
               <CardDescription>
-                담당 직원별 고객 목록, 매출 및 신용 현황입니다.
+                담당 직원별 고객 목록, 매출 및 신용 현황입니다. 매니저는 고객 유형을 변경할 수 있습니다.
               </CardDescription>
               <div className="flex items-end gap-4 pt-2">
                 <div className="grid gap-2">
@@ -127,6 +207,7 @@ export default function CustomersPage() {
                     <TableHead>담당 직원</TableHead>
                     <TableHead>고객명</TableHead>
                     <TableHead>등급</TableHead>
+                    <TableHead>고객 유형</TableHead>
                     <TableHead className="text-right">실제 월 매출</TableHead>
                     <TableHead className="text-right">월 평균 매출</TableHead>
                     <TableHead className="text-right">연 매출 ({selectedYear})</TableHead>
@@ -149,6 +230,26 @@ export default function CustomersPage() {
                         </TableCell>
                          <TableCell>
                           <Badge variant="secondary">{customer.customerGrade}</Badge>
+                        </TableCell>
+                        <TableCell>
+                            {role === 'manager' ? (
+                                <Select 
+                                    value={customer.customerType} 
+                                    onValueChange={(value: 'self-developed' | 'transferred') => handleCustomerTypeChange(customer.customerCode, value)}
+                                >
+                                    <SelectTrigger className="w-[120px]">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="self-developed">자체 개발</SelectItem>
+                                        <SelectItem value="transferred">인계</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            ) : (
+                                <Badge variant={customer.customerType === 'self-developed' ? 'default' : 'outline'}>
+                                    {customer.customerType === 'self-developed' ? '자체 개발' : '인계'}
+                                </Badge>
+                            )}
                         </TableCell>
                         <TableCell className="text-right">
                           {monthlySales.actual}
