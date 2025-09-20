@@ -2,10 +2,9 @@
 "use client"
 
 import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -28,10 +27,16 @@ type ComboboxProps = {
     noResultsMessage: string;
     value: string;
     onValueChange: (value: string) => void;
+    onAddNew?: (newItem: string) => void;
 }
 
-export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessage, value, onValueChange }: ComboboxProps) {
-  const [open, setOpen] = React.useState(false)
+export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessage, value, onValueChange, onAddNew }: ComboboxProps) {
+  const [open, setOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const filteredItems = items.filter(item => item.label.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const showAddNew = onAddNew && searchQuery && !items.some(item => item.label.toLowerCase() === searchQuery.toLowerCase());
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,7 +45,10 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
             <Input
                 placeholder={placeholder}
                 value={value}
-                onChange={(e) => onValueChange(e.target.value)}
+                onChange={(e) => {
+                    onValueChange(e.target.value);
+                    setSearchQuery(e.target.value);
+                }}
                 onClick={() => setOpen(true)}
                 className="w-full"
             />
@@ -48,22 +56,24 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command filter={(value, search) => {
-            const item = items.find(i => i.value === value);
-            if (item?.label.toLowerCase().includes(search.toLowerCase())) return 1;
-            return 0;
-        }}>
-          <CommandInput placeholder={searchPlaceholder} />
+        <Command>
+          <CommandInput 
+            placeholder={searchPlaceholder} 
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+          />
           <CommandList>
-            <CommandEmpty>{noResultsMessage}</CommandEmpty>
+            {filteredItems.length === 0 && !showAddNew && (
+                <CommandEmpty>{noResultsMessage}</CommandEmpty>
+            )}
             <CommandGroup>
-              {items.map((item) => (
+              {filteredItems.map((item) => (
                 <CommandItem
                   key={item.value}
-                  value={item.value}
+                  value={item.label}
                   onSelect={(currentValue) => {
-                    const selectedItem = items.find(i => i.value === currentValue);
-                    onValueChange(selectedItem ? selectedItem.label : "")
+                    onValueChange(currentValue === value ? "" : currentValue)
+                    setSearchQuery('');
                     setOpen(false)
                   }}
                 >
@@ -76,6 +86,19 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
                   {item.label}
                 </CommandItem>
               ))}
+              {showAddNew && (
+                <CommandItem
+                    onSelect={() => {
+                        onAddNew(searchQuery);
+                        setSearchQuery('');
+                        setOpen(false);
+                    }}
+                    className="text-primary hover:!bg-primary/10"
+                >
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add "{searchQuery}"
+                </CommandItem>
+              )}
             </CommandGroup>
           </CommandList>
         </Command>

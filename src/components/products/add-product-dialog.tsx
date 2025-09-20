@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -19,20 +20,44 @@ import { useToast } from "@/hooks/use-toast";
 type AddProductDialogProps = {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  defaultName?: string;
+  onProductAdded?: (newProduct: { label: string, value: string, basePrice: number }) => void;
 };
 
-export function AddProductDialog({ isOpen, onOpenChange }: AddProductDialogProps) {
+export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onProductAdded }: AddProductDialogProps) {
   const { toast } = useToast();
+  const [name, setName] = React.useState('');
+
+  React.useEffect(() => {
+    if(isOpen) {
+      setName(defaultName);
+    }
+  }, [isOpen, defaultName]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically handle the form submission,
-    // e.g., send data to your backend API to create a new product.
+    const formData = new FormData(event.currentTarget);
+    const newProduct = {
+      label: formData.get('productName') as string,
+      value: (formData.get('productCode') as string).toLowerCase(),
+      basePrice: parseFloat(formData.get('importPrice') as string),
+    };
+
+    if (!newProduct.label || !newProduct.value || isNaN(newProduct.basePrice)) {
+       toast({
+        title: 'Error',
+        description: 'Please fill all fields correctly.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     toast({
       title: 'Product Added',
-      description: 'The new product has been successfully added.',
+      description: `The new product "${newProduct.label}" has been successfully added.`,
     });
+    
+    onProductAdded?.(newProduct);
     onOpenChange(false); // Close the dialog
   };
 
@@ -51,7 +76,15 @@ export function AddProductDialog({ isOpen, onOpenChange }: AddProductDialogProps
               <Label htmlFor="productName" className="text-right">
                 Name
               </Label>
-              <Input id="productName" placeholder="e.g., Wireless Mouse" className="col-span-3" required />
+              <Input 
+                id="productName" 
+                name="productName"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Wireless Mouse" 
+                className="col-span-3" 
+                required 
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="category" className="text-right">
@@ -73,19 +106,19 @@ export function AddProductDialog({ isOpen, onOpenChange }: AddProductDialogProps
               <Label htmlFor="productCode" className="text-right">
                 Product Code
               </Label>
-              <Input id="productCode" placeholder="e.g., E-005" className="col-span-3" required />
+              <Input id="productCode" name="productCode" placeholder="e.g., e-005" className="col-span-3" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="importPrice" className="text-right">
                 Import Price
               </Label>
-              <Input id="importPrice" type="number" placeholder="e.g., 25.50" className="col-span-3" required />
+              <Input id="importPrice" name="importPrice" type="number" placeholder="e.g., 25.50" className="col-span-3" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="localPrice" className="text-right">
                 Local Price
               </Label>
-              <Input id="localPrice" type="number" placeholder="e.g., 22.00" className="col-span-3" required />
+              <Input id="localPrice" name="localPrice" type="number" placeholder="e.g., 22.00" className="col-span-3" required />
             </div>
           </div>
           <DialogFooter>

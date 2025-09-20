@@ -15,7 +15,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Combobox } from '@/components/ui/combobox';
-import { products } from '@/lib/mock-data';
+import { products as initialProducts } from '@/lib/mock-data';
+import { AddProductDialog } from '@/components/products/add-product-dialog';
 
 export default function NewPurchasePage() {
   const { toast } = useToast();
@@ -24,11 +25,16 @@ export default function NewPurchasePage() {
   const role = auth?.role;
 
   // Form state
+  const [products, setProducts] = useState(initialProducts);
   const [productDescription, setProductDescription] = useState('');
   const [productCode, setProductCode] = useState('');
   const [quantity, setQuantity] = useState(0);
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [totalPurchasePrice, setTotalPurchasePrice] = useState(0);
+
+  const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false);
+  const [newProductName, setNewProductName] = useState('');
+
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -65,12 +71,24 @@ export default function NewPurchasePage() {
   const handleCancel = () => {
     router.push('/admin');
   };
+
+  const handleAddNewProduct = (newProductLabel: string) => {
+    setNewProductName(newProductLabel);
+    setIsAddProductDialogOpen(true);
+  };
   
+  const handleProductAdded = (newProduct: {label: string, value: string}) => {
+    setProducts(prev => [...prev, newProduct]);
+    setProductDescription(newProduct.label);
+    setProductCode(newProduct.value);
+  };
+
   if (!role || role !== 'manager') {
     return null;
   }
 
   return (
+    <>
     <SidebarProvider>
       <AppSidebar role={role} />
       <SidebarInset>
@@ -124,7 +142,7 @@ export default function NewPurchasePage() {
                         items={products}
                         placeholder="Select or type product..."
                         searchPlaceholder="Search products..."
-                        noResultsMessage="제품을 찾을 수 없습니다. 직접 입력하여 새 제품을 추가할 수 있습니다."
+                        noResultsMessage="제품을 찾을 수 없습니다."
                         value={productDescription}
                         onValueChange={(value) => {
                             const selectedProduct = products.find(p => p.label.toLowerCase() === value.toLowerCase());
@@ -136,6 +154,7 @@ export default function NewPurchasePage() {
                                 setProductCode('');
                             }
                         }}
+                        onAddNew={handleAddNewProduct}
                     />
                   </div>
                 </div>
@@ -165,5 +184,12 @@ export default function NewPurchasePage() {
         </main>
       </SidebarInset>
     </SidebarProvider>
+    <AddProductDialog 
+        isOpen={isAddProductDialogOpen} 
+        onOpenChange={setIsAddProductDialogOpen}
+        defaultName={newProductName}
+        onProductAdded={handleProductAdded}
+    />
+    </>
   );
 }
