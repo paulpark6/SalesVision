@@ -18,23 +18,17 @@ import { Progress } from '../ui/progress';
 const CustomLabel = (props: any) => {
     const { x, y, width, height, value, payload } = props;
 
-    if (!payload) {
+    if (!payload || value === undefined || height < 20) {
         return null;
     }
 
-    // Don't render label if segment is too small
-    if (height < 20 || !value) {
-        return null;
-    }
-
-    // The payload contains the full data entry for the bar
     const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
 
     return (
         <g>
             <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`$${(value / 1000).toFixed(0)}K, ${percentage}%`}
+                {`$${(value / 1000).toFixed(0)}K (${percentage}%)`}
             </text>
         </g>
     );
