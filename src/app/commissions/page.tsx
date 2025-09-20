@@ -30,7 +30,7 @@ type Sale = {
   type: '수입' | '현지';
   salePrice: number;
   costPrice: number;
-  customerType: 'self-developed' | 'transferred';
+  customerType: 'own' | 'transfer';
 };
 
 // Function to calculate commission based on the new rules
@@ -39,8 +39,8 @@ const calculateCommission = (sales: Sale[]) => {
   let totalSales = 0;
 
   // --- Imported Products Commission ---
-  const selfDevImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'self-developed');
-  const transferredImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'transferred');
+  const selfDevImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'own');
+  const transferredImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'transfer');
 
   // Self-developed customer rules for imported goods
   let selfDevImportTotal = 0;
@@ -63,8 +63,8 @@ const calculateCommission = (sales: Sale[]) => {
   });
 
   // --- Local Products Commission ---
-  const selfDevLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'self-developed');
-  const transferredLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'transferred');
+  const selfDevLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'own');
+  const transferredLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'transfer');
 
   // Function to get commission rate for local products based on margin
   const getLocalCommissionRate = (salePrice: number, costPrice: number) => {
@@ -151,7 +151,7 @@ export default function CommissionsPage() {
               <CardTitle>Commission Overview</CardTitle>
               <CardDescription>
                 직원별 커미션 수익을 검토합니다. 수입 제품은 관리자가, 현지 구매는 매니저가 등록한 판매를 기준으로 합니다.
-                커미션은 고객 유형(자체 개발/인계)에 따라 다르게 계산됩니다.
+                커미션은 고객 유형(Own/Transfer)에 따라 다르게 계산됩니다.
               </CardDescription>
             </CardHeader>
             <CardContent>

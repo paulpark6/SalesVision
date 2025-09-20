@@ -167,8 +167,8 @@ export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,
 `;
 
 export const customerUploadCsvData = `CustomerCode,CustomerName,Employee,Grade,CustomerType
-C-101,John Doe,EMP-01,A,self-developed
-C-102,Jane Smith,EMP-02,B,transferred
+C-101,John Doe,EMP-01,A,own
+C-102,Jane Smith,EMP-02,B,transfer
 `;
 
 const getLatestPrice = (history: { date: string; price: number }[]) => {
@@ -255,7 +255,7 @@ export const customerData = [
     customerName: 'Liam Johnson',
     customerCode: 'C-106',
     customerGrade: 'B',
-    customerType: 'self-developed' as const,
+    customerType: 'own' as const,
     monthlySales: [
         { month: 8, actual: 2450.50, average: 2350.00 },
         { month: 9, actual: 2600.00, average: 2400.00 },
@@ -271,7 +271,7 @@ export const customerData = [
     customerName: 'Emma Brown',
     customerCode: 'C-107',
     customerGrade: 'A',
-    customerType: 'transferred' as const,
+    customerType: 'transfer' as const,
     monthlySales: [
         { month: 8, actual: 5890.00, average: 5500.00 },
         { month: 9, actual: 6100.00, average: 5600.00 },
@@ -287,7 +287,7 @@ export const customerData = [
     customerName: 'Olivia Smith',
     customerCode: 'C-108',
     customerGrade: 'B',
-    customerType: 'self-developed' as const,
+    customerType: 'own' as const,
     monthlySales: [
         { month: 8, actual: 1530.25, average: 1600.00 },
         { month: 9, actual: 1700.00, average: 1650.00 },
@@ -303,7 +303,7 @@ export const customerData = [
     customerName: 'Ava Jones',
     customerCode: 'C-109',
     customerGrade: 'C',
-    customerType: 'transferred' as const,
+    customerType: 'transfer' as const,
     monthlySales: [
         { month: 8, actual: 780.00, average: 820.00 },
         { month: 9, actual: 810.00, average: 815.00 },
@@ -319,7 +319,7 @@ export const customerData = [
     customerName: 'Noah Williams',
     customerCode: 'C-110',
     customerGrade: 'A',
-    customerType: 'self-developed' as const,
+    customerType: 'own' as const,
     monthlySales: [
         { month: 8, actual: 8940.00, average: 8500.00 },
         { month: 9, actual: 9200.00, average: 8600.00 },
@@ -335,7 +335,7 @@ export const customerData = [
     customerName: 'James Wilson',
     customerCode: 'C-111',
     customerGrade: 'C',
-    customerType: 'self-developed' as const,
+    customerType: 'own' as const,
     monthlySales: [
         { month: 8, actual: 950.00, average: 900.00 },
         { month: 9, actual: 1000.00, average: 925.00 },
@@ -350,35 +350,35 @@ export const customerData = [
 
 // Commission data includes sales records for commission calculation.
 // '수입' (Imported) products are registered by Admins. '현지' (Local) products are registered by Managers.
-// 'customerType' determines if the commission rules for 'self-developed' or 'transferred' customers apply.
+// 'customerType' determines if the commission rules for 'own' or 'transfer' customers apply.
 export const commissionData = [
   {
     employeeId: 'emp-01',
     employeeName: 'Jane Smith',
     sales: [
-      { type: '수입', salePrice: 210000, costPrice: 150000, customerType: 'self-developed' },
-      { type: '현지', salePrice: 5000, costPrice: 4600, customerType: 'self-developed' }, // Margin 8%
-      { type: '현지', salePrice: 10000, costPrice: 8500, customerType: 'self-developed' }, // Margin 15%
-      { type: '수입', salePrice: 50000, costPrice: 30000, customerType: 'transferred' }, // 1% commission
-      { type: '현지', salePrice: 20000, costPrice: 16000, customerType: 'transferred' }, // Margin 20% -> 12% rate * 50%
+      { type: '수입', salePrice: 210000, costPrice: 150000, customerType: 'own' },
+      { type: '현지', salePrice: 5000, costPrice: 4600, customerType: 'own' }, // Margin 8%
+      { type: '현지', salePrice: 10000, costPrice: 8500, customerType: 'own' }, // Margin 15%
+      { type: '수입', salePrice: 50000, costPrice: 30000, customerType: 'transfer' }, // 1% commission
+      { type: '현지', salePrice: 20000, costPrice: 16000, customerType: 'transfer' }, // Margin 20% -> 12% rate * 50%
     ],
   },
   {
     employeeId: 'emp-02',
     employeeName: 'Alex Ray',
     sales: [
-      { type: '수입', salePrice: 180000, costPrice: 120000, customerType: 'self-developed' },
-      { type: '현지', salePrice: 20000, costPrice: 15000, customerType: 'self-developed' }, // Margin 25%
-      { type: '현지', salePrice: 15000, costPrice: 10000, customerType: 'self-developed' }, // Margin 33.3%
+      { type: '수입', salePrice: 180000, costPrice: 120000, customerType: 'own' },
+      { type: '현지', salePrice: 20000, costPrice: 15000, customerType: 'own' }, // Margin 25%
+      { type: '현지', salePrice: 15000, costPrice: 10000, customerType: 'own' }, // Margin 33.3%
     ],
   },
   {
     employeeId: 'emp-03',
     employeeName: 'John Doe',
     sales: [
-      { type: '수입', salePrice: 50000, costPrice: 30000, customerType: 'self-developed' },
-      { type: '현지', salePrice: 30000, costPrice: 15000, customerType: 'self-developed' }, // Margin 50%
-      { type: '현지', salePrice: 100000, costPrice: 95000, customerType: 'transferred' }, // Margin 5% -> 3% rate * 50%
+      { type: '수입', salePrice: 50000, costPrice: 30000, customerType: 'own' },
+      { type: '현지', salePrice: 30000, costPrice: 15000, customerType: 'own' }, // Margin 50%
+      { type: '현지', salePrice: 100000, costPrice: 95000, customerType: 'transfer' }, // Margin 5% -> 3% rate * 50%
     ],
   },
 ];

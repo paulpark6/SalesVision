@@ -77,10 +77,10 @@ export default function CustomersPage() {
   }
   
   const currentYear = new Date().getFullYear();
-  const availableYears = Array.from({ length: currentYear - 2019 + 1 }, (_, i) => currentYear - i);
+  const availableYears = Array.from({ length: currentYear - 2018 }, (_, i) => currentYear - i);
   const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
 
-  const handleCustomerTypeChange = (customerCode: string, newType: 'self-developed' | 'transferred') => {
+  const handleCustomerTypeChange = (customerCode: string, newType: 'own' | 'transfer') => {
     setCustomerData(prevData =>
       prevData.map(customer =>
         customer.customerCode === customerCode
@@ -89,8 +89,8 @@ export default function CustomersPage() {
       )
     );
     toast({
-        title: '고객 유형 변경',
-        description: `고객(${customerCode})의 유형이 ${newType === 'self-developed' ? '자체 개발' : '인계'}로 변경되었습니다.`
+        title: 'Customer Characteristic Changed',
+        description: `Customer (${customerCode}) characteristic changed to ${newType}.`
     });
   };
 
@@ -169,7 +169,7 @@ export default function CustomersPage() {
             <CardHeader>
               <CardTitle>고객 목록</CardTitle>
               <CardDescription>
-                담당 직원별 고객 목록, 매출 및 신용 현황입니다. 매니저는 고객 유형을 변경할 수 있습니다.
+                담당 직원별 고객 목록, 매출 및 신용 현황입니다. 매니저는 고객 특성을 변경할 수 있습니다.
               </CardDescription>
               <div className="flex items-end gap-4 pt-2">
                 <div className="grid gap-2">
@@ -207,7 +207,7 @@ export default function CustomersPage() {
                     <TableHead>담당 직원</TableHead>
                     <TableHead>고객명</TableHead>
                     <TableHead>등급</TableHead>
-                    <TableHead>고객 유형</TableHead>
+                    <TableHead>고객 특성</TableHead>
                     <TableHead className="text-right">실제 월 매출</TableHead>
                     <TableHead className="text-right">월 평균 매출</TableHead>
                     <TableHead className="text-right">연 매출 ({selectedYear})</TableHead>
@@ -235,19 +235,19 @@ export default function CustomersPage() {
                             {role === 'manager' ? (
                                 <Select 
                                     value={customer.customerType} 
-                                    onValueChange={(value: 'self-developed' | 'transferred') => handleCustomerTypeChange(customer.customerCode, value)}
+                                    onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
                                 >
                                     <SelectTrigger className="w-[120px]">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="self-developed">자체 개발</SelectItem>
-                                        <SelectItem value="transferred">인계</SelectItem>
+                                        <SelectItem value="own">Own</SelectItem>
+                                        <SelectItem value="transfer">Transfer</SelectItem>
                                     </SelectContent>
                                 </Select>
                             ) : (
-                                <Badge variant={customer.customerType === 'self-developed' ? 'default' : 'outline'}>
-                                    {customer.customerType === 'self-developed' ? '자체 개발' : '인계'}
+                                <Badge variant={customer.customerType === 'own' ? 'default' : 'outline'}>
+                                    {customer.customerType === 'own' ? 'Own' : 'Transfer'}
                                 </Badge>
                             )}
                         </TableCell>
