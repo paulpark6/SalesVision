@@ -1,3 +1,4 @@
+
 'use client';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
 import {
@@ -98,7 +99,16 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 />
                 <Tooltip
                   cursor={{ fill: 'hsl(var(--background))' }}
-                  content={<ChartTooltipContent />}
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value, name, item) => {
+                        const payload = item.payload;
+                        const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
+                        const pct = total > 0 ? ((value as number) / total) * 100 : 0;
+                        return `${(value as number).toLocaleString()} (${pct.toFixed(1)}%)`;
+                      }}
+                    />
+                  }
                 />
                 <Legend />
                 <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[4, 4, 0, 0]}>
