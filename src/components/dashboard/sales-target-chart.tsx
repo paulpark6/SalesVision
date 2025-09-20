@@ -120,8 +120,8 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   const achievementRate = (current / target) * 100;
   
   const chartConfig = {
-    sales: { label: '매출', color: 'hsl(var(--chart-1))' },
-    target: { label: '목표', color: 'hsl(var(--chart-2))' },
+    sales: { label: '매출', color: 'hsl(var(--chart-2))' },
+    target: { label: '목표', color: 'hsl(var(--chart-1))' },
   };
   
 
@@ -161,8 +161,8 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
               />
               <Tooltip content={<ChartTooltipContent />} />
               <Legend />
-              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
-              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" />
+              <Bar dataKey="target" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="목표" />
+              <Bar dataKey="sales" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="매출" />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
