@@ -38,6 +38,9 @@ export default function NewSalePage() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [employee, setEmployee] = useState('');
   const [needsApproval, setNeedsApproval] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('');
+  
+  const showDueDate = paymentMethod.includes('credit') || paymentMethod.includes('check');
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -259,10 +262,10 @@ export default function NewSalePage() {
                     <Input id="totalPrice" type="text" value={`$${totalPrice.toFixed(2)}`} readOnly className="bg-muted" />
                   </div>
                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="paymentMethod">결제방법</Label>
-                        <Select name="paymentMethod" required>
+                        <Select name="paymentMethod" required onValueChange={setPaymentMethod}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select a payment method" />
                             </SelectTrigger>
@@ -278,6 +281,12 @@ export default function NewSalePage() {
                             </SelectContent>
                         </Select>
                     </div>
+                    {showDueDate && (
+                      <div className="space-y-2">
+                          <Label htmlFor="dueDate">결제 예정일</Label>
+                          <DatePicker />
+                      </div>
+                    )}
                     <div className="space-y-2">
                         <Label htmlFor="employee">직원</Label>
                         <Select name="employee" value={employee} onValueChange={setEmployee} required disabled>
