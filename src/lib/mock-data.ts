@@ -28,6 +28,12 @@ export const teamSalesTargetChartData = [
   { name: '전년 동월', jane: 35000, alex: 48000, john: 42000, target: 120000 },
 ];
 
+export const salesComparisonData = [
+    { name: '9월 목표', jane: 45000, alex: 50000, john: 40000 },
+    { name: '9월 실적', jane: 38000, alex: 52000, john: 41000 },
+    { name: '전년 동기', jane: 35000, alex: 48000, john: 42000 },
+];
+
 export const cumulativeSalesTargetChartData = [
     { name: '당해년도', sales: 294000.5, target: 350000 },
     { name: '전년', sales: 273653.25, target: 300000 },
