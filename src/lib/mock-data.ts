@@ -306,6 +306,7 @@ export const customerData = [
       position: 'Senior Buyer',
       phone: '234-567-8901',
       address: '456 Oak Ave, Anytown, USA',
+      email: null
     },
     companyOverview: 'A large retail chain with stores across the country.'
   },
@@ -353,6 +354,7 @@ export const customerData = [
       position: 'Store Manager',
       phone: '456-789-0123',
       address: '101 Maple St, Anytown, USA',
+      email: null
     },
     companyOverview: 'A small business focused on eco-friendly products.'
   },
@@ -400,6 +402,7 @@ export const customerData = [
       position: 'Operations Manager',
       phone: '678-901-2345',
       address: '333 Cedar Blvd, Anytown, USA',
+      email: null
     },
     companyOverview: 'A logistics and transportation company.'
   },
@@ -439,3 +442,5 @@ export const commissionData = [
     ],
   },
 ];
+
+    

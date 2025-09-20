@@ -135,8 +135,11 @@ export default function CustomersPage() {
   };
 
   const filteredCustomerData = useMemo(() => {
-    if ((role === 'employee' || showMyCustomers) && loggedInEmployee) {
-      return customerData.filter(customer => customer.employee === loggedInEmployee.name);
+    if (role === 'employee' || (role === 'manager' && showMyCustomers)) {
+      if (loggedInEmployee) {
+        return customerData.filter(customer => customer.employee === loggedInEmployee.name);
+      }
+      return [];
     }
     return customerData;
   }, [customerData, showMyCustomers, loggedInEmployee, role]);
@@ -343,3 +346,4 @@ export default function CustomersPage() {
   );
 }
 
+    
