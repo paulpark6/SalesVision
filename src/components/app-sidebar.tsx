@@ -118,9 +118,6 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         Add Customer
                     </NavLink>
                 </NavCollapsible>
-                <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
-                    Products
-                </NavLink>
                 <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
                     매출 목표
                 </NavLink>
