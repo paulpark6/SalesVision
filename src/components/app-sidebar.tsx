@@ -11,6 +11,9 @@ import {
   Truck,
   BadgePercent,
   Boxes,
+  ChevronDown,
+  UserPlus,
+  User,
 } from 'lucide-react';
 import {
   Card,
@@ -21,10 +24,61 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from './ui/sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+
+function NavLink({ href, children, icon }: { href: string; children: React.ReactNode, icon: React.ReactNode }) {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                isActive && "bg-muted text-primary"
+            )}
+            >
+            {icon}
+            {children}
+        </Link>
+    )
+}
+
+function NavCollapsible({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isActive = React.Children.toArray(children).some((child: any) => child.props.href && pathname.startsWith(child.props.href));
+
+    return (
+        <Collapsible defaultOpen={isActive}>
+            <CollapsibleTrigger asChild>
+                <div className={cn(
+                    "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                    isActive && "text-primary"
+                    )}>
+                    <div className="flex items-center gap-3">
+                        {icon}
+                        {title}
+                    </div>
+                    <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+                </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pl-9 space-y-1 mt-1">
+                {children}
+            </CollapsibleContent>
+        </Collapsible>
+    )
+}
 
 
 export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' }) {
   const dashboardUrl = role === 'admin' ? '/dashboard' : '/admin';
+
   return (
     <Sidebar>
       <div className="flex h-full max-h-screen flex-col gap-2">
@@ -40,73 +94,46 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
         </div>
         <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                <Link
-                href={dashboardUrl}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                    <Home className="h-4 w-4" />
+                <NavLink href={dashboardUrl} icon={<Home className="h-4 w-4" />}>
                     Dashboard
-                </Link>
-                <Link
-                    href="/sales/new"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                    <ShoppingCart className="h-4 w-4" />
+                </NavLink>
+                <NavLink href="/sales/new" icon={<ShoppingCart className="h-4 w-4" />}>
                     Sales
-                </Link>
-                 <Link
-                    href="/customers"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                    <Users className="h-4 w-4" />
-                    Customers
-                </Link>
+                </NavLink>
+                 <NavCollapsible title="Customers" icon={<Users className="h-4 w-4" />}>
+                     <NavLink href="/customers" icon={<User className="h-4 w-4" />}>
+                        Customer List
+                    </NavLink>
+                     <NavLink href="/customers/new" icon={<UserPlus className="h-4 w-4" />}>
+                        Add Customer
+                    </NavLink>
+                </NavCollapsible>
                 {(role === 'admin' || role === 'manager') && (
                     <>
-                        <Link
-                            href="/inventory"
-                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                        >
-                            <Boxes className="h-4 w-4" />
+                        <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
                             Inventory
-                        </Link>
+                        </NavLink>
                     </>
                 )}
                 {role === 'admin' && (
-                     <Link
-                        href="/imports/new"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                        <Truck className="h-4 w-4" />
+                     <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
                         Products Import
-                    </Link>
+                    </NavLink>
                 )}
                 {role === 'admin' && (
-                    <Link
-                        href="/credit"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                        <CreditCard className="h-4 w-4" />
+                    <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
                         Credit Management
-                    </Link>
+                    </NavLink>
                 )}
                 {(role === 'admin' || role === 'manager') && (
-                     <Link
-                        href="/commissions"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                        <BadgePercent className="h-4 w-4" />
+                     <NavLink href="/commissions" icon={<BadgePercent className="h-4 w-4" />}>
                         Commissions
-                    </Link>
+                    </NavLink>
                 )}
                  {role === 'admin' && (
-                    <Link
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                        <LineChart className="h-4 w-4" />
+                    <NavLink href="#" icon={<LineChart className="h-4 w-4" />}>
                         Analytics
-                    </Link>
+                    </NavLink>
                 )}
             </nav>
         </div>

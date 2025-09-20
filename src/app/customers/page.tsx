@@ -27,11 +27,12 @@ import { customerData as initialCustomerData, customerUploadCsvData, employees }
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Download, Upload, Users, ChevronDown } from 'lucide-react';
+import { Download, Upload, Users, ChevronDown, PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 
 type Customer = typeof initialCustomerData[0];
@@ -180,6 +181,14 @@ export default function CustomersPage() {
                             />
                         </>
                     )}
+                     <Button asChild size="sm" className="h-8 gap-1">
+                        <Link href="/customers/new">
+                            <PlusCircle className="h-3.5 w-3.5" />
+                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                                Add Customer
+                            </span>
+                        </Link>
+                    </Button>
                     <Button type="button" variant="outline" onClick={handleBack}>
                         Back to Dashboard
                     </Button>
@@ -345,7 +354,3 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
-
-    
-
-    
