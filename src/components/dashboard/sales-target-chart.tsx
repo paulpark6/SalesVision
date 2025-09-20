@@ -24,7 +24,8 @@ const CustomLabel = (props: any) => {
         return null;
     }
 
-    const total = (payload?.jane || 0) + (payload?.alex || 0) + (payload?.john || 0);
+    // The payload contains the full data entry for the bar
+    const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
 
     return (
