@@ -15,6 +15,9 @@ import { useEffect } from 'react';
 import { EmployeeSalesTarget } from '@/components/dashboard/employee-sales-target';
 import { CumulativeSalesTargetChart } from '@/components/dashboard/cumulative-sales-target-chart';
 import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { DollarSign, Target } from 'lucide-react';
+import { salesTargetData } from '@/lib/mock-data';
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
@@ -59,7 +62,32 @@ export default function EmployeeDashboardPage() {
                 </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-              <OverviewCards />
+                {role === 'manager' ? (
+                    <OverviewCards />
+                ) : (
+                    <>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">9월 매출</CardTitle>
+                                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">${salesTargetData.current.toLocaleString()}</div>
+                                <p className="text-xs text-muted-foreground">전월 대비 +15%</p>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">9월 목표 달성률</CardTitle>
+                                <Target className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{((salesTargetData.current / salesTargetData.target) * 100).toFixed(1)}%</div>
+                                <p className="text-xs text-muted-foreground">목표: ${salesTargetData.target.toLocaleString()}</p>
+                            </CardContent>
+                        </Card>
+                    </>
+                )}
             </div>
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
