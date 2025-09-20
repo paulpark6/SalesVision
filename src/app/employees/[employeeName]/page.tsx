@@ -139,7 +139,10 @@ export default function EmployeeDetailPage() {
                             </TableHeader>
                             <TableBody>
                                 {employeeCustomerSales.map((sale) => {
-                                    const achievementRate = (sale.salesAmount / sale.salesTarget) * 100;
+                                    const achievementRate = sale.salesTarget > 0 
+                                      ? (sale.salesAmount / sale.salesTarget) * 100 
+                                      : (sale.salesAmount > 0 ? 100 : 0);
+
                                     return (
                                     <TableRow key={sale.id}>
                                         <TableCell className="font-medium">{sale.customerName}</TableCell>
