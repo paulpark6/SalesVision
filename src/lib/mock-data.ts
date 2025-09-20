@@ -5,6 +5,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -36,12 +37,24 @@ export const salesComparisonData = [
 
 export const cumulativeSalesTargetChartData = [
     { name: '당해년도', sales: 294000.5, target: 350000 },
-    { name: '전년', sales: 273653.25, target: 300000 },
+    { name: '전년동기간', sales: 273653.25, target: 300000 },
 ];
 
 export const teamCumulativeSalesTargetChartData = [
     { name: '팀 당해년도', sales: 851500, target: 945000 },
-    { name: '팀 전년', sales: 812500, target: 840000 },
+    { name: '팀 전년동기간', sales: 812500, target: 840000 },
+];
+
+export const cumulativeReportData = [
+    { month: '1월', target: 35000, actual: 32000, lastYear: 30000 },
+    { month: '2월', target: 35000, actual: 34000, lastYear: 31000 },
+    { month: '3월', target: 38000, actual: 39000, lastYear: 35000 },
+    { month: '4월', target: 38000, actual: 37000, lastYear: 36000 },
+    { month: '5월', target: 40000, actual: 42000, lastYear: 38000 },
+    { month: '6월', target: 40000, actual: 41000, lastYear: 39000 },
+    { month: '7월', target: 42000, actual: 43000, lastYear: 40000 },
+    { month: '8월', target: 42000, actual: 44000.50, lastYear: 41000 },
+    { month: '9월', target: 45000, actual: 45231.89, lastYear: 42100.50 },
 ];
 
 

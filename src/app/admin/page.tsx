@@ -74,9 +74,9 @@ export default function EmployeeDashboardPage() {
                     <SalesTargetChart isTeamData={role === 'manager'} />
                  </Link>
                  {role === 'employee' && (
-                    <>
+                    <Link href="/sales/cumulative-report" className="cursor-pointer">
                       <CumulativeSalesTargetChart />
-                    </>
+                    </Link>
                  )}
                 <DuePaymentsTable />
               </div>
