@@ -24,8 +24,8 @@ export const salesTargetChartData = [
 ];
 
 export const teamSalesTargetChartData = [
-  { name: '팀 당월', sales: 131000, target: 135000 },
-  { name: '팀 전년 동월', sales: 125000, target: 120000 },
+  { name: '당월', jane: 38000, alex: 52000, john: 41000, target: 135000 },
+  { name: '전년 동월', jane: 35000, alex: 48000, john: 42000, target: 120000 },
 ];
 
 export const cumulativeSalesTargetChartData = [
@@ -55,36 +55,43 @@ export const duePaymentsData: DuePayment[] = [
     customer: { name: 'Liam Johnson', email: 'liam@example.com' },
     employee: 'Jane Smith',
     amount: 250.0,
-    dueDate: '2024-07-10', // Overdue by more than 14 days
+    dueDate: '2024-07-10', // Overdue
     status: 'overdue',
   },
   {
     customer: { name: 'Olivia Smith', email: 'olivia@example.com' },
     employee: 'Alex Ray',
     amount: 150.75,
-    dueDate: '2024-08-05', // due in < 14 days from now (assuming today is ~July 25-30)
+    dueDate: '2024-08-05', // due in < 14 days
     status: 'due',
   },
   {
     customer: { name: 'Noah Williams', email: 'noah@example.com' },
     employee: 'John Doe',
     amount: 350.0,
-    dueDate: '2024-08-15', // nearing
+    dueDate: '2024-08-25', // nearing
     status: 'nearing',
   },
   {
     customer: { name: 'Emma Brown', email: 'emma@example.com' },
     employee: 'Jane Smith',
     amount: 450.0,
-    dueDate: '2024-07-28', // due or overdue depending on current date
+    dueDate: '2024-08-01', // due or overdue depending on current date
     status: 'due',
   },
   {
     customer: { name: 'Ava Jones', email: 'ava@example.com' },
     employee: 'Alex Ray',
     amount: 550.0,
-    dueDate: '2024-08-20', // nearing
+    dueDate: '2024-08-28', // nearing
     status: 'nearing',
+  },
+    {
+    customer: { name: 'James Wilson', email: 'james@example.com' },
+    employee: 'John Doe',
+    amount: 200.0,
+    dueDate: '2024-07-15', // Overdue
+    status: 'overdue',
   },
 ];
 

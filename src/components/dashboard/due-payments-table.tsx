@@ -33,7 +33,7 @@ export function DuePaymentsTable() {
         const today = new Date();
         const daysDiff = differenceInDays(due, today);
 
-        if (daysDiff < -14) return 'overdue';
+        if (daysDiff < 0) return 'overdue';
         if (daysDiff <= 14) return 'due';
         return 'nearing';
     };
@@ -71,6 +71,8 @@ export function DuePaymentsTable() {
                 return '정상';
         }
     }
+    
+    const sortedPayments = [...duePaymentsData].sort((a, b) => a.employee.localeCompare(b.employee));
 
 
   return (
@@ -85,8 +87,8 @@ export function DuePaymentsTable() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>담당자</TableHead>
               <TableHead>고객</TableHead>
-              <TableHead className="hidden md:table-cell">담당자</TableHead>
               <TableHead className="hidden md:table-cell">만기일</TableHead>
               <TableHead className="hidden md:table-cell">상태</TableHead>
               <TableHead className="text-right">금액</TableHead>
@@ -96,17 +98,17 @@ export function DuePaymentsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {duePaymentsData.map((payment, index) => {
+            {sortedPayments.map((payment, index) => {
                 const status = getStatus(payment.dueDate);
               return (
               <TableRow key={index} className={cn(getStatusRowClass(status))}>
+                <TableCell className="font-medium">{payment.employee}</TableCell>
                 <TableCell>
                   <div className="font-medium">{payment.customer.name}</div>
                   <div className="hidden text-sm text-muted-foreground md:inline">
                     {payment.customer.email}
                   </div>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{payment.employee}</TableCell>
                 <TableCell className="hidden md:table-cell">
                   {payment.dueDate}
                 </TableCell>

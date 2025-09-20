@@ -1,5 +1,6 @@
+
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import {
   Card,
   CardContent,
@@ -20,8 +21,10 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   const chartData = isTeamData ? teamSalesTargetChartData : salesTargetChartData;
   
   const achievementRate = (data.current / data.target) * 100;
+  const lastYearTotalSales = isTeamData ? Object.values(teamSalesTargetChartData[1]).reduce((acc, val) => typeof val === 'number' ? acc + val : acc, 0) : data.lastYear;
   const lastYearTarget = isTeamData ? 120000 : 40000;
-  const lastYearAchievementRate = (data.lastYear / lastYearTarget) * 100;
+  const lastYearAchievementRate = (lastYearTotalSales / lastYearTarget) * 100;
+
 
   const cardTitle = isTeamData ? '팀 매출 목표' : '매출 목표';
   const cardDescription = isTeamData 
@@ -29,14 +32,11 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     : '월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.';
 
   const chartConfig = {
-    sales: {
-      label: '매출',
-      color: 'hsl(var(--chart-1))',
-    },
-    target: {
-      label: '목표',
-      color: 'hsl(var(--chart-2))',
-    },
+    sales: { label: '매출', color: 'hsl(var(--chart-1))' },
+    target: { label: '목표', color: 'hsl(var(--chart-2))' },
+    jane: { label: 'Jane', color: 'hsl(var(--chart-3))' },
+    alex: { label: 'Alex', color: 'hsl(var(--chart-4))' },
+    john: { label: 'John', color: 'hsl(var(--chart-5))' },
   };
 
   return (
@@ -53,7 +53,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           </div>
           <Progress value={achievementRate} />
           <div className="text-xs text-muted-foreground">
-            목표: ${data.target.toLocaleString()}
+            실적: ${data.current.toLocaleString()} / 목표: ${data.target.toLocaleString()}
           </div>
         </div>
         <div className="space-y-2">
@@ -63,7 +63,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           </div>
           <Progress value={lastYearAchievementRate} className="[&>div]:bg-secondary-foreground/50" />
            <div className="text-xs text-muted-foreground">
-            목표: ${lastYearTarget.toLocaleString()}
+            실적: ${lastYearTotalSales.toLocaleString()} / 목표: ${lastYearTarget.toLocaleString()}
           </div>
         </div>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
@@ -87,7 +87,16 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 cursor={{ fill: 'hsl(var(--background))' }}
                 content={<ChartTooltipContent />}
               />
-              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
+              {isTeamData && <Legend />}
+              {isTeamData ? (
+                <>
+                  <Bar dataKey="jane" fill="hsl(var(--chart-3))" stackId="a" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="alex" fill="hsl(var(--chart-4))" stackId="a" />
+                  <Bar dataKey="john" fill="hsl(var(--chart-5))" stackId="a" radius={[4, 4, 0, 0]} />
+                </>
+              ) : (
+                <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
+              )}
               <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" />
             </BarChart>
           </ResponsiveContainer>
