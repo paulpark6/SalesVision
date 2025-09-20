@@ -12,18 +12,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Combobox } from '@/components/ui/combobox';
-import { products as initialProducts } from '@/lib/mock-data';
+import { products as initialProducts, importUploadCsvData } from '@/lib/mock-data';
 import { AddProductDialog } from '@/components/products/add-product-dialog';
+import { Download, Upload } from 'lucide-react';
 
 export default function NewImportPage() {
   const { toast } = useToast();
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form state
   const [products, setProducts] = useState(initialProducts);
@@ -86,6 +88,39 @@ export default function NewImportPage() {
     setImportPrice(newProduct.basePrice);
   };
 
+  const handleDownloadSample = () => {
+    const blob = new Blob([importUploadCsvData], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.href) {
+      URL.revokeObjectURL(link.href);
+    }
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', 'sample-imports.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+        title: "Sample File Downloading",
+        description: "sample-imports.csv has started downloading.",
+    })
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      toast({
+        title: 'File Selected',
+        description: `Selected file: ${file.name}. Processing would start here.`,
+      });
+      event.target.value = '';
+    }
+  };
+
   if (!role || role !== 'admin') {
     return null;
   }
@@ -99,14 +134,35 @@ export default function NewImportPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">Register New Import</h1>
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                  Back to Dashboard
-              </Button>
+                <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
+                      <Download className="h-3.5 w-3.5" />
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        Download Sample
+                      </span>
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleUploadClick}>
+                      <Upload className="h-3.5 w-3.5" />
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        Upload File
+                      </span>
+                    </Button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept=".csv"
+                    />
+                    <Button type="button" variant="outline" onClick={handleCancel}>
+                        Back to Dashboard
+                    </Button>
+                </div>
           </div>
           <Card>
             <CardHeader>
               <CardTitle>Import Details</CardTitle>
-              <CardDescription>Fill out the form to add a new imported product batch.</CardDescription>
+              <CardDescription>Fill out the form to add a new imported product batch or upload a file for bulk registration.</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">

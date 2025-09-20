@@ -160,6 +160,12 @@ Electronics,e-002,Smartphone,800,780
 Clothing,c-005,T-Shirt,25,22
 `;
 
+export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,Product Description,Quantity,Unit Price (Import)
+2024-08-01,Overseas Supplier Co.,Electronics,e-001,Laptop,50,850
+2024-08-01,Global Tech Inc.,Electronics,e-002,Smartphone,100,600
+2024-08-02,Fashion Forward,Clothing,c-008,Jeans,200,45
+`;
+
 const getLatestPrice = (history: { date: string; price: number }[]) => {
     if (!history || history.length === 0) return 0;
     return [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0].price;
