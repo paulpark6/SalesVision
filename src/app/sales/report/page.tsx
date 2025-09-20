@@ -42,6 +42,16 @@ export default function SalesReportPage() {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(dashboardPath);
   };
+
+  const filteredData = useMemo(() => {
+    if (role === 'employee') {
+      // For a real app, you'd filter by the logged-in employee's ID.
+      // Here, we'll hardcode it to 'Jane Smith' for demonstration.
+      return salesReportData.filter(d => d.employeeName === 'Jane Smith');
+    }
+    // Managers and Admins see all data
+    return salesReportData;
+  }, [role]);
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -50,8 +60,8 @@ export default function SalesReportPage() {
     }).format(amount);
   };
 
-  const totalTarget = useMemo(() => salesReportData.reduce((sum, item) => sum + item.target, 0), []);
-  const totalActual = useMemo(() => salesReportData.reduce((sum, item) => sum + item.actual, 0), []);
+  const totalTarget = useMemo(() => filteredData.reduce((sum, item) => sum + item.target, 0), [filteredData]);
+  const totalActual = useMemo(() => filteredData.reduce((sum, item) => sum + item.actual, 0), [filteredData]);
   const totalAchievement = totalTarget > 0 ? (totalActual / totalTarget) * 100 : 0;
 
   if (!role) {
@@ -81,7 +91,7 @@ export default function SalesReportPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>담당 직원</TableHead>
+                    { (role === 'admin' || role === 'manager') && <TableHead>담당 직원</TableHead> }
                     <TableHead>고객명</TableHead>
                     <TableHead className="text-right">매출 목표 (9월)</TableHead>
                     <TableHead className="text-right">매출 실적 (9월)</TableHead>
@@ -89,11 +99,11 @@ export default function SalesReportPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {salesReportData.map((data) => {
+                  {filteredData.map((data) => {
                     const achievementRate = data.target > 0 ? (data.actual / data.target) * 100 : 0;
                     return (
                       <TableRow key={data.customerCode}>
-                        <TableCell>{data.employeeName}</TableCell>
+                        { (role === 'admin' || role === 'manager') && <TableCell>{data.employeeName}</TableCell> }
                         <TableCell>
                             <div className="font-medium">{data.customerName}</div>
                             <div className="text-sm text-muted-foreground">{data.customerCode}</div>
