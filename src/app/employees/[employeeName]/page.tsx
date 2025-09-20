@@ -9,18 +9,14 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
-import {
-  ChartContainer,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
 import { ArrowLeft, DollarSign, Target, Users, MoreHorizontal } from 'lucide-react';
-import { salesTargetData, salesTargetChartData, employeeCustomerSales, customerProductSalesDetails } from '@/lib/mock-data';
+import { salesTargetData, employeeCustomerSales, customerProductSalesDetails } from '@/lib/mock-data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { CustomerSalesDetailDialog } from '@/components/dashboard/customer-sales-detail-dialog';
 import type { EmployeeCustomerSale } from '@/lib/mock-data';
+import { SalesTargetChart } from '@/components/dashboard/sales-target-chart';
 
 export default function EmployeeDetailPage() {
   const router = useRouter();
@@ -43,11 +39,6 @@ export default function EmployeeDetailPage() {
   if (!role || role !== 'manager') {
     return null;
   }
-  
-  const chartConfig = {
-    sales: { label: '매출', color: 'hsl(var(--chart-1))' },
-    target: { label: '목표', color: 'hsl(var(--chart-2))' },
-  };
 
   return (
     <SidebarProvider>
@@ -90,39 +81,7 @@ export default function EmployeeDetailPage() {
             </div>
             
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>월별 매출 목표 비교</CardTitle>
-                        <CardDescription>
-                            {employeeName}의 9월 매출과 전년 동월 실적을 비교합니다.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={salesTargetChartData}>
-                                    <XAxis
-                                        dataKey="name"
-                                        stroke="#888888"
-                                        fontSize={12}
-                                        tickLine={false}
-                                        axisLine={false}
-                                    />
-                                    <YAxis
-                                        stroke="#888888"
-                                        fontSize={12}
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tickFormatter={(value) => `$${value / 1000}K`}
-                                    />
-                                    <Tooltip content={<ChartTooltipContent />} />
-                                    <Bar dataKey="sales" fill="hsl(var(--chart-1))" name="매출" radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="target" fill="hsl(var(--chart-2))" name="목표" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </ChartContainer>
-                    </CardContent>
-                </Card>
+                <SalesTargetChart />
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle>고객별 매출 현황</CardTitle>
