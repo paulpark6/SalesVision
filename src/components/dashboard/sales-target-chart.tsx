@@ -28,6 +28,18 @@ const CustomLabel = (props: any) => {
 
     if (height < 20) return null;
 
+    if (dataKey === 'jane') {
+        const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
+        const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+        return (
+            <g>
+                <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
+                    {`실적: $${(value / 1000).toFixed(0)}K (${percentage}%)`}
+                </text>
+            </g>
+        );
+    }
+
     return (
         <g>
             <text x={x + width / 2} y={y + height / 2 - 8} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
@@ -184,8 +196,12 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 cursor={{ fill: 'hsl(var(--background))' }}
                 content={<ChartTooltipContent />}
               />
-              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
-              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" />
+              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" >
+                 <LabelList dataKey="sales" content={<CustomLabel />} />
+              </Bar>
+              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" >
+                 <LabelList dataKey="target" content={<CustomLabel />} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -193,8 +209,3 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     </Card>
   );
 }
-
-    
-
-    
-
