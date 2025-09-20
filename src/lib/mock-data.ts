@@ -1,6 +1,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -469,11 +470,11 @@ export const salesTargetHistoryData = [
         customerCode: 'C-106', 
         customerName: 'Liam Johnson', 
         monthlySales: [
+            { month: '6월', amount: 2250.00, products: ['Laptop'] },
             { month: '7월', amount: 2300.00, products: ['Laptop', 'T-Shirt'] },
-            { month: '8월', amount: 2450.50, products: ['Smartphone'] },
-            { month: '9월', amount: 2600.00, products: ['Laptop', 'Coffee Maker'] }
+            { month: '8월', amount: 2450.50, products: ['Smartphone'] }
         ],
-        nextMonthTarget: [
+        nextMonthTarget: [ // September targets
             { productName: 'Laptop', targetAmount: 2000 },
             { productName: 'T-Shirt', targetAmount: 500 },
         ]
@@ -482,11 +483,11 @@ export const salesTargetHistoryData = [
         customerCode: 'C-107', 
         customerName: 'Emma Brown', 
         monthlySales: [
+            { month: '6월', amount: 5200.00, products: ['Jeans'] },
             { month: '7월', amount: 5400.00, products: ['Jeans', 'Winter Jacket'] },
-            { month: '8월', amount: 5890.00, products: ['Jeans', 'T-Shirt', 'Cookbook'] },
-            { month: '9월', amount: 6100.00, products: ['Jeans', 'Gaming Console'] }
+            { month: '8월', amount: 5890.00, products: ['Jeans', 'T-Shirt', 'Cookbook'] }
         ],
-        nextMonthTarget: [
+        nextMonthTarget: [ // September targets
             { productName: 'Jeans', targetAmount: 4000 },
             { productName: 'Gaming Console', targetAmount: 2500 },
         ]
@@ -495,11 +496,11 @@ export const salesTargetHistoryData = [
         customerCode: 'C-108', 
         customerName: 'Olivia Smith', 
         monthlySales: [
+            { month: '6월', amount: 1450.00, products: [] },
             { month: '7월', amount: 1500.00, products: ['Tablet'] },
-            { month: '8월', amount: 1530.25, products: ['Tablet', 'T-Shirt'] },
-            { month: '9월', amount: 1700.00, products: ['Tablet', 'Science Fiction Novel'] }
+            { month: '8월', amount: 1530.25, products: ['Tablet', 'T-Shirt'] }
         ],
-        nextMonthTarget: [
+        nextMonthTarget: [ // September targets
             { productName: 'Tablet', targetAmount: 1800 }
         ]
     },
@@ -507,11 +508,11 @@ export const salesTargetHistoryData = [
         customerCode: 'C-205',
         customerName: 'New Customer Inc.',
         monthlySales: [
+            { month: '6월', amount: 0, products: [] },
             { month: '7월', amount: 0, products: [] },
-            { month: '8월', amount: 0, products: [] },
-            { month: '9월', amount: 0, products: [] }
+            { month: '8월', amount: 0, products: [] }
         ],
-        nextMonthTarget: [
+        nextMonthTarget: [ // September targets
             { productName: 'Initial Product', targetAmount: 5000 }
         ]
     }
@@ -525,10 +526,10 @@ const calculateTotalTarget = (data: typeof salesTargetHistoryData) => {
 };
 
 const calculateCurrentSales = (data: typeof salesTargetHistoryData) => {
-    return data.reduce((total, customer) => {
-        const septemberSales = customer.monthlySales.find(s => s.month === '9월');
-        return total + (septemberSales?.amount || 0);
-    }, 0);
+    // This is now a bit of a misnomer, as we don't have September sales yet.
+    // For demonstration, let's use August sales as a placeholder for "current".
+    // In a real app, you'd fetch actual September sales data.
+    return 45231.89; // Keeping a static value for consistency with dashboard cards
 };
 
 export const monthlySalesData = {

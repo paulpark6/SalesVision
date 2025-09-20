@@ -135,7 +135,7 @@ export default function SalesTargetPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-semibold">월별 고객 매출 목표</h1>
+              <h1 className="text-2xl font-semibold">9월 매출 목표 설정</h1>
                 <div className="flex gap-2">
                     <Button type="button" variant="outline" onClick={handleBack}>
                     Back to Dashboard
@@ -151,7 +151,7 @@ export default function SalesTargetPage() {
             <CardHeader>
                 <CardTitle>고객별 매출 목표 설정</CardTitle>
                 <CardDescription>
-                    지난 3개월간의 매출 실적을 바탕으로 다음 달(10월)의 매출 목표를 제품별로 설정합니다.
+                    지난 3개월간의 매출 실적을 바탕으로 9월의 매출 목표를 제품별로 설정합니다.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -159,10 +159,10 @@ export default function SalesTargetPage() {
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[250px]">고객명</TableHead>
+                            <TableHead className="text-right">6월 매출</TableHead>
                             <TableHead className="text-right">7월 매출</TableHead>
                             <TableHead className="text-right">8월 매출</TableHead>
-                            <TableHead className="text-right">9월 매출</TableHead>
-                            <TableHead className="w-[200px] text-right">10월 목표 총액</TableHead>
+                            <TableHead className="w-[200px] text-right">9월 목표 총액</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -208,7 +208,7 @@ export default function SalesTargetPage() {
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-semibold mb-2 text-base">10월 목표 제품 설정</h4>
+                                                        <h4 className="font-semibold mb-2 text-base">9월 목표 제품 설정</h4>
                                                         <div className="space-y-2 max-w-lg">
                                                             {data.nextMonthTarget.map((target, index) => (
                                                                 <div key={index} className="flex items-center gap-2">
