@@ -17,11 +17,10 @@ import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/li
 import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
+    const { x, y, width, height, value, payload } = props;
     
-    if (height < 20 || !value) return null;
+    if (height < 20 || !value || !payload) return null;
     
-    const { payload } = props;
     const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
 
