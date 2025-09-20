@@ -110,13 +110,17 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
                     fill="var(--color-실적)"
                     radius={[4, 4, 0, 0]}
                     name="실적"
-                  />
+                  >
+                     <LabelList dataKey="실적" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
+                  </Bar>
                    <Bar
                     dataKey="전년실적"
                     fill="var(--color-전년실적)"
                     radius={[4, 4, 0, 0]}
                     name="전년실적"
-                  />
+                  >
+                    <LabelList dataKey="전년실적" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
