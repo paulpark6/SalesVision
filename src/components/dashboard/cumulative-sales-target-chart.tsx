@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { cumulativeReportData } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
@@ -48,6 +48,8 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
     '전년실적': { label: '전년실적', color: 'hsl(var(--chart-3))' },
   };
 
+  const formatCurrencyLabel = (value: number) => `$${(value / 1000).toFixed(0)}K`;
+
   return (
     <Card>
       <CardHeader>
@@ -78,7 +80,7 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
                 <BarChart
                   accessibilityLayer
                   data={chartData}
-                  margin={{ top: 0 }}
+                  margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
                   barCategoryGap="20%"
                 >
                     <XAxis
@@ -100,7 +102,9 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
                     fill="var(--color-목표)"
                     radius={[4, 4, 0, 0]}
                     name="목표"
-                  />
+                  >
+                    <LabelList dataKey="목표" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
+                  </Bar>
                   <Bar
                     dataKey="실적"
                     fill="var(--color-실적)"
