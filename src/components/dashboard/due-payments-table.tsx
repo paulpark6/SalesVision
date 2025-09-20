@@ -78,7 +78,7 @@ export function DuePaymentsTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>신용 판매 관리</CardTitle>
+        <CardTitle>미수금 현황</CardTitle>
         <CardDescription>
           다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
         </CardDescription>

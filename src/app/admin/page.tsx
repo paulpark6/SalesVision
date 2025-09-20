@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { EmployeeSalesTarget } from '@/components/dashboard/employee-sales-target';
 import { CumulativeSalesTargetChart } from '@/components/dashboard/cumulative-sales-target-chart';
+import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
@@ -79,6 +80,7 @@ export default function EmployeeDashboardPage() {
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <RecentSalesTable />
+                {role === 'manager' && <EmployeeCreditSummary />}
               </div>
             </div>
           </main>

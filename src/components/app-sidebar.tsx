@@ -70,7 +70,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         Inventory
                     </Link>
                 )}
-                {(role === 'admin' || role === 'manager') && (
+                {role === 'admin' && (
                      <Link
                         href="/imports/new"
                         className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
@@ -82,18 +82,11 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 {role === 'admin' && (
                     <>
                         <Link
-                            href="#"
-                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                        >
-                            <Users className="h-4 w-4" />
-                            Customers
-                        </Link>
-                        <Link
-                            href="#"
+                            href="/credit"
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                         >
                             <CreditCard className="h-4 w-4" />
-                            Credit Sales
+                            Credit Management
                         </Link>
                     </>
                 )}
