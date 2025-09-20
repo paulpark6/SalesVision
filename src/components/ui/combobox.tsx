@@ -61,14 +61,14 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    onValueChange(currentValue === value ? "" : currentValue)
+                    onValueChange(currentValue === (items.find(i => i.label.toLowerCase() === value.toLowerCase())?.value || '').toLowerCase() ? "" : currentValue)
                     setOpen(false)
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.toLowerCase() === item.value.toLowerCase() ? "opacity-100" : "opacity-0"
+                      value.toLowerCase() === item.label.toLowerCase() ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {item.label}

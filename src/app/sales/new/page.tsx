@@ -215,8 +215,8 @@ export default function NewSalePage() {
                         noResultsMessage="No product found."
                         value={productDescription}
                         onValueChange={(value) => {
-                            const selectedLabel = items.find(item => item.value.toLowerCase() === value.toLowerCase())?.label || '';
-                            setProductDescription(selectedLabel);
+                            const selectedItem = products.find(item => item.value.toLowerCase() === value.toLowerCase());
+                            setProductDescription(selectedItem ? selectedItem.label : '');
                         }}
                     />
                   </div>
@@ -236,8 +236,8 @@ export default function NewSalePage() {
                             noResultsMessage="No customer found."
                             value={customerName}
                             onValueChange={(value) => {
-                                const selectedLabel = items.find(item => item.value.toLowerCase() === value.toLowerCase())?.label || '';
-                                setCustomerName(selectedLabel);
+                                const selectedItem = customers.find(item => item.value.toLowerCase() === value.toLowerCase());
+                                setCustomerName(selectedItem ? selectedItem.label : '');
                             }}
                         />
                     </div>
