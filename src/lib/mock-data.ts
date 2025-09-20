@@ -250,7 +250,10 @@ export const customerData = [
     customerName: 'Liam Johnson',
     customerCode: 'C-106',
     customerGrade: 'B',
-    monthlySales: { actual: 2450.50, average: 2350.00 },
+    monthlySales: [
+        { month: 8, actual: 2450.50, average: 2350.00 },
+        { month: 9, actual: 2600.00, average: 2400.00 },
+    ],
     yearlySales: [
         { year: 2023, amount: 28340.75 },
         { year: 2024, amount: 15400.25 },
@@ -262,7 +265,10 @@ export const customerData = [
     customerName: 'Emma Brown',
     customerCode: 'C-107',
     customerGrade: 'A',
-    monthlySales: { actual: 5890.00, average: 5500.00 },
+    monthlySales: [
+        { month: 8, actual: 5890.00, average: 5500.00 },
+        { month: 9, actual: 6100.00, average: 5600.00 },
+    ],
     yearlySales: [
         { year: 2023, amount: 61230.00 },
         { year: 2024, amount: 32100.00 },
@@ -274,7 +280,10 @@ export const customerData = [
     customerName: 'Olivia Smith',
     customerCode: 'C-108',
     customerGrade: 'B',
-    monthlySales: { actual: 1530.25, average: 1600.00 },
+    monthlySales: [
+        { month: 8, actual: 1530.25, average: 1600.00 },
+        { month: 9, actual: 1700.00, average: 1650.00 },
+    ],
     yearlySales: [
         { year: 2023, amount: 18450.50 },
         { year: 2024, amount: 9800.75 },
@@ -286,7 +295,10 @@ export const customerData = [
     customerName: 'Ava Jones',
     customerCode: 'C-109',
     customerGrade: 'C',
-    monthlySales: { actual: 780.00, average: 820.00 },
+    monthlySales: [
+        { month: 8, actual: 780.00, average: 820.00 },
+        { month: 9, actual: 810.00, average: 815.00 },
+    ],
     yearlySales: [
         { year: 2023, amount: 9870.00 },
         { year: 2024, amount: 5400.00 },
@@ -298,7 +310,10 @@ export const customerData = [
     customerName: 'Noah Williams',
     customerCode: 'C-110',
     customerGrade: 'A',
-    monthlySales: { actual: 8940.00, average: 8500.00 },
+    monthlySales: [
+        { month: 8, actual: 8940.00, average: 8500.00 },
+        { month: 9, actual: 9200.00, average: 8600.00 },
+    ],
     yearlySales: [
         { year: 2023, amount: 95040.00 },
         { year: 2024, amount: 51200.00 },
@@ -310,7 +325,10 @@ export const customerData = [
     customerName: 'James Wilson',
     customerCode: 'C-111',
     customerGrade: 'C',
-    monthlySales: { actual: 950.00, average: 900.00 },
+    monthlySales: [
+        { month: 8, actual: 950.00, average: 900.00 },
+        { month: 9, actual: 1000.00, average: 925.00 },
+    ],
     yearlySales: [
         { year: 2023, amount: 11200.00 },
         { year: 2024, amount: 6100.00 },
@@ -318,5 +336,3 @@ export const customerData = [
     creditBalance: 200.00,
   },
 ];
-
-    

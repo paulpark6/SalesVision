@@ -21,15 +21,19 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { customerData } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 export default function CustomersPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
+  const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -59,6 +63,15 @@ export default function CustomersPage() {
     return sale ? formatCurrency(sale.amount) : '-';
   }
 
+  const getMonthlySales = (customer: typeof customerData[0], month: number) => {
+    const sale = customer.monthlySales.find(s => s.month === month);
+    return sale ? { actual: formatCurrency(sale.actual), average: formatCurrency(sale.average) } : { actual: '-', average: '-' };
+  }
+  
+  const availableYears = Array.from(new Set(customerData.flatMap(c => c.yearlySales.map(s => s.year)))).sort((a,b) => b - a);
+  const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
+
+
   return (
     <SidebarProvider>
       <AppSidebar role={role} />
@@ -77,6 +90,34 @@ export default function CustomersPage() {
               <CardDescription>
                 담당 직원별 고객 목록, 매출 및 신용 현황입니다.
               </CardDescription>
+              <div className="flex items-end gap-4 pt-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="year-select">Year</Label>
+                   <Select value={selectedYear} onValueChange={setSelectedYear}>
+                    <SelectTrigger id="year-select" className="w-[120px]">
+                      <SelectValue placeholder="Select Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableYears.map(year => (
+                        <SelectItem key={year} value={String(year)}>{year}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="month-select">Month</Label>
+                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <SelectTrigger id="month-select" className="w-[120px]">
+                      <SelectValue placeholder="Select Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                       {availableMonths.map(month => (
+                        <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -87,13 +128,14 @@ export default function CustomersPage() {
                     <TableHead>등급</TableHead>
                     <TableHead className="text-right">실제 월 매출</TableHead>
                     <TableHead className="text-right">월 평균 매출</TableHead>
-                    <TableHead className="text-right">연 매출 (2024)</TableHead>
-                    <TableHead className="text-right">연 매출 (2023)</TableHead>
+                    <TableHead className="text-right">연 매출 ({selectedYear})</TableHead>
                     <TableHead className="text-right">신용 잔액 (9월)</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {customerData.map((customer) => (
+                  {customerData.map((customer) => {
+                      const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
+                      return (
                       <TableRow key={customer.customerCode}>
                         <TableCell>
                            <div className="font-medium">{customer.employee}</div>
@@ -108,22 +150,19 @@ export default function CustomersPage() {
                           <Badge variant="secondary">{customer.customerGrade}</Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(customer.monthlySales.actual)}
+                          {monthlySales.actual}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatCurrency(customer.monthlySales.average)}
+                          {monthlySales.average}
                         </TableCell>
                         <TableCell className="text-right">
-                          {getYearlySales(customer, 2024)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {getYearlySales(customer, 2023)}
+                          {getYearlySales(customer, parseInt(selectedYear))}
                         </TableCell>
                         <TableCell className="text-right font-semibold">
                           {formatCurrency(customer.creditBalance)}
                         </TableCell>
                       </TableRow>
-                  ))}
+                  )})}
                 </TableBody>
               </Table>
             </CardContent>
@@ -133,5 +172,3 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
-
-    
