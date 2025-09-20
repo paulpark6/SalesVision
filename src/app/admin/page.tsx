@@ -62,31 +62,8 @@ export default function EmployeeDashboardPage() {
                 </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-                {role === 'manager' ? (
+                {role === 'manager' && (
                     <OverviewCards />
-                ) : (
-                    <>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">9월 매출</CardTitle>
-                                <DollarSign className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">${monthlySalesData.current.toLocaleString()}</div>
-                                <p className="text-xs text-muted-foreground">전월 대비 +15%</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">9월 목표 달성률</CardTitle>
-                                <Target className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{((monthlySalesData.current / monthlySalesData.target) * 100).toFixed(1)}%</div>
-                                <p className="text-xs text-muted-foreground">목표: ${monthlySalesData.target.toLocaleString()}</p>
-                            </CardContent>
-                        </Card>
-                    </>
                 )}
             </div>
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
