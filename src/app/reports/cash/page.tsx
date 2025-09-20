@@ -45,8 +45,8 @@ export default function CashReportPage() {
   const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
 
   const loggedInEmployee = useMemo(() => {
-    if (!auth?.role) return null;
-    return employees.find(e => e.role === auth.role);
+    if (!auth?.role || !auth?.name) return null;
+    return employees.find(e => e.name === auth.name);
   }, [auth]);
 
   useEffect(() => {

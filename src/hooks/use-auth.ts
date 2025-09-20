@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -6,6 +7,7 @@ const AUTH_KEY = 'salesvision_auth';
 
 type AuthState = {
   role: 'admin' | 'employee' | 'manager';
+  name: string;
 } | null;
 
 // undefined means we haven't checked localStorage yet
@@ -31,7 +33,11 @@ export function useAuth() {
   }, []);
 
   const login = useCallback((role: 'admin' | 'employee' | 'manager') => {
-    const newAuth = { role };
+    let name = 'Admin User';
+    if (role === 'manager') name = 'Alex Ray';
+    if (role === 'employee') name = 'Jane Smith';
+    
+    const newAuth = { role, name };
     localStorage.setItem(AUTH_KEY, JSON.stringify(newAuth));
     setAuth(newAuth);
   }, []);
