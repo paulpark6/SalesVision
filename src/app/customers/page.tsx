@@ -32,6 +32,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import Papa from 'papaparse';
 
 
 type Customer = typeof initialCustomerData[0];
@@ -116,11 +117,48 @@ export default function CustomersPage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      toast({
-        title: 'File Selected',
-        description: `Selected file: ${file.name}. Processing would start here.`,
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          const newCustomers = results.data.map((row: any) => {
+            const employee = employees.find(e => e.value === row.Employee);
+            return {
+              employee: employee ? employee.name : 'Unassigned',
+              customerName: row.CustomerName,
+              customerCode: row.CustomerCode,
+              customerGrade: row.Grade,
+              customerType: row.CustomerType as 'own' | 'transfer',
+              monthlySales: [],
+              yearlySales: [],
+              creditBalance: 0,
+              contact: {
+                name: row.CustomerName,
+                position: 'N/A',
+                phone: 'N/A',
+                address: 'N/A',
+                email: null,
+              },
+              companyOverview: 'No overview provided.'
+            } as Customer;
+          }).filter(c => c.customerCode && c.customerName); // Basic validation
+
+          setCustomerData(prev => [...prev, ...newCustomers]);
+
+          toast({
+            title: 'Upload Successful',
+            description: `${newCustomers.length} new customers have been added.`,
+          });
+        },
+        error: (error: any) => {
+          toast({
+            title: 'Upload Failed',
+            description: `An error occurred: ${error.message}`,
+            variant: 'destructive',
+          });
+        }
       });
-      event.target.value = '';
+      event.target.value = ''; // Reset file input
     }
   };
 

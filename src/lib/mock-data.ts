@@ -178,9 +178,10 @@ export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,
 2024-08-02,Fashion Forward,Clothing,c-008,Jeans,200,45
 `;
 
-export const customerUploadCsvData = `CustomerCode,CustomerName,Employee,Grade,CustomerType
-C-101,John Doe,EMP-01,A,own
-C-102,Jane Smith,EMP-02,B,transfer
+export const customerUploadCsvData = `CustomerName,CustomerCode,Employee,Grade,CustomerType
+Tech Solutions,C-201,manager,A,own
+Retail Giant,C-202,employee,B,transfer
+Local Biz,C-203,employee,C,own
 `;
 
 const getLatestPrice = (history: { date: string; price: number }[]) => {
@@ -261,7 +262,30 @@ export const customerProductSalesDetails: Record<string, CustomerProductSale[]> 
   ],
 };
 
-export const customerData = [
+type MonthlySale = { month: number; actual: number; average: number };
+type YearlySale = { year: number; amount: number };
+
+export type Customer = {
+  employee: string;
+  customerName: string;
+  customerCode: string;
+  customerGrade: string;
+  customerType: 'own' | 'transfer';
+  monthlySales: MonthlySale[];
+  yearlySales: YearlySale[];
+  creditBalance: number;
+  contact: {
+    name: string;
+    position: string;
+    phone: string;
+    address: string;
+    email: string | null;
+  };
+  companyOverview: string;
+};
+
+
+export const customerData: Customer[] = [
   {
     employee: 'Jane Smith',
     customerName: 'Liam Johnson',
