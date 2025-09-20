@@ -71,12 +71,16 @@ export default function EmployeeDashboardPage() {
                  {role === 'manager' && (
                     <>
                         <EmployeeSalesTarget />
-                        <SalesTargetChart isTeamData={true} />
                     </>
                  )}
                  {role === 'employee' && (
                     <>
                       <SalesTargetChart />
+                    </>
+                 )}
+                 <SalesTargetChart isTeamData={role === 'manager'} />
+                 {role === 'employee' && (
+                    <>
                       <CumulativeSalesTargetChart />
                     </>
                  )}
