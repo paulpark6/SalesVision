@@ -71,7 +71,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           </div>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">누적 매출 비교</span>
+              <span className="text-sm font-medium">9월 누적 매출 비교</span>
               <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
               </span>
@@ -149,7 +149,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
         </div>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">누적 매출 비교</span>
+            <span className="text-sm font-medium">9월 누적 매출 비교</span>
             <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
             </span>
