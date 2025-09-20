@@ -241,7 +241,7 @@ export default function CustomersPage() {
                     <TableHead>고객명</TableHead>
                     <TableHead>등급</TableHead>
                     <TableHead>고객 특성</TableHead>
-                    <TableHead className="text-right">실제 월 매출</TableHead>
+                    <TableHead className="text-right">당월 매출</TableHead>
                     <TableHead className="text-right">월 평균 매출</TableHead>
                     <TableHead className="text-right">연 매출 ({selectedYear})</TableHead>
                     <TableHead className="text-right">신용 잔액 (9월)</TableHead>
@@ -345,5 +345,7 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
+
+    
 
     
