@@ -17,17 +17,20 @@ import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/li
 import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
-    
+    const { x, y, width, height, value, dataKey, payload } = props;
+
     // Don't render label if segment is too small
     if (height < 20 || !value) {
         return null;
     }
 
+    const total = payload.jane + payload.alex + payload.john;
+    const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+
     return (
         <g>
             <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`$${(value / 1000).toFixed(0)}K`}
+                {`$${(value / 1000).toFixed(0)}K, ${percentage}%`}
             </text>
         </g>
     );
