@@ -47,6 +47,7 @@ export const teamCumulativeSalesTargetChartData = [
 
 
 export type DuePayment = {
+  id: string;
   customer: {
     name: string;
     email: string;
@@ -55,24 +56,30 @@ export type DuePayment = {
   amount: number;
   dueDate: string;
   status: 'due' | 'overdue' | 'nearing';
+  collectionPlan?: string;
 };
 
 export const duePaymentsData: DuePayment[] = [
   {
+    id: 'pay-1',
     customer: { name: 'Liam Johnson', email: 'liam@example.com' },
     employee: 'Jane Smith',
     amount: 250.0,
     dueDate: '2024-07-10', // Overdue
     status: 'overdue',
+    collectionPlan: '이번 주 내 연락하여 8월 초까지 입금 요청 예정.',
   },
   {
+    id: 'pay-2',
     customer: { name: 'Olivia Smith', email: 'olivia@example.com' },
     employee: 'Alex Ray',
     amount: 150.75,
     dueDate: '2024-08-05', // due in < 14 days
     status: 'due',
+    collectionPlan: '만기일 전 알림 이메일 발송 완료.',
   },
   {
+    id: 'pay-3',
     customer: { name: 'Noah Williams', email: 'noah@example.com' },
     employee: 'John Doe',
     amount: 350.0,
@@ -80,6 +87,7 @@ export const duePaymentsData: DuePayment[] = [
     status: 'nearing',
   },
   {
+    id: 'pay-4',
     customer: { name: 'Emma Brown', email: 'emma@example.com' },
     employee: 'Jane Smith',
     amount: 450.0,
@@ -87,13 +95,16 @@ export const duePaymentsData: DuePayment[] = [
     status: 'due',
   },
   {
+    id: 'pay-5',
     customer: { name: 'Ava Jones', email: 'ava@example.com' },
     employee: 'Alex Ray',
     amount: 550.0,
     dueDate: '2024-08-28', // nearing
     status: 'nearing',
+    collectionPlan: '다음 주 중으로 확인 전화 예정.',
   },
     {
+    id: 'pay-6',
     customer: { name: 'James Wilson', email: 'james@example.com' },
     employee: 'John Doe',
     amount: 200.0,
@@ -101,6 +112,7 @@ export const duePaymentsData: DuePayment[] = [
     status: 'overdue',
   },
 ];
+
 
 export type RecentSale = {
   customer: {
@@ -168,7 +180,7 @@ export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,
 
 export const customerUploadCsvData = `CustomerCode,CustomerName,Employee,Grade,CustomerType
 C-101,John Doe,EMP-01,A,own
-C-102,Jane Smith,EMP-02,B,transfer
+C-102,Jane Smith,EMP-02,transfer
 `;
 
 const getLatestPrice = (history: { date: string; price: number }[]) => {
@@ -265,6 +277,14 @@ export const customerData = [
         { year: 2024, amount: 15400.25 },
     ],
     creditBalance: 250.00,
+    contact: {
+      name: 'Liam Johnson',
+      position: 'Purchasing Manager',
+      phone: '123-456-7890',
+      address: '123 Main St, Anytown, USA',
+      email: 'liam.j@example.com'
+    },
+    companyOverview: 'A mid-sized manufacturing company specializing in custom parts.'
   },
   {
     employee: 'Jane Smith',
@@ -281,6 +301,13 @@ export const customerData = [
         { year: 2024, amount: 32100.00 },
     ],
     creditBalance: 450.00,
+    contact: {
+      name: 'Emma Brown',
+      position: 'Senior Buyer',
+      phone: '234-567-8901',
+      address: '456 Oak Ave, Anytown, USA',
+    },
+    companyOverview: 'A large retail chain with stores across the country.'
   },
   {
     employee: 'Alex Ray',
@@ -297,6 +324,14 @@ export const customerData = [
         { year: 2024, amount: 9800.75 },
     ],
     creditBalance: 150.75,
+    contact: {
+      name: 'Olivia Smith',
+      position: 'Owner',
+      phone: '345-678-9012',
+      address: '789 Pine Rd, Anytown, USA',
+      email: 'olivia.s@example.com'
+    },
+    companyOverview: 'A local boutique specializing in handcrafted goods.'
   },
   {
     employee: 'Alex Ray',
@@ -313,6 +348,13 @@ export const customerData = [
         { year: 2024, amount: 5400.00 },
     ],
     creditBalance: 550.00,
+    contact: {
+      name: 'Ava Jones',
+      position: 'Store Manager',
+      phone: '456-789-0123',
+      address: '101 Maple St, Anytown, USA',
+    },
+    companyOverview: 'A small business focused on eco-friendly products.'
   },
   {
     employee: 'John Doe',
@@ -329,6 +371,14 @@ export const customerData = [
         { year: 2024, amount: 51200.00 },
     ],
     creditBalance: 350.00,
+    contact: {
+      name: 'Noah Williams',
+      position: 'CEO',
+      phone: '567-890-1234',
+      address: '212 Birch Ln, Anytown, USA',
+      email: 'noah.w@example.com'
+    },
+    companyOverview: 'A rapidly growing tech startup.'
   },
     {
     employee: 'John Doe',
@@ -345,6 +395,13 @@ export const customerData = [
         { year: 2024, amount: 6100.00 },
     ],
     creditBalance: 200.00,
+    contact: {
+      name: 'James Wilson',
+      position: 'Operations Manager',
+      phone: '678-901-2345',
+      address: '333 Cedar Blvd, Anytown, USA',
+    },
+    companyOverview: 'A logistics and transportation company.'
   },
 ];
 
