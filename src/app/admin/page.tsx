@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { EmployeeSalesTarget } from '@/components/dashboard/employee-sales-target';
+import { CumulativeSalesTargetChart } from '@/components/dashboard/cumulative-sales-target-chart';
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
@@ -65,10 +66,14 @@ export default function EmployeeDashboardPage() {
                     <>
                         <EmployeeSalesTarget />
                         <SalesTargetChart isTeamData={true} />
+                        <CumulativeSalesTargetChart isTeamData={true} />
                     </>
                  )}
                  {role === 'employee' && (
-                    <SalesTargetChart />
+                    <>
+                      <SalesTargetChart />
+                      <CumulativeSalesTargetChart />
+                    </>
                  )}
                 <DuePaymentsTable />
               </div>
