@@ -17,11 +17,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Textarea } from '@/components/ui/textarea';
-import { employees, customerData } from '@/lib/mock-data';
-import { PlusCircle, X } from 'lucide-react';
+import { employees, customerData, customerUploadCsvData } from '@/lib/mock-data';
+import { PlusCircle, X, Download, Upload } from 'lucide-react';
+import Papa from 'papaparse';
 
 type ContactPoint = {
   name: string;
@@ -50,6 +51,7 @@ export default function NewCustomerPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [employee, setEmployee] = useState('');
   const [contactPoints, setContactPoints] = useState<ContactPoint[]>([
@@ -99,6 +101,56 @@ export default function NewCustomerPage() {
     router.push('/customers');
   };
 
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          // This would typically update a shared state or call an API
+          // For now, we just toast and redirect
+          toast({
+            title: 'Upload Successful',
+            description: `${results.data.length} new customers have been added and are pending approval.`,
+          });
+          router.push('/customers');
+        },
+        error: (error: any) => {
+          toast({
+            title: 'Upload Failed',
+            description: `An error occurred: ${error.message}`,
+            variant: 'destructive',
+          });
+        }
+      });
+      event.target.value = ''; // Reset file input
+    }
+  };
+
+  const handleDownloadSample = () => {
+    const blob = new Blob([customerUploadCsvData], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.href) {
+      URL.revokeObjectURL(link.href);
+    }
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', 'sample-customers.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+        title: "Sample File Downloading",
+        description: "sample-customers.csv has started downloading.",
+    })
+  };
+
+
   if (!role) {
     return null;
   }
@@ -111,9 +163,27 @@ export default function NewCustomerPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">Add New Customer</h1>
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                  Back to Customer List
-              </Button>
+                <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
+                        <Download className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                            Sample File
+                        </span>
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleUploadClick}>
+                        <Upload className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                            Upload File
+                        </span>
+                    </Button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept=".csv"
+                    />
+                </div>
           </div>
           <Card>
             <CardHeader>
