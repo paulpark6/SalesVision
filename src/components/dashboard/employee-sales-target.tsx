@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '../ui/progress';
-import { salesTargetData } from '@/lib/mock-data';
+import Link from 'next/link';
 
 const employeeTargets = [
     { name: 'Jane Smith', current: 38000, target: 45000 },
@@ -31,10 +31,12 @@ export function EmployeeSalesTarget() {
             const achievementRate = (employee.current / employee.target) * 100;
             return (
                  <div key={employee.name} className="space-y-2">
-                    <div className="flex justify-between">
-                        <span className="text-sm font-medium">{employee.name}</span>
-                        <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
-                    </div>
+                    <Link href={`/employees/${encodeURIComponent(employee.name)}`} className="hover:underline">
+                        <div className="flex justify-between">
+                            <span className="text-sm font-medium">{employee.name}</span>
+                            <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
+                        </div>
+                    </Link>
                     <Progress value={achievementRate} />
                     <div className="text-xs text-muted-foreground">
                         실적: ${employee.current.toLocaleString()} / 목표: ${employee.target.toLocaleString()}
