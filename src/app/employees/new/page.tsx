@@ -70,6 +70,14 @@ export default function NewEmployeePage() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
+                  <Label htmlFor="employeeName">Name</Label>
+                  <Input
+                    id="employeeName"
+                    placeholder="e.g., John Doe"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="employeeId">Employee ID</Label>
                   <Input
                     id="employeeId"
