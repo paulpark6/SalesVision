@@ -14,8 +14,10 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { ArrowLeft, DollarSign, Target } from 'lucide-react';
-import { employees, salesTargetData, salesTargetChartData } from '@/lib/mock-data';
+import { ArrowLeft, DollarSign, Target, Users, MoreHorizontal } from 'lucide-react';
+import { salesTargetData, salesTargetChartData, employeeCustomerSales } from '@/lib/mock-data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function EmployeeDetailPage() {
   const router = useRouter();
@@ -82,39 +84,84 @@ export default function EmployeeDetailPage() {
                 </Card>
             </div>
             
-            <Card>
-                <CardHeader>
-                    <CardTitle>월별 매출 목표 비교</CardTitle>
-                    <CardDescription>
-                        {employeeName}의 9월 매출과 전년 동월 실적을 비교합니다.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={salesTargetChartData}>
-                                <XAxis
-                                    dataKey="name"
-                                    stroke="#888888"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                />
-                                <YAxis
-                                    stroke="#888888"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickFormatter={(value) => `$${value / 1000}K`}
-                                />
-                                <Tooltip content={<ChartTooltipContent />} />
-                                <Bar dataKey="sales" fill="hsl(var(--chart-1))" name="매출" radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="target" fill="hsl(var(--chart-2))" name="목표" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
-                </CardContent>
-            </Card>
+            <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>월별 매출 목표 비교</CardTitle>
+                        <CardDescription>
+                            {employeeName}의 9월 매출과 전년 동월 실적을 비교합니다.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={salesTargetChartData}>
+                                    <XAxis
+                                        dataKey="name"
+                                        stroke="#888888"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <YAxis
+                                        stroke="#888888"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(value) => `$${value / 1000}K`}
+                                    />
+                                    <Tooltip content={<ChartTooltipContent />} />
+                                    <Bar dataKey="sales" fill="hsl(var(--chart-1))" name="매출" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="target" fill="hsl(var(--chart-2))" name="목표" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle>고객별 매출 현황</CardTitle>
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>고객명</TableHead>
+                                    <TableHead className="text-center">매출 건수</TableHead>
+                                    <TableHead className="text-right">총 매출액</TableHead>
+                                    <TableHead>
+                                        <span className="sr-only">Actions</span>
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {employeeCustomerSales.map((sale) => (
+                                    <TableRow key={sale.id}>
+                                        <TableCell className="font-medium">{sale.customerName}</TableCell>
+                                        <TableCell className="text-center">{sale.salesCount}</TableCell>
+                                        <TableCell className="text-right">${sale.totalRevenue.toLocaleString()}</TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                        <span className="sr-only">Toggle menu</span>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </div>
 
           </main>
         </SidebarInset>
