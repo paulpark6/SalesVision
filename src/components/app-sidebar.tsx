@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import {
   Bell,
@@ -10,10 +11,6 @@ import {
   User,
 } from 'lucide-react';
 import {
-  Sheet,
-  SheetContent,
-} from '@/components/ui/sheet';
-import {
   Card,
   CardContent,
   CardDescription,
@@ -21,13 +18,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Sidebar, SidebarTrigger } from './ui/sidebar';
+import { Sidebar } from './ui/sidebar';
 
 
 export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' }) {
@@ -55,15 +46,15 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     Dashboard
                 </Link>
                 <Link
-                    href="#"
-                    className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+                    href="/sales/new"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
                     <ShoppingCart className="h-4 w-4" />
                     Sales
                 </Link>
                 <Link
-                    href="#"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    href="/products"
+                    className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
                 >
                     <Package className="h-4 w-4" />
                     Products
@@ -108,6 +99,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
               <Button size="sm" className="w-full">
                 Upgrade
               </Button>
+            </Button>
             </CardContent>
           </Card>
         </div>

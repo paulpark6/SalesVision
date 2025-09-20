@@ -272,6 +272,7 @@ export default function NewSalePage() {
                                 <SelectItem value="cash">Cash</SelectItem>
                                 <SelectItem value="check">Check</SelectItem>
                                 <SelectItem value="prepayment">Prepayment</SelectItem>
+                                <SelectItem value="mixed">Mixed</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
