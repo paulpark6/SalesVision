@@ -30,52 +30,70 @@ type Sale = {
   type: '수입' | '현지';
   salePrice: number;
   costPrice: number;
+  customerType: 'self-developed' | 'transferred';
 };
 
 // Function to calculate commission based on the new rules
 const calculateCommission = (sales: Sale[]) => {
   let totalCommission = 0;
   let totalSales = 0;
-  let importSalesTotal = 0;
 
-  // Separate sales by type to apply different rules
-  const importSales = sales.filter(s => s.type === '수입');
-  const localSales = sales.filter(s => s.type === '현지');
+  // --- Imported Products Commission ---
+  const selfDevImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'self-developed');
+  const transferredImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'transferred');
 
-  // Calculate commission for imported products
-  importSales.forEach(sale => {
-    importSalesTotal += sale.salePrice;
+  // Self-developed customer rules for imported goods
+  let selfDevImportTotal = 0;
+  selfDevImportSales.forEach(sale => {
+    selfDevImportTotal += sale.salePrice;
   });
 
-  if (importSalesTotal > 200000) {
+  if (selfDevImportTotal > 200000) {
     totalCommission += 200000 * 0.05;
-    totalCommission += (importSalesTotal - 200000) * 0.03;
+    totalCommission += (selfDevImportTotal - 200000) * 0.03;
   } else {
-    totalCommission += importSalesTotal * 0.05;
+    totalCommission += selfDevImportTotal * 0.05;
   }
-  
-  totalSales += importSalesTotal;
+  totalSales += selfDevImportTotal;
 
-  // Calculate commission for local products
-  localSales.forEach(sale => {
+  // Transferred customer rules for imported goods (1%)
+  transferredImportSales.forEach(sale => {
+    totalCommission += sale.salePrice * 0.01;
+    totalSales += sale.salePrice;
+  });
+
+  // --- Local Products Commission ---
+  const selfDevLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'self-developed');
+  const transferredLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'transferred');
+
+  // Function to get commission rate for local products based on margin
+  const getLocalCommissionRate = (salePrice: number, costPrice: number) => {
+    const grossMargin = salePrice - costPrice;
+    const marginPercentage = salePrice > 0 ? (grossMargin / salePrice) * 100 : 0;
+    
+    if (marginPercentage < 10) return 0.03;
+    if (marginPercentage < 20) return 0.10;
+    if (marginPercentage < 30) return 0.12;
+    if (marginPercentage < 40) return 0.15;
+    return 0.18; // 40% or more
+  };
+
+  // Self-developed customer rules for local goods
+  selfDevLocalSales.forEach(sale => {
     const grossMargin = sale.salePrice - sale.costPrice;
-    const marginPercentage = sale.salePrice > 0 ? (grossMargin / sale.salePrice) * 100 : 0;
-
-    let commissionRate = 0;
-    if (marginPercentage < 10) {
-      commissionRate = 0.03;
-    } else if (marginPercentage >= 10 && marginPercentage < 20) {
-      commissionRate = 0.10;
-    } else if (marginPercentage >= 20 && marginPercentage < 30) {
-      commissionRate = 0.12;
-    } else if (marginPercentage >= 30 && marginPercentage < 40) {
-      commissionRate = 0.15;
-    } else { // 40% or more
-      commissionRate = 0.18;
-    }
+    const commissionRate = getLocalCommissionRate(sale.salePrice, sale.costPrice);
     totalCommission += grossMargin * commissionRate;
     totalSales += sale.salePrice;
   });
+
+  // Transferred customer rules for local goods (50% of self-developed commission)
+  transferredLocalSales.forEach(sale => {
+    const grossMargin = sale.salePrice - sale.costPrice;
+    const baseCommissionRate = getLocalCommissionRate(sale.salePrice, sale.costPrice);
+    totalCommission += (grossMargin * baseCommissionRate) * 0.5;
+    totalSales += sale.salePrice;
+  });
+
 
   const averageCommissionRate = totalSales > 0 ? (totalCommission / totalSales) * 100 : 0;
 
@@ -132,8 +150,8 @@ export default function CommissionsPage() {
             <CardHeader>
               <CardTitle>Commission Overview</CardTitle>
               <CardDescription>
-                Review commission earnings for each employee for the current period. 
-                Imported products are those entered by Admins, and local purchases are those entered by Managers.
+                직원별 커미션 수익을 검토합니다. 수입 제품은 관리자가, 현지 구매는 매니저가 등록한 판매를 기준으로 합니다.
+                커미션은 고객 유형(자체 개발/인계)에 따라 다르게 계산됩니다.
               </CardDescription>
             </CardHeader>
             <CardContent>

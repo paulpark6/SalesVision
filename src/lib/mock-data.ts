@@ -338,33 +338,36 @@ export const customerData = [
 ];
 
 // Commission data includes sales records for commission calculation.
-// '수입' (Imported) products are registered by Admins.
-// '현지' (Local) products are registered by Managers.
+// '수입' (Imported) products are registered by Admins. '현지' (Local) products are registered by Managers.
+// 'customerType' determines if the commission rules for 'self-developed' or 'transferred' customers apply.
 export const commissionData = [
   {
     employeeId: 'emp-01',
     employeeName: 'Jane Smith',
     sales: [
-      { type: '수입', salePrice: 210000, costPrice: 150000 },
-      { type: '현지', salePrice: 5000, costPrice: 4600 }, // 마진 8%
-      { type: '현지', salePrice: 10000, costPrice: 8500 }, // 마진 15%
+      { type: '수입', salePrice: 210000, costPrice: 150000, customerType: 'self-developed' },
+      { type: '현지', salePrice: 5000, costPrice: 4600, customerType: 'self-developed' }, // Margin 8%
+      { type: '현지', salePrice: 10000, costPrice: 8500, customerType: 'self-developed' }, // Margin 15%
+      { type: '수입', salePrice: 50000, costPrice: 30000, customerType: 'transferred' }, // 1% commission
+      { type: '현지', salePrice: 20000, costPrice: 16000, customerType: 'transferred' }, // Margin 20% -> 12% rate * 50%
     ],
   },
   {
     employeeId: 'emp-02',
     employeeName: 'Alex Ray',
     sales: [
-      { type: '수입', salePrice: 180000, costPrice: 120000 },
-      { type: '현지', salePrice: 20000, costPrice: 15000 }, // 마진 25%
-      { type: '현지', salePrice: 15000, costPrice: 10000 }, // 마진 33.3%
+      { type: '수입', salePrice: 180000, costPrice: 120000, customerType: 'self-developed' },
+      { type: '현지', salePrice: 20000, costPrice: 15000, customerType: 'self-developed' }, // Margin 25%
+      { type: '현지', salePrice: 15000, costPrice: 10000, customerType: 'self-developed' }, // Margin 33.3%
     ],
   },
   {
     employeeId: 'emp-03',
     employeeName: 'John Doe',
     sales: [
-      { type: '수입', salePrice: 50000, costPrice: 30000 },
-      { type: '현지', salePrice: 30000, costPrice: 15000 }, // 마진 50%
+      { type: '수입', salePrice: 50000, costPrice: 30000, customerType: 'self-developed' },
+      { type: '현지', salePrice: 30000, costPrice: 15000, customerType: 'self-developed' }, // Margin 50%
+      { type: '현지', salePrice: 100000, costPrice: 95000, customerType: 'transferred' }, // Margin 5% -> 3% rate * 50%
     ],
   },
 ];
