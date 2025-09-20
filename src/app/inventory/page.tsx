@@ -26,6 +26,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { products } from '@/lib/mock-data';
+import { DatePicker } from '@/components/ui/date-picker';
+import { CalendarDays } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 // Mock inventory data - in a real app, this would come from a database
 const inventoryData = products.map(product => ({
@@ -92,8 +95,18 @@ export default function InventoryPage() {
             <CardHeader>
               <CardTitle>Current Stock Levels</CardTitle>
               <CardDescription>
-                Monitor the inventory levels for all products.
+                Select a date to view inventory levels.
               </CardDescription>
+              <div className="flex items-end gap-4 pt-2">
+                <div className="grid gap-2">
+                    <Label htmlFor="date">Date</Label>
+                    <DatePicker />
+                </div>
+                <Button>
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    View
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -130,4 +143,3 @@ export default function InventoryPage() {
     </SidebarProvider>
   );
 }
-
