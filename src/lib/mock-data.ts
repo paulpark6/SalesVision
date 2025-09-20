@@ -8,6 +8,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -624,3 +625,21 @@ export const monthlySalesData = {
     target: calculateTotalTarget(salesTargetHistoryData),
     current: calculateCurrentSales(salesTargetHistoryData),
 };
+
+export type CashSale = {
+    id: string;
+    date: string;
+    customerName: string;
+    employeeName: string;
+    amount: number;
+};
+
+export const cashSalesData: CashSale[] = [
+    { id: 'cs-1', date: '2024-09-01', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 125.50 },
+    { id: 'cs-2', date: '2024-09-01', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 60.00 },
+    { id: 'cs-3', date: '2024-09-02', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 200.00 },
+    { id: 'cs-4', date: '2024-09-02', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 45.00 },
+    { id: 'cs-5', date: '2024-09-03', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 300.00 },
+    { id: 'cs-6', date: '2024-09-03', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 80.00 },
+    { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00 },
+];

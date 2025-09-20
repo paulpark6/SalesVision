@@ -17,6 +17,10 @@ import {
   User,
   Target,
   PlusCircle,
+  FileText,
+  AreaChart,
+  BarChart,
+  DollarSign,
 } from 'lucide-react';
 import {
   Card,
@@ -116,6 +120,19 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
                     매출 목표
                 </NavLink>
+
+                 <NavCollapsible title="Reports" icon={<FileText className="h-4 w-4" />}>
+                     <NavLink href="/sales/report" icon={<BarChart className="h-4 w-4" />}>
+                        Sales Report
+                    </NavLink>
+                     <NavLink href="/sales/cumulative-report" icon={<AreaChart className="h-4 w-4" />}>
+                        Cumulative Report
+                    </NavLink>
+                    <NavLink href="/reports/cash" icon={<DollarSign className="h-4 w-4" />}>
+                        Cash Report
+                    </NavLink>
+                </NavCollapsible>
+
                 {(role === 'admin' || role === 'manager') && (
                     <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
                         Inventory
