@@ -10,6 +10,7 @@ import {
   CreditCard,
   Truck,
   BadgePercent,
+  Boxes,
 } from 'lucide-react';
 import {
   Card,
@@ -60,6 +61,15 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     <Package className="h-4 w-4" />
                     Products
                 </Link>
+                {(role === 'admin' || role === 'manager') && (
+                     <Link
+                        href="/inventory"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                        <Boxes className="h-4 w-4" />
+                        Inventory
+                    </Link>
+                )}
                 {(role === 'admin' || role === 'manager') && (
                      <Link
                         href="/imports/new"
