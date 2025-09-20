@@ -106,11 +106,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     <NavLink href="/sales/new" icon={<PlusCircle className="h-4 w-4" />}>
                         Add Sale
                     </NavLink>
-                    {(role === 'admin' || role === 'manager') && (
-                        <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                            당월 매출 목표
-                        </NavLink>
-                    )}
+                    <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
+                        당월 매출 목표
+                    </NavLink>
                 </NavCollapsible>
                  <NavCollapsible title="Customers" icon={<Users className="h-4 w-4" />}>
                      <NavLink href="/customers" icon={<User className="h-4 w-4" />}>
@@ -123,11 +121,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
                     Products
                 </NavLink>
-                {(role === 'admin' || role === 'manager') && (
-                     <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                        매출 목표
-                    </NavLink>
-                )}
+                <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
+                    매출 목표
+                </NavLink>
                 {(role === 'admin' || role === 'manager') && (
                     <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
                         Inventory
