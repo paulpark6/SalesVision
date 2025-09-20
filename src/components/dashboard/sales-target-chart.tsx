@@ -20,11 +20,15 @@ const CustomLabel = (props: any) => {
     const { x, y, width, height, value } = props;
     
     if (height < 20 || !value) return null;
+    
+    const { payload } = props;
+    const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
+    const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
 
     return (
         <g>
             <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`$${(value / 1000).toFixed(0)}K`}
+                {`$${(value / 1000).toFixed(0)}K (${percentage}%)`}
             </text>
         </g>
     );
@@ -123,6 +127,21 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     sales: { label: '매출', color: 'hsl(var(--chart-1))' },
     target: { label: '목표', color: 'hsl(var(--chart-2))' },
   };
+  
+  const SingleCustomLabel = (props: any) => {
+    const { x, y, width, height, value } = props;
+    
+    if (height < 20 || !value) return null;
+
+    return (
+        <g>
+            <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
+                {`$${(value / 1000).toFixed(0)}K`}
+            </text>
+        </g>
+    );
+};
+
 
   return (
     <Card>
@@ -175,10 +194,10 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 content={<ChartTooltipContent />}
               />
               <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" >
-                 <LabelList dataKey="sales" content={<CustomLabel />} />
+                 <LabelList dataKey="sales" content={<SingleCustomLabel />} />
               </Bar>
               <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" >
-                 <LabelList dataKey="target" content={<CustomLabel />} />
+                 <LabelList dataKey="target" content={<SingleCustomLabel />} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
