@@ -15,6 +15,8 @@ import {
   ChevronDown,
   UserPlus,
   User,
+  Target,
+  PlusCircle,
 } from 'lucide-react';
 import {
   Card,
@@ -53,13 +55,14 @@ function NavLink({ href, children, icon }: { href: string; children: React.React
 
 function NavCollapsible({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
     const pathname = usePathname();
-    const isActive = React.Children.toArray(children).some((child: any) => child.props.href && pathname.startsWith(child.props.href));
+    const childHrefs = React.Children.toArray(children).map((child: any) => child.props.href);
+    const isActive = childHrefs.some(href => pathname.startsWith(href));
 
     return (
         <Collapsible defaultOpen={isActive}>
             <CollapsibleTrigger asChild>
                 <div className={cn(
-                    "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                    "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary cursor-pointer",
                     isActive && "text-primary"
                     )}>
                     <div className="flex items-center gap-3">
@@ -98,9 +101,16 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 <NavLink href={dashboardUrl} icon={<Home className="h-4 w-4" />}>
                     Dashboard
                 </NavLink>
-                <NavLink href="/sales/new" icon={<ShoppingCart className="h-4 w-4" />}>
-                    Sales
-                </NavLink>
+                <NavCollapsible title="Sales" icon={<ShoppingCart className="h-4 w-4" />}>
+                    <NavLink href="/sales/new" icon={<PlusCircle className="h-4 w-4" />}>
+                        Add Sale
+                    </NavLink>
+                    {(role === 'admin' || role === 'manager') && (
+                        <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
+                            Monthly Sales Target
+                        </NavLink>
+                    )}
+                </NavCollapsible>
                  <NavCollapsible title="Customers" icon={<Users className="h-4 w-4" />}>
                      <NavLink href="/customers" icon={<User className="h-4 w-4" />}>
                         Customer List
