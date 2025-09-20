@@ -21,14 +21,15 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { customerData as initialCustomerData, customerUploadCsvData } from '@/lib/mock-data';
+import { customerData as initialCustomerData, customerUploadCsvData, employees } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Download, Upload } from 'lucide-react';
+import { Download, Upload, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Switch } from '@/components/ui/switch';
 
 type Customer = typeof initialCustomerData[0];
 
@@ -42,6 +43,9 @@ export default function CustomersPage() {
   const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
   const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
   const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
+  const [showMyCustomers, setShowMyCustomers] = useState(false);
+
+  const loggedInEmployee = useMemo(() => employees.find(e => e.role === role), [role]);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -127,6 +131,12 @@ export default function CustomersPage() {
     })
   };
 
+  const filteredCustomerData = useMemo(() => {
+    if (showMyCustomers && loggedInEmployee) {
+      return customerData.filter(customer => customer.employee === loggedInEmployee.name);
+    }
+    return customerData;
+  }, [customerData, showMyCustomers, loggedInEmployee]);
 
   return (
     <SidebarProvider>
@@ -171,33 +181,46 @@ export default function CustomersPage() {
               <CardDescription>
                 담당 직원별 고객 목록, 매출 및 신용 현황입니다. 관리자만 고객 특성을 변경할 수 있습니다.
               </CardDescription>
-              <div className="flex items-end gap-4 pt-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="year-select">Year</Label>
-                   <Select value={selectedYear} onValueChange={setSelectedYear}>
-                    <SelectTrigger id="year-select" className="w-[120px]">
-                      <SelectValue placeholder="Select Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableYears.map(year => (
-                        <SelectItem key={year} value={String(year)}>{year}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="flex items-end justify-between pt-2">
+                <div className="flex items-end gap-4">
+                    <div className="grid gap-2">
+                    <Label htmlFor="year-select">Year</Label>
+                    <Select value={selectedYear} onValueChange={setSelectedYear}>
+                        <SelectTrigger id="year-select" className="w-[120px]">
+                        <SelectValue placeholder="Select Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        {availableYears.map(year => (
+                            <SelectItem key={year} value={String(year)}>{year}</SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                    </div>
+                    <div className="grid gap-2">
+                    <Label htmlFor="month-select">Month</Label>
+                    <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                        <SelectTrigger id="month-select" className="w-[120px]">
+                        <SelectValue placeholder="Select Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        {availableMonths.map(month => (
+                            <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                    </div>
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="month-select">Month</Label>
-                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                    <SelectTrigger id="month-select" className="w-[120px]">
-                      <SelectValue placeholder="Select Month" />
-                    </SelectTrigger>
-                    <SelectContent>
-                       {availableMonths.map(month => (
-                        <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {role !== 'admin' && (
+                    <div className="flex items-center space-x-2">
+                        <Users className="h-4 w-4" />
+                        <Label htmlFor="my-customers-filter">내 고객만 보기</Label>
+                        <Switch
+                            id="my-customers-filter"
+                            checked={showMyCustomers}
+                            onCheckedChange={setShowMyCustomers}
+                        />
+                    </div>
+                )}
               </div>
             </CardHeader>
             <CardContent>
@@ -215,7 +238,7 @@ export default function CustomersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {customerData.map((customer) => {
+                  {filteredCustomerData.map((customer) => {
                       const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
                       return (
                       <TableRow key={customer.customerCode}>

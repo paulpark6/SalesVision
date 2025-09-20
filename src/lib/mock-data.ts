@@ -199,9 +199,9 @@ export const customers = [
 ];
 
 export const employees = [
-    { value: 'admin', label: 'John Doe (Admin)', role: 'admin' },
-    { value: 'manager', label: 'Alex Ray (Manager)', role: 'manager' },
-    { value: 'employee', label: 'Jane Smith (Employee)', role: 'employee' },
+    { value: 'admin', label: 'John Doe (Admin)', role: 'admin', name: 'John Doe' },
+    { value: 'manager', label: 'Alex Ray (Manager)', role: 'manager', name: 'Alex Ray' },
+    { value: 'employee', label: 'Jane Smith (Employee)', role: 'employee', name: 'Jane Smith' },
 ];
 
 export type EmployeeCustomerSale = {
