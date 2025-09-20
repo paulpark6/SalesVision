@@ -62,13 +62,22 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     Products
                 </Link>
                 {(role === 'admin' || role === 'manager') && (
-                     <Link
-                        href="/inventory"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                    >
-                        <Boxes className="h-4 w-4" />
-                        Inventory
-                    </Link>
+                    <>
+                        <Link
+                            href="/customers"
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                        >
+                            <Users className="h-4 w-4" />
+                            Customers
+                        </Link>
+                        <Link
+                            href="/inventory"
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                        >
+                            <Boxes className="h-4 w-4" />
+                            Inventory
+                        </Link>
+                    </>
                 )}
                 {role === 'admin' && (
                      <Link
@@ -80,22 +89,13 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </Link>
                 )}
                 {role === 'admin' && (
-                    <>
-                        <Link
-                            href="/credit"
-                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                        >
-                            <Users className="h-4 w-4" />
-                            Customers
-                        </Link>
-                        <Link
-                            href="/credit"
-                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                        >
-                            <CreditCard className="h-4 w-4" />
-                            Credit Management
-                        </Link>
-                    </>
+                    <Link
+                        href="/credit"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                        <CreditCard className="h-4 w-4" />
+                        Credit Management
+                    </Link>
                 )}
                 {(role === 'admin' || role === 'manager') && (
                      <Link
