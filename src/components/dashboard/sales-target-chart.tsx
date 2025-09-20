@@ -1,6 +1,6 @@
 
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, LabelList } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip } from 'recharts';
 import {
   Card,
   CardContent,
@@ -9,34 +9,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  ChartContainer
+  ChartContainer,
+  ChartTooltipContent
 } from '@/components/ui/chart';
 
 import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/lib/mock-data';
 import { Progress } from '../ui/progress';
-
-const CustomLabel = (props: any) => {
-    const { x, y, width, height, value, name, payload } = props;
-
-    // Don't render if the segment is too small, value is 0, or critical data is missing
-    if (height < 20 || !value || !payload || !payload.total) {
-        return null;
-    }
-      
-    const percentage = (value / payload.total) * 100;
-    
-    // Capitalize the first letter of the name
-    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-
-    return (
-        <g>
-            <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-semibold">
-                {`${displayName}: $${(value / 1000).toFixed(0)}K (${percentage.toFixed(0)}%)`}
-            </text>
-        </g>
-    );
-};
-
 
 export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
   if (isTeamData) {
@@ -107,16 +85,23 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                   axisLine={false}
                   tickFormatter={(value) => `$${value / 1000}K`}
                 />
+                <Tooltip
+                  cursor={{ fill: 'hsl(var(--background))' }}
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value, name, item) => {
+                        const total = item.payload.total;
+                        const percentage = total > 0 ? ((value as number / total) * 100) : 0;
+                        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+                        return `${capitalizedName}: $${(value as number).toLocaleString()} (${percentage.toFixed(1)}%)`;
+                      }}
+                    />
+                  }
+                />
                 <Legend />
-                <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}>
-                   <LabelList dataKey="jane" content={(props) => <CustomLabel {...props} name="jane" />} />
-                </Bar>
-                <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex">
-                   <LabelList dataKey="alex" content={(props) => <CustomLabel {...props} name="alex" />} />
-                </Bar>
-                <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}>
-                   <LabelList dataKey="john" content={(props) => <CustomLabel {...props} name="john" />} />
-                </Bar>
+                <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}/>
+                <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex" />
+                <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}/>
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -135,20 +120,6 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     target: { label: '목표', color: 'hsl(var(--chart-2))' },
   };
   
-  const SingleCustomLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
-    
-    if (height < 20 || !value) return null;
-
-    return (
-        <g>
-            <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-medium">
-                {`$${(value / 1000).toFixed(0)}K`}
-            </text>
-        </g>
-    );
-};
-
 
   return (
     <Card>
@@ -196,12 +167,9 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 axisLine={false}
                 tickFormatter={(value) => `$${value / 1000}K`}
               />
-              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" >
-                 <LabelList dataKey="sales" content={<SingleCustomLabel />} />
-              </Bar>
-              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" >
-                 <LabelList dataKey="target" content={<SingleCustomLabel />} />
-              </Bar>
+              <Tooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
+              <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
