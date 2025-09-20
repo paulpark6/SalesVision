@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -18,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
 
 type ComboboxProps = {
     items: { value: string; label: string }[];
@@ -34,17 +36,16 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between"
-        >
-          {value
-            ? items.find((item) => item.label.toLowerCase() === value.toLowerCase())?.label
-            : placeholder}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+         <div className="relative w-full">
+            <Input
+                placeholder={placeholder}
+                value={value}
+                onChange={(e) => onValueChange(e.target.value)}
+                onClick={() => setOpen(true)}
+                className="w-full"
+            />
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 absolute right-2 top-1/2 -translate-y-1/2" />
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command filter={(value, search) => {
@@ -61,7 +62,8 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    onValueChange(currentValue === (items.find(i => i.label.toLowerCase() === value.toLowerCase())?.value || '').toLowerCase() ? "" : currentValue)
+                    const selectedItem = items.find(i => i.value === currentValue);
+                    onValueChange(selectedItem ? selectedItem.label : "")
                     setOpen(false)
                   }}
                 >

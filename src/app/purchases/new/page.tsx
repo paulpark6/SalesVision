@@ -131,14 +131,11 @@ export default function NewPurchasePage() {
                     <Label htmlFor="productDescription">제품 설명</Label>
                     <Combobox
                         items={products}
-                        placeholder="Select product..."
+                        placeholder="Select or type product..."
                         searchPlaceholder="Search products..."
-                        noResultsMessage="No product found."
+                        noResultsMessage="No product found. You can type a new one."
                         value={productDescription}
-                        onValueChange={(value) => {
-                            const selectedItem = products.find(item => item.value.toLowerCase() === value.toLowerCase());
-                            setProductDescription(selectedItem ? selectedItem.label : '');
-                        }}
+                        onValueChange={setProductDescription}
                     />
                   </div>
                 </div>
