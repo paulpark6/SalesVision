@@ -21,6 +21,7 @@ import {
   AreaChart,
   BarChart,
   DollarSign,
+  Landmark,
 } from 'lucide-react';
 import {
   Card,
@@ -130,6 +131,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </NavLink>
                     <NavLink href="/reports/cash" icon={<DollarSign className="h-4 w-4" />}>
                         Cash Report
+                    </NavLink>
+                    <NavLink href="/reports/checks" icon={<Landmark className="h-4 w-4" />}>
+                        Check Report
                     </NavLink>
                 </NavCollapsible>
 

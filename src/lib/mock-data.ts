@@ -10,6 +10,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -646,4 +647,23 @@ export const cashSalesData: CashSale[] = [
     { id: 'cs-5', date: '2024-09-03', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 300.00, source: '현금 판매' },
     { id: 'cs-6', date: '2024-09-03', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 80.00, source: '현금 판매' },
     { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00, source: '현금 판매' },
+];
+
+export type CheckPayment = {
+    id: string;
+    receiptDate: string;
+    salesperson: string;
+    customerName: string;
+    amount: number;
+    issuingBank: string;
+    checkNumber: string;
+    depositDate: string;
+    notes?: string;
+};
+
+export const checkPaymentsData: CheckPayment[] = [
+    { id: 'chk-1', receiptDate: '2024-09-01', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 500.00, issuingBank: 'Bank of America', checkNumber: '12345', depositDate: '2024-09-10', notes: 'Partial payment for INV-1008' },
+    { id: 'chk-2', receiptDate: '2024-09-02', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, issuingBank: 'Chase', checkNumber: '67890', depositDate: '2024-09-12', notes: 'Full payment for INV-1009' },
+    { id: 'chk-3', receiptDate: '2024-09-03', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 1000.00, issuingBank: 'Wells Fargo', checkNumber: '101112', depositDate: '2024-09-15', notes: '' },
+    { id: 'chk-4', receiptDate: '2024-09-04', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, issuingBank: 'Citibank', checkNumber: '131415', depositDate: '2024-09-11', notes: 'Payment for overdue balance' },
 ];
