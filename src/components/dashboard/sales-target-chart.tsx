@@ -38,7 +38,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   if (isTeamData) {
     const totalTarget = salesComparisonData.find(d => d.name === '9월 누적 목표')?.jane! + salesComparisonData.find(d => d.name === '9월 누적 목표')?.alex! + salesComparisonData.find(d => d.name === '9월 누적 목표')?.john!;
     const totalActual = salesComparisonData.find(d => d.name === '9월 누적 실적')?.jane! + salesComparisonData.find(d => d.name === '9월 누적 실적')?.alex! + salesComparisonData.find(d => d.name === '9월 누적 실적')?.john!;
-    const totalLastYear = salesComparisonData.find(d => d.name === '전년 동기')?.jane! + salesComparisonData.find(d => d.name === '전년 동기')?.alex! + salesComparisonData.find(d => d.name === '전년 동기')?.john!;
+    const totalLastYear = salesComparisonData.find(d => d.name === '전년 동기 실적')?.jane! + salesComparisonData.find(d => d.name === '전년 동기 실적')?.alex! + salesComparisonData.find(d => d.name === '전년 동기 실적')?.john!;
 
     const achievementRate = (totalActual / totalTarget) * 100;
     const yoyGrowth = ((totalActual - totalLastYear) / totalLastYear) * 100;
