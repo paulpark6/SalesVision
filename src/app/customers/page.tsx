@@ -68,7 +68,8 @@ export default function CustomersPage() {
     return sale ? { actual: formatCurrency(sale.actual), average: formatCurrency(sale.average) } : { actual: '-', average: '-' };
   }
   
-  const availableYears = Array.from(new Set(customerData.flatMap(c => c.yearlySales.map(s => s.year)))).sort((a,b) => b - a);
+  const currentYear = new Date().getFullYear();
+  const availableYears = Array.from({ length: currentYear - 2019 + 1 }, (_, i) => currentYear - i);
   const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
 
 
