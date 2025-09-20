@@ -119,16 +119,16 @@ export const salesTrendCsvData = `Date,Product Category,Product Code,Description
 `;
 
 export const products = [
-    { value: 'e-001', label: 'Laptop' },
-    { value: 'e-002', label: 'Smartphone' },
-    { value: 'e-003', label: 'Tablet' },
-    { value: 'e-004', label: 'Gaming Console' },
-    { value: 'c-005', label: 'T-Shirt' },
-    { value: 'c-008', label: 'Jeans' },
-    { value: 'c-015', label: 'Winter Jacket' },
-    { value: 'b-010', label: 'Science Fiction Novel' },
-    { value: 'b-012', label: 'Cookbook' },
-    { value: 'h-003', label: 'Coffee Maker' },
+    { value: 'e-001', label: 'Laptop', basePrice: 1200 },
+    { value: 'e-002', label: 'Smartphone', basePrice: 800 },
+    { value: 'e-003', label: 'Tablet', basePrice: 450 },
+    { value: 'e-004', label: 'Gaming Console', basePrice: 500 },
+    { value: 'c-005', label: 'T-Shirt', basePrice: 25 },
+    { value: 'c-008', label: 'Jeans', basePrice: 75 },
+    { value: 'c-015', label: 'Winter Jacket', basePrice: 200 },
+    { value: 'b-010', label: 'Science Fiction Novel', basePrice: 15 },
+    { value: 'b-012', label: 'Cookbook', basePrice: 30 },
+    { value: 'h-003', label: 'Coffee Maker', basePrice: 100 },
 ];
 
 export const customers = [

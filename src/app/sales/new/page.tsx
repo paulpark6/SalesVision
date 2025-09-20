@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppSidebar } from '@/components/app-sidebar';
@@ -32,33 +33,59 @@ export default function NewSalePage() {
   const [customerGrade, setCustomerGrade] = useState('');
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
+  const [autoCalculatedPrice, setAutoCalculatedPrice] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [employee, setEmployee] = useState('');
+  const [needsApproval, setNeedsApproval] = useState(false);
 
   useEffect(() => {
     if (auth === undefined) return;
     if (!auth) {
       router.push('/login');
     } else {
-      // Set the employee based on the logged-in user's role
       const loggedInEmployee = employees.find(e => e.role === auth.role);
       if (loggedInEmployee) {
           setEmployee(loggedInEmployee.value);
       }
     }
   }, [auth, router]);
+
+  const getDiscount = (grade: string) => {
+    switch (grade) {
+      case 'A': return 0.1; // 10%
+      case 'B': return 0.05; // 5%
+      default: return 0;
+    }
+  }
+
+  useEffect(() => {
+    const selectedProduct = products.find(p => p.value === productCode);
+    if (selectedProduct && customerGrade && quantity > 0) {
+      const basePrice = selectedProduct.basePrice;
+      const discount = getDiscount(customerGrade);
+      const finalPrice = basePrice * (1 - discount);
+      setAutoCalculatedPrice(finalPrice);
+      setPrice(finalPrice);
+      setTotalPrice(finalPrice * quantity);
+    } else {
+        setAutoCalculatedPrice(0);
+    }
+  }, [productCode, customerGrade, quantity]);
   
   useEffect(() => {
     const total = quantity * price;
     setTotalPrice(total);
-  }, [quantity, price]);
+    if (price < autoCalculatedPrice && autoCalculatedPrice > 0) {
+        setNeedsApproval(true);
+    } else {
+        setNeedsApproval(false);
+    }
+  }, [quantity, price, autoCalculatedPrice]);
 
   useEffect(() => {
     if (productDescription) {
         const selectedProduct = products.find(p => p.value === productDescription);
-        if (selectedProduct) {
-            setProductCode(selectedProduct.value);
-        }
+        setProductCode(selectedProduct ? selectedProduct.value : '');
     } else {
         setProductCode('');
     }
@@ -89,6 +116,16 @@ export default function NewSalePage() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
+    if (needsApproval) {
+        toast({
+          title: '승인 필요',
+          description: '특별 할인이 적용되어 관리자 승인이 필요합니다.',
+          variant: 'destructive'
+        });
+        return;
+    }
+
     toast({
       title: 'Sale Recorded',
       description: 'The new sale has been successfully recorded.',
@@ -206,7 +243,12 @@ export default function NewSalePage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="price">가격</Label>
-                    <Input id="price" type="number" placeholder="e.g., 1200" required min="0" step="0.01" onChange={handlePriceChange} />
+                    <Input id="price" type="number" value={price} placeholder="e.g., 1200" required min="0" step="0.01" onChange={handlePriceChange} />
+                     {needsApproval && (
+                      <p className="text-sm text-destructive font-medium pt-1">
+                        관리자 승인이 필요합니다.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="totalPrice">총 가격</Label>
