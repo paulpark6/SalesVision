@@ -58,8 +58,8 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
         </div>
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">전년 동기 달성률</span>
-            <span className="text-sm font-medium">{lastYearAchievementRate.toFixed(1)}%</span>
+            <span className="text-sm font-medium">전년 동기 매출 비교</span>
+            <span className="text-sm text-muted-foreground">{lastYearAchievementRate.toFixed(1)}% 달성</span>
           </div>
           <Progress value={lastYearAchievementRate} className="[&>div]:bg-secondary-foreground/50" />
            <div className="text-xs text-muted-foreground">
