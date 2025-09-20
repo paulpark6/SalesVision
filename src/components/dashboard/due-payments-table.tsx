@@ -1,4 +1,6 @@
-import { MoreHorizontal } from 'lucide-react';
+
+'use client';
+import { MoreHorizontal, ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,11 +25,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { duePaymentsData } from '@/lib/mock-data';
+import { duePaymentsData as initialDuePaymentsData, DuePayment } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { differenceInDays, parseISO } from 'date-fns';
+import { useState, Fragment } from 'react';
+import { CollectionPlanDialog } from './collection-plan-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export function DuePaymentsTable() {
+    const { toast } = useToast();
+    const [duePaymentsData, setDuePaymentsData] = useState<DuePayment[]>(initialDuePaymentsData);
+    const [selectedPayment, setSelectedPayment] = useState<DuePayment | null>(null);
+    const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
+
     const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
         const due = parseISO(dueDate);
         const today = new Date();
@@ -72,10 +82,26 @@ export function DuePaymentsTable() {
         }
     }
     
-    const sortedPayments = [...duePaymentsData].sort((a, b) => a.employee.localeCompare(b.employee));
+    const sortedPayments = [...duePaymentsData].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+    const handleOpenDialog = (payment: DuePayment) => {
+        setSelectedPayment(payment);
+    };
+
+    const handleSavePlan = (paymentId: string, plan: string) => {
+        setDuePaymentsData(prevData =>
+            prevData.map(p => (p.id === paymentId ? { ...p, collectionPlan: plan } : p))
+        );
+        setSelectedPayment(null);
+        toast({
+            title: '수금 계획 제출됨',
+            description: '계획이 관리자에게 전달되었습니다.',
+        });
+    };
 
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>미수금 현황</CardTitle>
@@ -98,15 +124,22 @@ export function DuePaymentsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedPayments.map((payment, index) => {
+            {sortedPayments.map((payment) => {
                 const status = getStatus(payment.dueDate);
+                const isOpen = openCollapsible === payment.id;
               return (
-              <TableRow key={index} className={cn(getStatusRowClass(status))}>
+              <Fragment key={payment.id}>
+              <TableRow className={cn(getStatusRowClass(status))} onClick={() => setOpenCollapsible(isOpen ? null : payment.id)}>
                 <TableCell className="font-medium">{payment.employee}</TableCell>
                 <TableCell>
-                  <div className="font-medium">{payment.customer.name}</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    {payment.customer.email}
+                  <div className="flex items-center gap-2">
+                    <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180", !payment.collectionPlan && "invisible")} />
+                    <div>
+                        <div className="font-medium">{payment.customer.name}</div>
+                        <div className="hidden text-sm text-muted-foreground md:inline">
+                            {payment.customer.email}
+                        </div>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
@@ -133,17 +166,37 @@ export function DuePaymentsTable() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Log Follow-up</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleOpenDialog(payment)}>수금 계획 관리</DropdownMenuItem>
                       <DropdownMenuItem>View Details</DropdownMenuItem>
                       <DropdownMenuItem>Send Reminder</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
+               {isOpen && payment.collectionPlan && (
+                <TableRow className="bg-muted/30">
+                    <TableCell colSpan={6} className="py-2 px-8">
+                        <div className="text-xs">
+                            <span className="font-semibold">수금 계획: </span>
+                            <span className="text-muted-foreground">{payment.collectionPlan}</span>
+                        </div>
+                    </TableCell>
+                </TableRow>
+               )}
+              </Fragment>
             )})}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
+     {selectedPayment && (
+        <CollectionPlanDialog
+            isOpen={!!selectedPayment}
+            onOpenChange={(isOpen) => !isOpen && setSelectedPayment(null)}
+            payment={selectedPayment}
+            onSave={handleSavePlan}
+        />
+    )}
+    </>
   );
 }
