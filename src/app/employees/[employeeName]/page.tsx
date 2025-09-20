@@ -8,17 +8,19 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { ArrowLeft, DollarSign, Target, Users, MoreHorizontal } from 'lucide-react';
-import { salesTargetData, salesTargetChartData, employeeCustomerSales } from '@/lib/mock-data';
+import { salesTargetData, salesTargetChartData, employeeCustomerSales, customerProductSalesDetails } from '@/lib/mock-data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
+import { CustomerSalesDetailDialog } from '@/components/dashboard/customer-sales-detail-dialog';
+import type { EmployeeCustomerSale } from '@/lib/mock-data';
 
 export default function EmployeeDetailPage() {
   const router = useRouter();
@@ -27,6 +29,8 @@ export default function EmployeeDetailPage() {
   const role = auth?.role;
 
   const employeeName = decodeURIComponent(params.employeeName as string);
+
+  const [selectedCustomer, setSelectedCustomer] = useState<EmployeeCustomerSale | null>(null);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -145,7 +149,11 @@ export default function EmployeeDetailPage() {
 
                                     return (
                                     <TableRow key={sale.id}>
-                                        <TableCell className="font-medium">{sale.customerName}</TableCell>
+                                        <TableCell className="font-medium">
+                                          <button onClick={() => setSelectedCustomer(sale)} className="hover:underline">
+                                            {sale.customerName}
+                                          </button>
+                                        </TableCell>
                                         <TableCell className="text-right">${sale.salesTarget.toLocaleString()}</TableCell>
                                         <TableCell className="text-right">${sale.salesAmount.toLocaleString()}</TableCell>
                                         <TableCell>
@@ -164,7 +172,7 @@ export default function EmployeeDetailPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => setSelectedCustomer(sale)}>View Details</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
@@ -177,6 +185,14 @@ export default function EmployeeDetailPage() {
             </div>
 
           </main>
+          {selectedCustomer && (
+              <CustomerSalesDetailDialog
+                  isOpen={!!selectedCustomer}
+                  onOpenChange={(isOpen) => !isOpen && setSelectedCustomer(null)}
+                  customerName={selectedCustomer.customerName}
+                  salesData={customerProductSalesDetails[selectedCustomer.id] || []}
+              />
+          )}
         </SidebarInset>
     </SidebarProvider>
   );

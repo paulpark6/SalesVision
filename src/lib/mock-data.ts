@@ -180,10 +180,47 @@ export const employees = [
     { value: 'employee', label: 'Jane Smith (Employee)', role: 'employee' },
 ];
 
-export const employeeCustomerSales = [
+export type EmployeeCustomerSale = {
+  id: string;
+  customerName: string;
+  salesTarget: number;
+  salesAmount: number;
+};
+
+export const employeeCustomerSales: EmployeeCustomerSale[] = [
   { id: 'cus-1', customerName: 'John Doe', salesTarget: 10000, salesAmount: 12500 },
   { id: 'cus-2', customerName: 'Jane Smith', salesTarget: 8000, salesAmount: 7500 },
   { id: 'cus-3', customerName: 'Alice Williams', salesTarget: 5000, salesAmount: 6000 },
   { id: 'cus-4', customerName: 'Peter Jones', salesTarget: 3000, salesAmount: 2000 },
   { id: 'cus-5', customerName: 'Michael Brown', salesTarget: 15000, salesAmount: 17231.89 },
 ];
+
+export type CustomerProductSale = {
+  productName: string;
+  salesTarget: number;
+  salesAmount: number;
+};
+
+export const customerProductSalesDetails: Record<string, CustomerProductSale[]> = {
+  'cus-1': [
+    { productName: 'Laptop', salesTarget: 8000, salesAmount: 9600 },
+    { productName: 'Smartphone', salesTarget: 2000, salesAmount: 2100 },
+    { productName: 'Coffee Maker', salesTarget: 0, salesAmount: 800 },
+  ],
+  'cus-2': [
+    { productName: 'T-Shirt', salesTarget: 3000, salesAmount: 2500 },
+    { productName: 'Jeans', salesTarget: 4000, salesAmount: 4000 },
+    { productName: 'Tablet', salesTarget: 1000, salesAmount: 1000 },
+  ],
+  'cus-3': [
+    { productName: 'Laptop', salesTarget: 5000, salesAmount: 6000 },
+  ],
+  'cus-4': [
+     { productName: 'Science Fiction Novel', salesTarget: 2500, salesAmount: 1500 },
+     { productName: 'T-Shirt', salesTarget: 500, salesAmount: 500 },
+  ],
+  'cus-5': [
+      { productName: 'Gaming Console', salesTarget: 10000, salesAmount: 12231.89 },
+      { productName: 'Winter Jacket', salesTarget: 5000, salesAmount: 5000 },
+  ],
+};
