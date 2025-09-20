@@ -262,7 +262,7 @@ export default function CustomersPage() {
                       const isOpen = openCollapsible === customer.customerCode;
                       return (
                       <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
-                        <>
+                        <tbody key={customer.customerCode}>
                           <TableRow className="cursor-pointer">
                             <TableCell>
                               <div className="font-medium">{customer.employee}</div>
@@ -342,7 +342,7 @@ export default function CustomersPage() {
                                   </TableCell>
                               </TableRow>
                           </CollapsibleContent>
-                        </>
+                        </tbody>
                       </Collapsible>
                   )})}
                 </TableBody>
