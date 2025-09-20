@@ -102,14 +102,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 <NavLink href={dashboardUrl} icon={<Home className="h-4 w-4" />}>
                     Dashboard
                 </NavLink>
-                <NavCollapsible title="Sales" icon={<ShoppingCart className="h-4 w-4" />}>
-                    <NavLink href="/sales/new" icon={<PlusCircle className="h-4 w-4" />}>
-                        Add Sale
-                    </NavLink>
-                    <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                        당월 매출 목표
-                    </NavLink>
-                </NavCollapsible>
+                <NavLink href="/sales/new" icon={<ShoppingCart className="h-4 w-4" />}>
+                    Add Sale
+                </NavLink>
                  <NavCollapsible title="Customers" icon={<Users className="h-4 w-4" />}>
                      <NavLink href="/customers" icon={<User className="h-4 w-4" />}>
                         Customer List
