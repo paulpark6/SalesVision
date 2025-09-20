@@ -31,6 +31,8 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { cn } from '@/lib/utils';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 export default function CumulativeReportPage() {
   const router = useRouter();
@@ -77,6 +79,7 @@ export default function CumulativeReportPage() {
   const totalTarget = processedData[processedData.length - 1]?.cumulativeTarget || 0;
   const totalActual = processedData[processedData.length - 1]?.cumulativeActual || 0;
   const totalLastYear = processedData[processedData.length - 1]?.cumulativeLastYear || 0;
+  const totalYoyGrowth = totalLastYear > 0 ? ((totalActual - totalLastYear) / totalLastYear) * 100 : (totalActual > 0 ? 100 : 0);
   
   const chartConfig = {
       actual: { label: '당해년도 실적', color: 'hsl(var(--chart-1))' },
@@ -140,11 +143,13 @@ export default function CumulativeReportPage() {
                     <TableHead className="text-right">누적 실적 (당해)</TableHead>
                     <TableHead className="text-right">누적 실적 (전년)</TableHead>
                     <TableHead className="w-[200px]">목표 달성률</TableHead>
+                    <TableHead className="w-[200px]">전년 대비 성장률</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {processedData.map((data) => {
                     const achievementRate = data.cumulativeTarget > 0 ? (data.cumulativeActual / data.cumulativeTarget) * 100 : 0;
+                    const yoyGrowth = data.cumulativeLastYear > 0 ? ((data.cumulativeActual - data.cumulativeLastYear) / data.cumulativeLastYear) * 100 : (data.cumulativeActual > 0 ? 100 : 0);
                     return (
                       <TableRow key={data.month}>
                         <TableCell className="font-medium">{data.month}</TableCell>
@@ -157,6 +162,15 @@ export default function CumulativeReportPage() {
                             <span className="text-xs font-semibold w-12 text-right">
                                 {achievementRate.toFixed(1)}%
                             </span>
+                          </div>
+                        </TableCell>
+                         <TableCell>
+                          <div className={cn(
+                            "flex items-center justify-end gap-1 font-semibold",
+                            yoyGrowth >= 0 ? "text-green-600" : "text-red-600"
+                          )}>
+                            {yoyGrowth >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+                            <span>{yoyGrowth.toFixed(1)}%</span>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -176,6 +190,15 @@ export default function CumulativeReportPage() {
                                     {((totalActual/totalTarget)*100).toFixed(1)}%
                                 </span>
                             </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={cn(
+                            "flex items-center justify-end gap-1 font-bold",
+                            totalYoyGrowth >= 0 ? "text-green-600" : "text-red-600"
+                          )}>
+                            {totalYoyGrowth >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                            <span>{totalYoyGrowth.toFixed(1)}%</span>
+                          </div>
                         </TableCell>
                     </TableRow>
                 </TableFooter>
