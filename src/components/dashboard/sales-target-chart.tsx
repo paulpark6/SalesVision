@@ -1,6 +1,6 @@
 
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
 import {
   Card,
   CardContent,
@@ -16,11 +16,29 @@ import {
 import { salesTargetData, salesComparisonData, salesTargetChartData } from '@/lib/mock-data';
 import { Progress } from '../ui/progress';
 
+const CustomLabel = (props: any) => {
+    const { x, y, width, height, value, name, dataKey } = props;
+    const { payload } = props;
+    const total = payload.jane + payload.alex + payload.john;
+    const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+    
+    if (height < 20) return null;
+
+    return (
+        <g>
+        <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" className="text-xs font-medium">
+            {`$${(value / 1000).toFixed(0)}K (${percentage}%)`}
+        </text>
+        </g>
+    );
+};
+
+
 export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
   if (isTeamData) {
-    const totalTarget = salesComparisonData[0].jane + salesComparisonData[0].alex + salesComparisonData[0].john;
-    const totalActual = salesComparisonData[1].jane + salesComparisonData[1].alex + salesComparisonData[1].john;
-    const totalLastYear = salesComparisonData[2].jane + salesComparisonData[2].alex + salesComparisonData[2].john;
+    const totalTarget = salesComparisonData.find(d => d.name === '9월 목표')?.jane! + salesComparisonData.find(d => d.name === '9월 목표')?.alex! + salesComparisonData.find(d => d.name === '9월 목표')?.john!;
+    const totalActual = salesComparisonData.find(d => d.name === '9월 실적')?.jane! + salesComparisonData.find(d => d.name === '9월 실적')?.alex! + salesComparisonData.find(d => d.name === '9월 실적')?.john!;
+    const totalLastYear = salesComparisonData.find(d => d.name === '전년 동기')?.jane! + salesComparisonData.find(d => d.name === '전년 동기')?.alex! + salesComparisonData.find(d => d.name === '전년 동기')?.john!;
 
     const achievementRate = (totalActual / totalTarget) * 100;
     const yoyGrowth = ((totalActual - totalLastYear) / totalLastYear) * 100;
@@ -60,7 +78,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
               <span>작년: ${totalLastYear.toLocaleString()}</span>
             </div>
           </div>
-          <ChartContainer config={chartConfig} className="h-[250px] w-full">
+          <ChartContainer config={chartConfig} className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesComparisonData} margin={{ top: 20 }}>
                 <XAxis
@@ -82,9 +100,15 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                   content={<ChartTooltipContent />}
                 />
                 <Legend />
-                <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" />
-                <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex" />
-                <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[4, 4, 0, 0]}>
+                   <LabelList dataKey="jane" content={<CustomLabel />} />
+                </Bar>
+                <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex">
+                   <LabelList dataKey="alex" content={<CustomLabel />} />
+                </Bar>
+                <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}>
+                   <LabelList dataKey="john" content={<CustomLabel />} />
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -122,7 +146,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
         </div>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">매출 비교</span>
+            <span className="text-sm font-medium">누적 매출 비교</span>
             <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
             </span>
@@ -162,3 +186,5 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     </Card>
   );
 }
+
+    
