@@ -21,9 +21,16 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   const chartData = isTeamData ? teamSalesTargetChartData : salesTargetChartData;
   
   const achievementRate = (data.current / data.target) * 100;
-  const lastYearTotalSales = isTeamData ? Object.values(teamSalesTargetChartData[1]).reduce((acc, val) => typeof val === 'number' ? acc + val : acc, 0) : data.lastYear;
-  const lastYearTarget = isTeamData ? 120000 : 40000;
-  const lastYearAchievementRate = (lastYearTotalSales / lastYearTarget) * 100;
+  
+  const currentYearTotalSales = isTeamData 
+    ? teamSalesTargetChartData[0].jane + teamSalesTargetChartData[0].alex + teamSalesTargetChartData[0].john 
+    : data.current;
+    
+  const lastYearTotalSales = isTeamData 
+    ? teamSalesTargetChartData[1].jane + teamSalesTargetChartData[1].alex + teamSalesTargetChartData[1].john 
+    : salesTargetChartData[1].sales;
+
+  const yoyGrowth = ((currentYearTotalSales - lastYearTotalSales) / lastYearTotalSales) * 100;
 
 
   const cardTitle = isTeamData ? '9월 누적 매출 현황' : '매출 목표';
@@ -57,13 +64,15 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           </div>
         </div>
         <div className="space-y-2">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <span className="text-sm font-medium">전년 동기 매출 비교</span>
-            <span className="text-sm text-muted-foreground">{lastYearAchievementRate.toFixed(1)}% 달성</span>
+            <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
+            </span>
           </div>
-          <Progress value={lastYearAchievementRate} className="[&>div]:bg-secondary-foreground/50" />
-           <div className="text-xs text-muted-foreground">
-            실적: ${lastYearTotalSales.toLocaleString()} / 목표: ${lastYearTarget.toLocaleString()}
+           <div className="text-xs text-muted-foreground flex justify-between">
+            <span>올해: ${currentYearTotalSales.toLocaleString()}</span>
+            <span>작년: ${lastYearTotalSales.toLocaleString()}</span>
           </div>
         </div>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
