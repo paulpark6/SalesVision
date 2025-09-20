@@ -38,7 +38,7 @@ export function OverviewCards() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">당해년도 누적</CardTitle>
+          <CardTitle className="text-sm font-medium">당해년도 9월 누적</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
