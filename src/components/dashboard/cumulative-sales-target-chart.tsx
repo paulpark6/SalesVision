@@ -10,6 +10,8 @@ import {
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { cumulativeReportData } from '@/lib/mock-data';
+import { cn } from '@/lib/utils';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 
 export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
   const cardTitle = isTeamData ? '팀 9월 누적 매출 현황' : '9월 누적 매출 현황';
@@ -32,14 +34,17 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
 
   const chartData = [{
     month: '9월 누적',
-    '실적': cumulativeActual,
     '목표': cumulativeTarget,
+    '실적': cumulativeActual,
     '전년실적': cumulativeLastYear,
   }];
+  
+  const achievementRate = cumulativeTarget > 0 ? (cumulativeActual / cumulativeTarget) * 100 : 0;
+  const yoyGrowth = cumulativeLastYear > 0 ? ((cumulativeActual - cumulativeLastYear) / cumulativeLastYear) * 100 : 0;
 
   const chartConfig = {
-    '실적': { label: '실적', color: 'hsl(var(--chart-2))' },
     '목표': { label: '목표', color: 'hsl(var(--chart-1))' },
+    '실적': { label: '실적', color: 'hsl(var(--chart-2))' },
     '전년실적': { label: '전년실적', color: 'hsl(var(--chart-3))' },
   };
 
@@ -52,48 +57,66 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              accessibilityLayer
-              data={chartData}
-              margin={{ top: 20 }}
-            >
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  className="font-bold"
-                />
-                <YAxis
-                    tickFormatter={(value) => `$${value / 1000}K`}
-                    tickLine={false}
-                    axisLine={false}
-                />
-              <Tooltip cursor={{ fill: 'transparent' }} content={<ChartTooltipContent hideLabel />} />
-              <Legend />
-              <Bar
-                dataKey="목표"
-                fill="var(--color-목표)"
-                radius={[4, 4, 0, 0]}
-                name="목표"
-              />
-              <Bar
-                dataKey="실적"
-                fill="var(--color-실적)"
-                radius={[4, 4, 0, 0]}
-                name="실적"
-              />
-               <Bar
-                dataKey="전년실적"
-                fill="var(--color-전년실적)"
-                radius={[4, 4, 0, 0]}
-                name="전년실적"
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+        <div className="relative mb-4">
+            <div className="flex justify-around text-center text-xs sm:text-sm font-bold h-8">
+                <div className="w-1/3 flex justify-end pr-2 sm:pr-4">
+                    <div className="flex flex-col items-center">
+                        <span>목표 대비</span>
+                        <span>{achievementRate.toFixed(1)}%</span>
+                    </div>
+                </div>
+                <div className="w-1/3 flex justify-center items-center px-1 sm:px-2">
+                    <div className={cn("flex items-center gap-1", yoyGrowth >= 0 ? "text-green-600" : "text-red-600")}>
+                        {yoyGrowth >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+                        <span>{yoyGrowth.toFixed(1)}%</span>
+                    </div>
+                </div>
+                <div className="w-1/3"></div>
+            </div>
+            <ChartContainer config={chartConfig} className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  accessibilityLayer
+                  data={chartData}
+                  margin={{ top: 0 }}
+                  barCategoryGap="20%"
+                >
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                      className="font-bold"
+                    />
+                    <YAxis
+                        tickFormatter={(value) => `$${value / 1000}K`}
+                        tickLine={false}
+                        axisLine={false}
+                    />
+                  <Tooltip cursor={{ fill: 'transparent' }} content={<ChartTooltipContent hideLabel />} />
+                  <Legend />
+                   <Bar
+                    dataKey="목표"
+                    fill="var(--color-목표)"
+                    radius={[4, 4, 0, 0]}
+                    name="목표"
+                  />
+                  <Bar
+                    dataKey="실적"
+                    fill="var(--color-실적)"
+                    radius={[4, 4, 0, 0]}
+                    name="실적"
+                  />
+                   <Bar
+                    dataKey="전년실적"
+                    fill="var(--color-전년실적)"
+                    radius={[4, 4, 0, 0]}
+                    name="전년실적"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );
