@@ -1,4 +1,3 @@
-
 'use client';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
 import {
@@ -18,6 +17,10 @@ import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
     const { x, y, width, height, value, payload } = props;
+
+    if (!payload) {
+        return null;
+    }
 
     // Don't render label if segment is too small
     if (height < 20 || !value) {
