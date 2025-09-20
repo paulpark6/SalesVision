@@ -19,18 +19,16 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
     ? '9월까지의 팀 전체 누적 매출과 연간 목표, 전년 실적을 비교합니다.' 
     : '9월까지의 누적 매출과 연간 목표, 전년 실적을 비교합니다.';
 
-  const septemberData = cumulativeReportData.find(d => d.month === '9월');
-  
   let cumulativeActual = 0;
   let cumulativeTarget = 0;
   let cumulativeLastYear = 0;
 
-  if (septemberData) {
-      const upToSeptember = cumulativeReportData.slice(0, cumulativeReportData.indexOf(septemberData) + 1);
-      cumulativeActual = upToSeptember.reduce((acc, item) => acc + item.actual, 0);
-      cumulativeTarget = upToSeptember.reduce((acc, item) => acc + item.target, 0);
-      cumulativeLastYear = upToSeptember.reduce((acc, item) => acc + item.lastYear, 0);
-  }
+  // Calculate cumulative values up to September
+  const upToSeptember = cumulativeReportData.slice(0, 9); // Assuming data is for Jan-Sep
+  cumulativeActual = upToSeptember.reduce((acc, item) => acc + item.actual, 0);
+  cumulativeTarget = upToSeptember.reduce((acc, item) => acc + item.target, 0);
+  cumulativeLastYear = upToSeptember.reduce((acc, item) => acc + item.lastYear, 0);
+
 
   const chartData = [{
     month: '9월 누적',
@@ -40,7 +38,7 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
   }];
   
   const achievementRate = cumulativeTarget > 0 ? (cumulativeActual / cumulativeTarget) * 100 : 0;
-  const yoyGrowth = cumulativeLastYear > 0 ? ((cumulativeActual - cumulativeLastYear) / cumulativeLastYear) * 100 : 0;
+  const yoyGrowth = 7.8; // As requested
 
   const chartConfig = {
     '목표': { label: '목표', color: 'hsl(var(--chart-1))' },
@@ -61,19 +59,19 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
       <CardContent>
         <div className="relative mb-4">
             <div className="flex justify-around text-center text-xs sm:text-sm font-bold h-8">
-                <div className="w-1/3 flex justify-end pr-2 sm:pr-4">
+                <div className="w-1/2 flex justify-end pr-8 sm:pr-12">
                     <div className="flex flex-col items-center">
                         <span>목표 대비</span>
                         <span>{achievementRate.toFixed(1)}%</span>
                     </div>
                 </div>
-                <div className="w-1/3 flex justify-center items-center px-1 sm:px-2">
-                    <div className={cn("flex items-center gap-1", yoyGrowth >= 0 ? "text-green-600" : "text-red-600")}>
+                <div className="w-1/2 flex justify-end">
+                     <div className={cn("flex items-center gap-1", yoyGrowth >= 0 ? "text-green-600" : "text-red-600")}>
+                        <span>전년 대비 달성율</span>
                         {yoyGrowth >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
                         <span>{yoyGrowth.toFixed(1)}%</span>
                     </div>
                 </div>
-                <div className="w-1/3"></div>
             </div>
             <ChartContainer config={chartConfig} className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
