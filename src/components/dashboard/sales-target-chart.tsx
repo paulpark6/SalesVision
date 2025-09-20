@@ -18,11 +18,11 @@ import { Progress } from '../ui/progress';
 const CustomLabel = (props: any) => {
     const { x, y, width, height, value, name, payload } = props;
 
-    // Don't render label if the segment is too small
+    // Don't render label if the segment is too small, or if critical data is missing
     if (height < 20 || !value || !payload) {
         return null;
     }
-
+    
     const total = (payload.jane || 0) + (payload.alex || 0) + (payload.john || 0);
     const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
     
