@@ -213,19 +213,11 @@ export default function SalesTargetPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead rowSpan={2} className="align-bottom">고객명</TableHead>
-                            <TableHead colSpan={2} className="text-center">6월 매출</TableHead>
-                            <TableHead colSpan={2} className="text-center">7월 매출</TableHead>
-                            <TableHead colSpan={2} className="text-center">8월 매출</TableHead>
-                            <TableHead rowSpan={2} className="align-bottom text-right w-[200px]">9월 목표 총액</TableHead>
-                        </TableRow>
-                         <TableRow>
-                            <TableHead className="text-right">수량</TableHead>
-                            <TableHead className="text-right">금액</TableHead>
-                            <TableHead className="text-right">수량</TableHead>
-                            <TableHead className="text-right">금액</TableHead>
-                            <TableHead className="text-right">수량</TableHead>
-                            <TableHead className="text-right">금액</TableHead>
+                            <TableHead>고객명</TableHead>
+                            <TableHead className="text-center">6월 매출</TableHead>
+                            <TableHead className="text-center">7월 매출</TableHead>
+                            <TableHead className="text-center">8월 매출</TableHead>
+                            <TableHead className="text-right w-[200px]">9월 목표 총액</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -244,7 +236,6 @@ export default function SalesTargetPage() {
                                         </TableCell>
                                         {data.monthlySales.map(sale => (
                                            <Fragment key={sale.month}>
-                                             <TableCell className="text-right">{sale.totalQuantity}</TableCell>
                                              <TableCell className="text-right">{formatCurrency(sale.amount)}</TableCell>
                                            </Fragment>
                                         ))}
@@ -334,11 +325,8 @@ export default function SalesTargetPage() {
                      <TableFooter>
                         <TableRow>
                             <TableCell className="font-bold">총계</TableCell>
-                            <TableCell className="text-right font-bold">{grandTotals.totalQuantities[0]}</TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalAmounts[0])}</TableCell>
-                            <TableCell className="text-right font-bold">{grandTotals.totalQuantities[1]}</TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalAmounts[1])}</TableCell>
-                            <TableCell className="text-right font-bold">{grandTotals.totalQuantities[2]}</TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalAmounts[2])}</TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.totalSeptemberTarget)}</TableCell>
                         </TableRow>
