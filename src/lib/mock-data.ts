@@ -1,6 +1,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -473,7 +474,10 @@ export const salesTargetHistoryData = [
             { month: '8월', amount: 2450.50, products: ['Smartphone'] },
             { month: '9월', amount: 2600.00, products: ['Laptop', 'Coffee Maker'] }
         ],
-        nextMonthTarget: 2800.00
+        nextMonthTarget: [
+            { productName: 'Laptop', targetAmount: 2000 },
+            { productName: 'T-Shirt', targetAmount: 500 },
+        ]
     },
     { 
         customerCode: 'C-107', 
@@ -483,7 +487,10 @@ export const salesTargetHistoryData = [
             { month: '8월', amount: 5890.00, products: ['Jeans', 'T-Shirt', 'Cookbook'] },
             { month: '9월', amount: 6100.00, products: ['Jeans', 'Gaming Console'] }
         ],
-        nextMonthTarget: 6500.00
+        nextMonthTarget: [
+            { productName: 'Jeans', targetAmount: 4000 },
+            { productName: 'Gaming Console', targetAmount: 2500 },
+        ]
     },
     { 
         customerCode: 'C-108', 
@@ -493,6 +500,21 @@ export const salesTargetHistoryData = [
             { month: '8월', amount: 1530.25, products: ['Tablet', 'T-Shirt'] },
             { month: '9월', amount: 1700.00, products: ['Tablet', 'Science Fiction Novel'] }
         ],
-        nextMonthTarget: 1800.00
+        nextMonthTarget: [
+            { productName: 'Tablet', targetAmount: 1800 }
+        ]
     },
+    {
+        customerCode: 'C-205',
+        customerName: 'New Customer Inc.',
+        monthlySales: [
+            { month: '7월', amount: 0, products: [] },
+            { month: '8월', amount: 0, products: [] },
+            { month: '9월', amount: 0, products: [] }
+        ],
+        nextMonthTarget: [
+            { productName: 'Initial Product', targetAmount: 5000 }
+        ]
+    }
 ];
+
