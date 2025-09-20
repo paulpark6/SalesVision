@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { EmployeeSalesTarget } from '@/components/dashboard/employee-sales-target';
 import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
+import { SalesTargetInput } from '@/components/dashboard/sales-target-input';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function DashboardPage() {
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <RecentSalesTable />
                 <EmployeeCreditSummary />
+                <SalesTargetInput />
                 <SalesTrendAnalysisCard />
               </div>
             </div>
