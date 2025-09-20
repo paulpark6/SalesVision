@@ -42,9 +42,9 @@ type TargetProduct = {
 
 type MonthlySale = {
     month: string;
-    quantity: number;
+    totalQuantity: number;
     amount: number;
-    products: string[];
+    products: { name: string; quantity: number }[];
 };
 
 type TargetData = {
@@ -166,7 +166,7 @@ export default function SalesTargetPage() {
         return { totalQuantities: [0, 0, 0], totalAmounts: [0, 0, 0], totalSeptemberTarget: 0 };
     }
     const totalQuantities = salesData[0].monthlySales.map((_, i) =>
-        salesData.reduce((sum, customer) => sum + (customer.monthlySales[i]?.quantity || 0), 0)
+        salesData.reduce((sum, customer) => sum + (customer.monthlySales[i]?.totalQuantity || 0), 0)
     );
     const totalAmounts = salesData[0].monthlySales.map((_, i) =>
         salesData.reduce((sum, customer) => sum + (customer.monthlySales[i]?.amount || 0), 0)
@@ -244,7 +244,7 @@ export default function SalesTargetPage() {
                                         </TableCell>
                                         {data.monthlySales.map(sale => (
                                            <Fragment key={sale.month}>
-                                             <TableCell className="text-right">{sale.quantity}</TableCell>
+                                             <TableCell className="text-right">{sale.totalQuantity}</TableCell>
                                              <TableCell className="text-right">{formatCurrency(sale.amount)}</TableCell>
                                            </Fragment>
                                         ))}
@@ -257,16 +257,18 @@ export default function SalesTargetPage() {
                                             <TableCell colSpan={8} className="p-0">
                                                 <div className="bg-muted/50 p-4 space-y-4">
                                                     <div>
-                                                        <h4 className="font-semibold mb-2 text-base">지난 3개월 판매 제품</h4>
+                                                        <h4 className="font-semibold mb-2 text-base">지난 3개월 판매 제품 (수량)</h4>
                                                          <div className="grid grid-cols-3 gap-4">
                                                             {data.monthlySales.map(sale => (
                                                                 <div key={sale.month}>
                                                                     <h5 className="font-medium mb-2">{sale.month}</h5>
-                                                                    <div className="flex flex-wrap gap-1">
-                                                                        {sale.products.length > 0 ? sale.products.map(product => (
-                                                                            <Badge key={product} variant="secondary">{product}</Badge>
-                                                                        )) : <span className="text-xs text-muted-foreground">No sales</span>}
-                                                                    </div>
+                                                                    {sale.products.length > 0 ? (
+                                                                        <ul className="space-y-1 text-sm text-muted-foreground">
+                                                                            {sale.products.map(p => <li key={p.name}>{p.name} ({p.quantity})</li>)}
+                                                                        </ul>
+                                                                    ) : (
+                                                                        <p className="text-xs text-muted-foreground">No sales</p>
+                                                                    )}
                                                                 </div>
                                                             ))}
                                                         </div>

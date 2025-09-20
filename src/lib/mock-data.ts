@@ -14,6 +14,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -282,17 +283,238 @@ export const customerProductSalesDetails: Record<string, CustomerProductSale[]> 
   ],
 };
 
-type MonthlySale = { month: number; actual: number; average: number };
-type YearlySale = { year: number; amount: number };
+type MonthlySaleHistory = { 
+  month: string; 
+  totalQuantity: number; 
+  amount: number; 
+  products: { name: string; quantity: number }[] 
+};
+type TargetProduct = { 
+  productName: string; 
+  quantity: number; 
+  price: number; 
+  targetAmount: number 
+};
 
-export type Customer = {
+export type SalesTargetHistoryData = {
+    customerCode: string;
+    customerName: string;
+    monthlySales: MonthlySaleHistory[];
+    nextMonthTarget: TargetProduct[];
+};
+
+
+export const salesTargetHistoryData: SalesTargetHistoryData[] = [
+    { 
+        customerCode: 'C-106', 
+        customerName: 'Liam Johnson', 
+        monthlySales: [
+            { month: '6월', totalQuantity: 2, amount: 2250.00, products: [{ name: 'Laptop', quantity: 2 }] },
+            { month: '7월', totalQuantity: 6, amount: 2300.00, products: [{ name: 'Laptop', quantity: 1 }, { name: 'T-Shirt', quantity: 5 }] },
+            { month: '8월', totalQuantity: 3, amount: 2450.50, products: [{ name: 'Smartphone', quantity: 3 }] }
+        ],
+        nextMonthTarget: [
+            { productName: 'Laptop', quantity: 2, price: 1125, targetAmount: 2250 },
+            { productName: 'T-Shirt', quantity: 10, price: 23.75, targetAmount: 237.5 },
+        ]
+    },
+    { 
+        customerCode: 'C-107', 
+        customerName: 'Emma Brown', 
+        monthlySales: [
+            { month: '6월', totalQuantity: 7, amount: 5200.00, products: [{ name: 'Jeans', quantity: 7 }] },
+            { month: '7월', totalQuantity: 8, amount: 5400.00, products: [{ name: 'Jeans', quantity: 5 }, { name: 'Winter Jacket', quantity: 3 }] },
+            { month: '8월', totalQuantity: 12, amount: 5890.00, products: [{ name: 'Jeans', quantity: 8 }, { name: 'T-Shirt', quantity: 2 }, { name: 'Cookbook', quantity: 2 }] }
+        ],
+        nextMonthTarget: [
+             { productName: 'Jeans', quantity: 50, price: 67.5, targetAmount: 3375 },
+             { productName: 'Gaming Console', quantity: 5, price: 450, targetAmount: 2250 },
+        ]
+    },
+    { 
+        customerCode: 'C-108', 
+        customerName: 'Olivia Smith', 
+        monthlySales: [
+            { month: '6월', totalQuantity: 0, amount: 1450.00, products: [] },
+            { month: '7월', totalQuantity: 1, amount: 1500.00, products: [{ name: 'Tablet', quantity: 1 }] },
+            { month: '8월', totalQuantity: 2, amount: 1530.25, products: [{ name: 'Tablet', quantity: 1 }, { name: 'T-Shirt', quantity: 1 }] }
+        ],
+        nextMonthTarget: [
+            { productName: 'Tablet', quantity: 4, price: 427.5, targetAmount: 1710 }
+        ]
+    },
+    {
+        customerCode: 'C-110',
+        customerName: 'Noah Williams',
+        monthlySales: [
+            { month: '6월', totalQuantity: 0, amount: 0, products: [] },
+            { month: '7월', totalQuantity: 0, amount: 0, products: [] },
+            { month: '8월', totalQuantity: 0, amount: 0, products: [] }
+        ],
+        nextMonthTarget: [
+            { productName: 'Laptop', quantity: 4, price: 1125, targetAmount: 4500 }
+        ]
+    }
+];
+
+export const salesReportData = [
+    { employeeName: 'Jane Smith', customerName: 'Liam Johnson', customerCode: 'C-106', target: 2500, actual: 2600.00 },
+    { employeeName: 'Jane Smith', customerName: 'Emma Brown', customerCode: 'C-107', target: 6500, actual: 6100.00 },
+    { employeeName: 'Alex Ray', customerName: 'Olivia Smith', customerCode: 'C-108', target: 1800, actual: 1700.00 },
+    { employeeName: 'Alex Ray', customerName: 'Ava Jones', customerCode: 'C-109', target: 1000, actual: 810.00 },
+    { employeeName: 'John Doe', customerName: 'Noah Williams', customerCode: 'C-110', target: 9000, actual: 9200.00 },
+    { employeeName: 'John Doe', customerName: 'James Wilson', customerCode: 'C-111', target: 1000, actual: 1000.00 },
+];
+
+export type MonthlyDetail = {
+    month: string;
+    details: {
+        customerName: string;
+        products: {
+            productName: string;
+            target: number;
+            actual: number;
+        }[];
+    }[];
+};
+
+export const monthlyDetailReportData: MonthlyDetail[] = [
+    {
+        month: '9월',
+        details: [
+            {
+                customerName: 'Liam Johnson',
+                products: [
+                    { productName: 'Laptop', target: 2000, actual: 2100 },
+                    { productName: 'T-Shirt', target: 500, actual: 500 },
+                ],
+            },
+            {
+                customerName: 'Emma Brown',
+                products: [
+                    { productName: 'Jeans', target: 4000, actual: 3800 },
+                    { productName: 'Gaming Console', target: 2500, actual: 2300 },
+                ],
+            },
+            {
+                customerName: 'Noah Williams',
+                products: [
+                    { productName: 'Smartphone', target: 9000, actual: 9200 },
+                ],
+            },
+        ],
+    },
+    // Add more months as needed
+    {
+        month: '8월',
+        details: [
+            {
+                customerName: 'Liam Johnson',
+                products: [
+                    { productName: 'Smartphone', target: 2500, actual: 2450.50 },
+                ],
+            },
+            {
+                customerName: 'Emma Brown',
+                products: [
+                    { productName: 'Jeans', target: 3000, actual: 3200 },
+                    { productName: 'T-Shirt', target: 1000, actual: 1200 },
+                    { productName: 'Cookbook', target: 1500, actual: 1490 },
+                ],
+            },
+        ],
+    },
+];
+
+
+
+const calculateTotalTarget = (data: typeof salesTargetHistoryData) => {
+    return data.reduce((total, customer) => {
+        const customerTotal = customer.nextMonthTarget.reduce((sum, product) => sum + product.targetAmount, 0);
+        return total + customerTotal;
+    }, 0);
+};
+
+const calculateCurrentSales = (data: typeof salesTargetHistoryData) => {
+    // This is now a bit of a misnomer, as we don't have September sales yet.
+    // For demonstration, let's use August sales as a placeholder for "current".
+    // In a real app, you'd fetch actual September sales data.
+    return 45231.89; // Keeping a static value for consistency with dashboard cards
+};
+
+export const monthlySalesData = {
+    target: calculateTotalTarget(salesTargetHistoryData),
+    current: calculateCurrentSales(salesTargetHistoryData),
+};
+
+export type CashSale = {
+    id: string;
+    date: string;
+    customerName: string;
+    employeeName: string;
+    amount: number;
+    source: '현금 판매' | '신용 수금';
+};
+
+export const cashSalesData: CashSale[] = [
+    { id: 'cs-1', date: '2024-09-01', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 125.50, source: '현금 판매' },
+    { id: 'cs-2', date: '2024-09-01', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 60.00, source: '현금 판매' },
+    { id: 'cs-8', date: '2024-09-01', customerName: 'Liam Johnson', employeeName: 'Jane Smith', amount: 250.00, source: '신용 수금' },
+    { id: 'cs-3', date: '2024-09-02', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 200.00, source: '현금 판매' },
+    { id: 'cs-4', date: '2024-09-02', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 45.00, source: '현금 판매' },
+    { id: 'cs-9', date: '2024-09-02', customerName: 'James Wilson', employeeName: 'John Doe', amount: 200.00, source: '신용 수금' },
+    { id: 'cs-5', date: '2024-09-03', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 300.00, source: '현금 판매' },
+    { id: 'cs-6', date: '2024-09-03', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 80.00, source: '현금 판매' },
+    { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00, source: '현금 판매' },
+];
+
+export type CheckPayment = {
+    id: string;
+    receiptDate: string;
+    salesperson: string;
+    customerName: string;
+    amount: number;
+    issuingBank: string;
+    checkNumber: string;
+    depositDate: string;
+    notes?: string;
+};
+
+export const checkPaymentsData: CheckPayment[] = [
+    { id: 'chk-1', receiptDate: '2024-09-01', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 500.00, issuingBank: 'Bank of America', checkNumber: '12345', depositDate: '2024-09-10', notes: 'Partial payment for INV-1008' },
+    { id: 'chk-2', receiptDate: '2024-09-02', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, issuingBank: 'Chase', checkNumber: '67890', depositDate: '2024-09-12', notes: 'Full payment for INV-1009' },
+    { id: 'chk-3', receiptDate: '2024-09-03', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 1000.00, issuingBank: 'Wells Fargo', checkNumber: '101112', depositDate: '2024-09-15', notes: '' },
+    { id: 'chk-4', receiptDate: '2024-09-04', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, issuingBank: 'Citibank', checkNumber: '131415', depositDate: '2024-09-11', notes: 'Payment for overdue balance' },
+];
+
+export type CreditNote = {
+    id: string;
+    salesDate: string;
+    salesperson: string;
+    customerName: string;
+    amount: number;
+    dueDate: string;
+};
+
+export const creditNoteData: CreditNote[] = [
+    { id: 'cn-001', salesDate: '2024-08-15', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 250.00, dueDate: '2024-09-14' },
+    { id: 'cn-002', salesDate: '2024-08-20', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, dueDate: '2024-09-19' },
+    { id: 'cn-003', salesDate: '2024-07-25', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 350.00, dueDate: '2024-08-24' }, // 1-30 days overdue
+    { id: 'cn-004', salesDate: '2024-06-15', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, dueDate: '2024-07-15' }, // 31-60 days overdue
+    { id: 'cn-005', salesDate: '2024-05-10', salesperson: 'Alex Ray', customerName: 'Ava Jones', amount: 550.00, dueDate: '2024-06-09' }, // 61-90 days overdue
+    { id: 'cn-006', salesDate: '2024-03-01', salesperson: 'John Doe', customerName: 'James Wilson', amount: 200.00, dueDate: '2024-03-31' }, // > 90 days overdue
+    { id: 'cn-007', salesDate: '2024-07-30', salesperson: 'Jane Smith', customerName: 'Tech Innovators', amount: 1200.00, dueDate: '2024-08-29' }, // 1-30 days overdue
+    { id: 'cn-008', salesDate: '2024-08-25', salesperson: 'Alex Ray', customerName: 'Global Exports', amount: 3200.00, dueDate: '2024-09-24' },
+];
+
+type Customer = {
   employee: string;
   customerName: string;
   customerCode: string;
   customerGrade: string;
   customerType: 'own' | 'transfer' | 'pending';
-  monthlySales: MonthlySale[];
-  yearlySales: YearlySale[];
+  monthlySales: { month: number; actual: number; average: number }[];
+  yearlySales: { year: number; amount: number }[];
   creditBalance: number;
   contact: {
     name: string;
@@ -485,208 +707,4 @@ export const commissionData = [
       { type: '현지', salePrice: 100000, costPrice: 95000, customerType: 'transfer' }, // Margin 5% -> 3% rate * 50%
     ],
   },
-];
-
-
-export const salesTargetHistoryData = [
-    { 
-        customerCode: 'C-106', 
-        customerName: 'Liam Johnson', 
-        monthlySales: [
-            { month: '6월', quantity: 2, amount: 2250.00, products: ['Laptop'] },
-            { month: '7월', quantity: 5, amount: 2300.00, products: ['Laptop', 'T-Shirt'] },
-            { month: '8월', quantity: 3, amount: 2450.50, products: ['Smartphone'] }
-        ],
-        nextMonthTarget: [ // September targets
-            { productName: 'Laptop', quantity: 2, price: 1125, targetAmount: 2250 },
-            { productName: 'T-Shirt', quantity: 10, price: 23.75, targetAmount: 237.5 },
-        ]
-    },
-    { 
-        customerCode: 'C-107', 
-        customerName: 'Emma Brown', 
-        monthlySales: [
-            { month: '6월', quantity: 7, amount: 5200.00, products: ['Jeans'] },
-            { month: '7월', quantity: 8, amount: 5400.00, products: ['Jeans', 'Winter Jacket'] },
-            { month: '8월', quantity: 10, amount: 5890.00, products: ['Jeans', 'T-Shirt', 'Cookbook'] }
-        ],
-        nextMonthTarget: [ // September targets
-             { productName: 'Jeans', quantity: 50, price: 67.5, targetAmount: 3375 },
-             { productName: 'Gaming Console', quantity: 5, price: 450, targetAmount: 2250 },
-        ]
-    },
-    { 
-        customerCode: 'C-108', 
-        customerName: 'Olivia Smith', 
-        monthlySales: [
-            { month: '6월', quantity: 0, amount: 1450.00, products: [] },
-            { month: '7월', quantity: 1, amount: 1500.00, products: ['Tablet'] },
-            { month: '8월', quantity: 2, amount: 1530.25, products: ['Tablet', 'T-Shirt'] }
-        ],
-        nextMonthTarget: [ // September targets
-            { productName: 'Tablet', quantity: 4, price: 427.5, targetAmount: 1710 }
-        ]
-    },
-    {
-        customerCode: 'C-110',
-        customerName: 'Noah Williams',
-        monthlySales: [
-            { month: '6월', quantity: 0, amount: 0, products: [] },
-            { month: '7월', quantity: 0, amount: 0, products: [] },
-            { month: '8월', quantity: 0, amount: 0, products: [] }
-        ],
-        nextMonthTarget: [ // September targets
-            { productName: 'Laptop', quantity: 4, price: 1125, targetAmount: 4500 }
-        ]
-    }
-];
-
-export const salesReportData = [
-    { employeeName: 'Jane Smith', customerName: 'Liam Johnson', customerCode: 'C-106', target: 2500, actual: 2600.00 },
-    { employeeName: 'Jane Smith', customerName: 'Emma Brown', customerCode: 'C-107', target: 6500, actual: 6100.00 },
-    { employeeName: 'Alex Ray', customerName: 'Olivia Smith', customerCode: 'C-108', target: 1800, actual: 1700.00 },
-    { employeeName: 'Alex Ray', customerName: 'Ava Jones', customerCode: 'C-109', target: 1000, actual: 810.00 },
-    { employeeName: 'John Doe', customerName: 'Noah Williams', customerCode: 'C-110', target: 9000, actual: 9200.00 },
-    { employeeName: 'John Doe', customerName: 'James Wilson', customerCode: 'C-111', target: 1000, actual: 1000.00 },
-];
-
-export type MonthlyDetail = {
-    month: string;
-    details: {
-        customerName: string;
-        products: {
-            productName: string;
-            target: number;
-            actual: number;
-        }[];
-    }[];
-};
-
-export const monthlyDetailReportData: MonthlyDetail[] = [
-    {
-        month: '9월',
-        details: [
-            {
-                customerName: 'Liam Johnson',
-                products: [
-                    { productName: 'Laptop', target: 2000, actual: 2100 },
-                    { productName: 'T-Shirt', target: 500, actual: 500 },
-                ],
-            },
-            {
-                customerName: 'Emma Brown',
-                products: [
-                    { productName: 'Jeans', target: 4000, actual: 3800 },
-                    { productName: 'Gaming Console', target: 2500, actual: 2300 },
-                ],
-            },
-            {
-                customerName: 'Noah Williams',
-                products: [
-                    { productName: 'Smartphone', target: 9000, actual: 9200 },
-                ],
-            },
-        ],
-    },
-    // Add more months as needed
-    {
-        month: '8월',
-        details: [
-            {
-                customerName: 'Liam Johnson',
-                products: [
-                    { productName: 'Smartphone', target: 2500, actual: 2450.50 },
-                ],
-            },
-            {
-                customerName: 'Emma Brown',
-                products: [
-                    { productName: 'Jeans', target: 3000, actual: 3200 },
-                    { productName: 'T-Shirt', target: 1000, actual: 1200 },
-                    { productName: 'Cookbook', target: 1500, actual: 1490 },
-                ],
-            },
-        ],
-    },
-];
-
-
-
-const calculateTotalTarget = (data: typeof salesTargetHistoryData) => {
-    return data.reduce((total, customer) => {
-        const customerTotal = customer.nextMonthTarget.reduce((sum, product) => sum + product.targetAmount, 0);
-        return total + customerTotal;
-    }, 0);
-};
-
-const calculateCurrentSales = (data: typeof salesTargetHistoryData) => {
-    // This is now a bit of a misnomer, as we don't have September sales yet.
-    // For demonstration, let's use August sales as a placeholder for "current".
-    // In a real app, you'd fetch actual September sales data.
-    return 45231.89; // Keeping a static value for consistency with dashboard cards
-};
-
-export const monthlySalesData = {
-    target: calculateTotalTarget(salesTargetHistoryData),
-    current: calculateCurrentSales(salesTargetHistoryData),
-};
-
-export type CashSale = {
-    id: string;
-    date: string;
-    customerName: string;
-    employeeName: string;
-    amount: number;
-    source: '현금 판매' | '신용 수금';
-};
-
-export const cashSalesData: CashSale[] = [
-    { id: 'cs-1', date: '2024-09-01', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 125.50, source: '현금 판매' },
-    { id: 'cs-2', date: '2024-09-01', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 60.00, source: '현금 판매' },
-    { id: 'cs-8', date: '2024-09-01', customerName: 'Liam Johnson', employeeName: 'Jane Smith', amount: 250.00, source: '신용 수금' },
-    { id: 'cs-3', date: '2024-09-02', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 200.00, source: '현금 판매' },
-    { id: 'cs-4', date: '2024-09-02', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 45.00, source: '현금 판매' },
-    { id: 'cs-9', date: '2024-09-02', customerName: 'James Wilson', employeeName: 'John Doe', amount: 200.00, source: '신용 수금' },
-    { id: 'cs-5', date: '2024-09-03', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 300.00, source: '현금 판매' },
-    { id: 'cs-6', date: '2024-09-03', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 80.00, source: '현금 판매' },
-    { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00, source: '현금 판매' },
-];
-
-export type CheckPayment = {
-    id: string;
-    receiptDate: string;
-    salesperson: string;
-    customerName: string;
-    amount: number;
-    issuingBank: string;
-    checkNumber: string;
-    depositDate: string;
-    notes?: string;
-};
-
-export const checkPaymentsData: CheckPayment[] = [
-    { id: 'chk-1', receiptDate: '2024-09-01', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 500.00, issuingBank: 'Bank of America', checkNumber: '12345', depositDate: '2024-09-10', notes: 'Partial payment for INV-1008' },
-    { id: 'chk-2', receiptDate: '2024-09-02', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, issuingBank: 'Chase', checkNumber: '67890', depositDate: '2024-09-12', notes: 'Full payment for INV-1009' },
-    { id: 'chk-3', receiptDate: '2024-09-03', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 1000.00, issuingBank: 'Wells Fargo', checkNumber: '101112', depositDate: '2024-09-15', notes: '' },
-    { id: 'chk-4', receiptDate: '2024-09-04', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, issuingBank: 'Citibank', checkNumber: '131415', depositDate: '2024-09-11', notes: 'Payment for overdue balance' },
-];
-
-export type CreditNote = {
-    id: string;
-    salesDate: string;
-    salesperson: string;
-    customerName: string;
-    amount: number;
-    dueDate: string;
-};
-
-export const creditNoteData: CreditNote[] = [
-    { id: 'cn-001', salesDate: '2024-08-15', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 250.00, dueDate: '2024-09-14' },
-    { id: 'cn-002', salesDate: '2024-08-20', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, dueDate: '2024-09-19' },
-    { id: 'cn-003', salesDate: '2024-07-25', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 350.00, dueDate: '2024-08-24' }, // 1-30 days overdue
-    { id: 'cn-004', salesDate: '2024-06-15', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, dueDate: '2024-07-15' }, // 31-60 days overdue
-    { id: 'cn-005', salesDate: '2024-05-10', salesperson: 'Alex Ray', customerName: 'Ava Jones', amount: 550.00, dueDate: '2024-06-09' }, // 61-90 days overdue
-    { id: 'cn-006', salesDate: '2024-03-01', salesperson: 'John Doe', customerName: 'James Wilson', amount: 200.00, dueDate: '2024-03-31' }, // > 90 days overdue
-    { id: 'cn-007', salesDate: '2024-07-30', salesperson: 'Jane Smith', customerName: 'Tech Innovators', amount: 1200.00, dueDate: '2024-08-29' }, // 1-30 days overdue
-    { id: 'cn-008', salesDate: '2024-08-25', salesperson: 'Alex Ray', customerName: 'Global Exports', amount: 3200.00, dueDate: '2024-09-24' },
 ];
