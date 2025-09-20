@@ -42,13 +42,13 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     return (
       <Card>
         <CardHeader>
-          <CardTitle>9월 누적 매출 종합 비교</CardTitle>
+          <CardTitle>9월 팀 매출 현황</CardTitle>
           <CardDescription>팀의 9월 목표, 실적, 전년 동기 실적을 비교합니다.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm font-medium">9월 누적 달성률</span>
+              <span className="text-sm font-medium">9월 달성률</span>
               <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
             </div>
             <Progress value={achievementRate} />
@@ -58,7 +58,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
           </div>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">9월 누적 매출 비교</span>
+              <span className="text-sm font-medium">전년 동월 대비</span>
               <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
               </span>
@@ -135,7 +135,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">9월 누적 달성률</span>
+            <span className="text-sm font-medium">9월 달성률</span>
             <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
           </div>
           <Progress value={achievementRate} />
@@ -145,7 +145,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
         </div>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">9월 누적 매출 비교</span>
+            <span className="text-sm font-medium">전년 동월 대비</span>
             <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
             </span>
