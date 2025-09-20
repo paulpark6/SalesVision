@@ -62,10 +62,6 @@ export default function CustomersPage() {
     router.push(dashboardPath);
   };
   
-  if (!role) {
-    return null;
-  }
-
   const formatCurrency = (amount: number) => {
     return amount.toLocaleString('en-US', {
       style: 'currency',
@@ -140,6 +136,10 @@ export default function CustomersPage() {
     }
     return customerData;
   }, [customerData, showMyCustomers, loggedInEmployee]);
+  
+  if (!role) {
+    return null;
+  }
 
   return (
     <SidebarProvider>
@@ -150,7 +150,7 @@ export default function CustomersPage() {
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">고객 관리</h1>
                 <div className="flex items-center gap-2">
-                    {role === 'manager' && (
+                    {(role === 'manager' || role === 'admin') && (
                         <>
                              <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
                                 <Download className="h-3.5 w-3.5" />
