@@ -32,15 +32,15 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
 
   const chartData = [{
     month: '9월 누적',
-    '누적 실적': cumulativeActual,
-    '누적 목표': cumulativeTarget,
-    '전년동기간 누적': cumulativeLastYear,
+    '실적': cumulativeActual,
+    '목표': cumulativeTarget,
+    '전년실적': cumulativeLastYear,
   }];
 
   const chartConfig = {
-    '누적 실적': { label: '누적 실적', color: 'hsl(var(--chart-1))' },
-    '누적 목표': { label: '누적 목표', color: 'hsl(var(--chart-2))' },
-    '전년동기간 누적': { label: '전년동기간 누적', color: 'hsl(var(--chart-3))' },
+    '실적': { label: '실적', color: 'hsl(var(--chart-1))' },
+    '목표': { label: '목표', color: 'hsl(var(--chart-2))' },
+    '전년실적': { label: '전년실적', color: 'hsl(var(--chart-3))' },
   };
 
   return (
@@ -74,22 +74,22 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
               <Tooltip cursor={{ fill: 'transparent' }} content={<ChartTooltipContent hideLabel />} />
               <Legend />
               <Bar
-                dataKey="누적 실적"
-                fill="var(--color-누적 실적)"
+                dataKey="실적"
+                fill="var(--color-실적)"
                 radius={[4, 4, 0, 0]}
-                name="누적 실적"
+                name="실적"
               />
               <Bar
-                dataKey="누적 목표"
-                fill="var(--color-누적 목표)"
+                dataKey="목표"
+                fill="var(--color-목표)"
                 radius={[4, 4, 0, 0]}
-                name="누적 목표"
+                name="목표"
               />
                <Bar
-                dataKey="전년동기간 누적"
-                fill="var(--color-전년동기간 누적)"
+                dataKey="전년실적"
+                fill="var(--color-전년실적)"
                 radius={[4, 4, 0, 0]}
-                name="전년동기간 누적"
+                name="전년실적"
               />
             </BarChart>
           </ResponsiveContainer>
