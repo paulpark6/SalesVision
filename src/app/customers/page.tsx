@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, Fragment } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { customerData as initialCustomerData, customerUploadCsvData, employees } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
@@ -136,7 +136,12 @@ export default function CustomersPage() {
   };
 
   const filteredCustomerData = useMemo(() => {
-    if (role === 'employee' || (role === 'manager' && showMyCustomers)) {
+    if (role === 'employee') {
+      if (loggedInEmployee) {
+        return customerData.filter(customer => customer.employee === loggedInEmployee.name);
+      }
+      return [];
+    } else if (role === 'manager' && showMyCustomers) {
       if (loggedInEmployee) {
         return customerData.filter(customer => customer.employee === loggedInEmployee.name);
       }
@@ -261,34 +266,30 @@ export default function CustomersPage() {
                       const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
                       const isOpen = openCollapsible === customer.customerCode;
                       return (
-                      <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
-                        <tbody key={customer.customerCode}>
-                          <TableRow className="cursor-pointer">
+                      <Fragment key={customer.customerCode}>
+                        <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                          <TableRow>
+                            <TableCell>{customer.employee}</TableCell>
                             <TableCell>
-                              <div className="font-medium">{customer.employee}</div>
-                            </TableCell>
-                            <TableCell>
-                              <CollapsibleTrigger className='w-full'>
-                                <div className="flex items-center gap-2 text-left">
-                                  <div className="font-medium">{customer.customerName}</div>
-                                  <div className="text-sm text-muted-foreground">
-                                    {customer.customerCode}
-                                  </div>
+                              <CollapsibleTrigger asChild>
+                                <div className="flex items-center gap-2 cursor-pointer">
+                                  <span>{customer.customerName}</span>
                                   <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                                  <div className="text-sm text-muted-foreground ml-auto">{customer.customerCode}</div>
                                 </div>
                               </CollapsibleTrigger>
                             </TableCell>
                             <TableCell>
-                              <Badge variant="secondary">{customer.customerGrade}</Badge>
+                              <Badge variant="outline">{customer.customerGrade}</Badge>
                             </TableCell>
                             <TableCell>
                                 {role === 'admin' ? (
-                                    <Select 
-                                        value={customer.customerType} 
+                                    <Select
+                                        value={customer.customerType}
                                         onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
                                     >
-                                        <SelectTrigger className="w-[120px]">
-                                            <SelectValue />
+                                        <SelectTrigger className="h-8 w-[100px]">
+                                            <SelectValue placeholder="Select Type" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="own">Own</SelectItem>
@@ -296,54 +297,46 @@ export default function CustomersPage() {
                                         </SelectContent>
                                     </Select>
                                 ) : (
-                                    <Badge variant={customer.customerType === 'own' ? 'default' : 'outline'}>
+                                    <Badge variant={customer.customerType === 'own' ? 'default' : 'secondary'}>
                                         {customer.customerType === 'own' ? 'Own' : 'Transfer'}
                                     </Badge>
                                 )}
                             </TableCell>
-                            <TableCell className="text-right">
-                              {monthlySales.actual}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {monthlySales.average}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {getYearlySales(customer, parseInt(selectedYear))}
-                            </TableCell>
-                            <TableCell className="text-right font-semibold">
-                              {formatCurrency(customer.creditBalance)}
-                            </TableCell>
+                            <TableCell className="text-right">{monthlySales.actual}</TableCell>
+                            <TableCell className="text-right">{monthlySales.average}</TableCell>
+                            <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
                           </TableRow>
-                          <CollapsibleContent asChild>
-                              <TableRow>
-                                  <TableCell colSpan={8}>
-                                      <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50">
-                                          <Card>
-                                              <CardHeader>
-                                                  <CardTitle className='text-base'>Contact Point</CardTitle>
-                                              </CardHeader>
-                                              <CardContent className="text-sm space-y-2">
-                                                  <p><span className="font-semibold">Name:</span> {customer.contact.name}</p>
-                                                  <p><span className="font-semibold">Position:</span> {customer.contact.position}</p>
-                                                  <p><span className="font-semibold">Phone:</span> {customer.contact.phone}</p>
-                                                  <p><span className="font-semibold">Address:</span> {customer.contact.address}</p>
-                                                  {customer.contact.email && <p><span className="font-semibold">Email:</span> {customer.contact.email}</p>}
-                                              </CardContent>
-                                          </Card>
-                                          <Card>
-                                              <CardHeader>
-                                                  <CardTitle className='text-base'>Company Overview</CardTitle>
-                                              </CardHeader>
-                                              <CardContent className="text-sm">
-                                                  {customer.companyOverview}
-                                              </CardContent>
-                                          </Card>
-                                      </div>
-                                  </TableCell>
-                              </TableRow>
-                          </CollapsibleContent>
-                        </tbody>
-                      </Collapsible>
+                        </Collapsible>
+                        <CollapsibleContent asChild>
+                            <tr className="bg-muted/50">
+                                <TableCell colSpan={8}>
+                                    <div className="grid grid-cols-2 gap-4 p-4">
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle className="text-base">Contact Point</CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="text-sm space-y-2">
+                                                <p><span className="font-semibold">Name:</span> {customer.contact.name}</p>
+                                                <p><span className="font-semibold">Position:</span> {customer.contact.position}</p>
+                                                <p><span className="font-semibold">Phone:</span> {customer.contact.phone}</p>
+                                                <p><span className="font-semibold">Address:</span> {customer.contact.address}</p>
+                                                {customer.contact.email && <p><span className="font-semibold">Email:</span> {customer.contact.email}</p>}
+                                            </CardContent>
+                                        </Card>
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle className="text-base">Company Overview</CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="text-sm">
+                                                {customer.companyOverview}
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                </TableCell>
+                            </tr>
+                        </CollapsibleContent>
+                      </Fragment>
                   )})}
                 </TableBody>
               </Table>
