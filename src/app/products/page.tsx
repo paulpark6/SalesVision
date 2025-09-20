@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { products } from '@/lib/mock-data';
+import { products as initialProducts } from '@/lib/mock-data';
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, Upload } from 'lucide-react';
 import {
@@ -36,11 +36,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { AddProductDialog } from '@/components/products/add-product-dialog';
 
+type Product = typeof initialProducts[0];
+
 export default function ProductsPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
   const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -49,6 +52,10 @@ export default function ProductsPage() {
       router.push('/login');
     }
   }, [auth, router, role]);
+
+  const handleProductAdded = (newProduct: Product) => {
+    setProducts((prevProducts) => [...prevProducts, newProduct]);
+  };
 
   const canEditImportPrice = role === 'admin';
   const canEditLocalPrice = role === 'manager';
@@ -160,7 +167,11 @@ export default function ProductsPage() {
         </main>
       </SidebarInset>
     </SidebarProvider>
-    <AddProductDialog isOpen={isAddProductDialogOpen} onOpenChange={setIsAddProductDialogOpen} />
+    <AddProductDialog 
+        isOpen={isAddProductDialogOpen} 
+        onOpenChange={setIsAddProductDialogOpen}
+        onProductAdded={handleProductAdded}
+    />
     </>
   );
 }

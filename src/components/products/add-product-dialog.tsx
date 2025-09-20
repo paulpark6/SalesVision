@@ -50,7 +50,6 @@ export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onPro
     const newProduct = {
       label: formData.get('productName') as string,
       value: (formData.get('productCode') as string).toLowerCase(),
-      // Since local price is the only price, let's treat it as the base price
       basePrice: parseFloat(formData.get('localPrice') as string),
     };
 
