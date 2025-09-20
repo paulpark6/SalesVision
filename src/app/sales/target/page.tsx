@@ -15,7 +15,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import {
   Table,
@@ -27,13 +26,16 @@ import {
   TableFooter
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { salesTargetHistoryData as initialData } from '@/lib/mock-data';
+import { salesTargetHistoryData as initialData, products, customerData } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Combobox } from '@/components/ui/combobox';
 
 type TargetProduct = {
     productName: string;
+    quantity: number;
+    price: number;
     targetAmount: number;
 };
 
@@ -49,6 +51,14 @@ type TargetData = {
     customerName: string;
     monthlySales: MonthlySale[];
     nextMonthTarget: TargetProduct[];
+};
+
+const getDiscount = (grade: string) => {
+    switch (grade) {
+      case 'A': return 0.1; // 10%
+      case 'B': return 0.05; // 5%
+      default: return 0;
+    }
 };
 
 export default function SalesTargetPage() {
@@ -67,12 +77,35 @@ export default function SalesTargetPage() {
     }
   }, [auth, router]);
   
-  const handleTargetProductChange = (customerCode: string, productIndex: number, field: keyof TargetProduct, value: string | number) => {
+ const handleTargetProductChange = (
+    customerCode: string,
+    productIndex: number,
+    field: 'productName' | 'quantity',
+    value: string | number
+  ) => {
     setSalesData(prevData =>
       prevData.map(item => {
         if (item.customerCode === customerCode) {
           const newTargets = [...item.nextMonthTarget];
-          newTargets[productIndex] = { ...newTargets[productIndex], [field]: value };
+          const currentTarget = { ...newTargets[productIndex] };
+
+          if (field === 'productName') {
+            currentTarget.productName = value as string;
+            const product = products.find(p => p.label.toLowerCase() === (value as string).toLowerCase());
+            const customer = customerData.find(c => c.customerCode === customerCode);
+            if (product && customer) {
+              const discount = getDiscount(customer.customerGrade);
+              currentTarget.price = product.basePrice * (1 - discount);
+            } else {
+              currentTarget.price = 0;
+            }
+          } else if (field === 'quantity') {
+            currentTarget.quantity = Number(value) || 0;
+          }
+          
+          currentTarget.targetAmount = currentTarget.price * currentTarget.quantity;
+          newTargets[productIndex] = currentTarget;
+
           return { ...item, nextMonthTarget: newTargets };
         }
         return item;
@@ -84,7 +117,7 @@ export default function SalesTargetPage() {
     setSalesData(prevData =>
       prevData.map(item => {
         if (item.customerCode === customerCode) {
-          const newTargets = [...item.nextMonthTarget, { productName: '', targetAmount: 0 }];
+          const newTargets = [...item.nextMonthTarget, { productName: '', quantity: 0, price: 0, targetAmount: 0 }];
           return { ...item, nextMonthTarget: newTargets };
         }
         return item;
@@ -121,7 +154,7 @@ export default function SalesTargetPage() {
         style: 'currency',
         currency: 'USD'
     }).format(amount);
-  }
+  };
 
   const calculateTotalTarget = (targets: TargetProduct[]) => {
     return targets.reduce((sum, current) => sum + current.targetAmount, 0);
@@ -143,6 +176,8 @@ export default function SalesTargetPage() {
   if (!role) {
     return null;
   }
+
+  const productComboboxItems = products.map(p => ({ value: p.label, label: p.label }));
 
   return (
     <SidebarProvider>
@@ -234,23 +269,44 @@ export default function SalesTargetPage() {
                                                     </div>
                                                     <div>
                                                         <h4 className="font-semibold mb-2 text-base">9월 목표 제품 설정</h4>
-                                                        <div className="space-y-2 max-w-lg">
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center gap-2 font-medium text-sm px-2">
+                                                                <Label className="flex-1">제품</Label>
+                                                                <Label className="w-20 text-center">수량</Label>
+                                                                <Label className="w-28 text-right">단가</Label>
+                                                                <Label className="w-32 text-right">목표금액</Label>
+                                                                <div className="w-8"></div>
+                                                            </div>
                                                             {data.nextMonthTarget.map((target, index) => (
                                                                 <div key={index} className="flex items-center gap-2">
-                                                                    <Input
-                                                                        placeholder="Product Name"
+                                                                    <Combobox
+                                                                        items={productComboboxItems}
+                                                                        placeholder="Select product..."
+                                                                        searchPlaceholder="Search products..."
+                                                                        noResultsMessage="No product found."
                                                                         value={target.productName}
-                                                                        onChange={(e) => handleTargetProductChange(data.customerCode, index, 'productName', e.target.value)}
-                                                                        className="h-8"
+                                                                        onValueChange={(value) => handleTargetProductChange(data.customerCode, index, 'productName', value)}
                                                                     />
                                                                     <Input
                                                                         type="number"
-                                                                        placeholder="Target Amount"
-                                                                        value={target.targetAmount}
-                                                                        onChange={(e) => handleTargetProductChange(data.customerCode, index, 'targetAmount', parseFloat(e.target.value) || 0)}
-                                                                        className="h-8 w-32 text-right"
+                                                                        placeholder="수량"
+                                                                        value={target.quantity || ''}
+                                                                        onChange={(e) => handleTargetProductChange(data.customerCode, index, 'quantity', e.target.value)}
+                                                                        className="h-9 w-20 text-center"
                                                                     />
-                                                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveProductFromTarget(data.customerCode, index)}>
+                                                                    <Input
+                                                                        type="text"
+                                                                        readOnly
+                                                                        value={formatCurrency(target.price)}
+                                                                        className="h-9 w-28 text-right bg-muted"
+                                                                    />
+                                                                    <Input
+                                                                        type="text"
+                                                                        readOnly
+                                                                        value={formatCurrency(target.targetAmount)}
+                                                                        className="h-9 w-32 text-right bg-muted font-semibold"
+                                                                    />
+                                                                    <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => handleRemoveProductFromTarget(data.customerCode, index)}>
                                                                         <Trash2 className="h-4 w-4" />
                                                                     </Button>
                                                                 </div>

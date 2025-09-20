@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
+import { Button } from "./button"
 
 type ComboboxProps = {
     items: { value: string; label: string }[];
@@ -38,22 +39,31 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
 
   const showAddNew = onAddNew && searchQuery && !items.some(item => item.label.toLowerCase() === searchQuery.toLowerCase());
 
+  // When the popover opens, if there's an existing value, we want the search to be empty
+  // to show all options. But if the user starts typing, we use their query.
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+        setSearchQuery('');
+    }
+  }
+  
+  const displayValue = value || placeholder;
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-         <div className="relative w-full">
-            <Input
-                placeholder={placeholder}
-                value={value}
-                onChange={(e) => {
-                    onValueChange(e.target.value);
-                    setSearchQuery(e.target.value);
-                }}
-                onClick={() => setOpen(true)}
-                className="w-full"
-            />
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 absolute right-2 top-1/2 -translate-y-1/2" />
-        </div>
+        <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between font-normal"
+        >
+            <span className="truncate">
+                {value ? items.find(item => item.label.toLowerCase() === value.toLowerCase())?.label : placeholder}
+            </span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width)] p-0">
         <Command>

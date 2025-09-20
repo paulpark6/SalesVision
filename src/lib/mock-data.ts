@@ -13,6 +13,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -497,8 +498,8 @@ export const salesTargetHistoryData = [
             { month: '8월', quantity: 3, amount: 2450.50, products: ['Smartphone'] }
         ],
         nextMonthTarget: [ // September targets
-            { productName: 'Laptop', targetAmount: 2000 },
-            { productName: 'T-Shirt', targetAmount: 500 },
+            { productName: 'Laptop', quantity: 2, price: 1125, targetAmount: 2250 },
+            { productName: 'T-Shirt', quantity: 10, price: 23.75, targetAmount: 237.5 },
         ]
     },
     { 
@@ -510,8 +511,8 @@ export const salesTargetHistoryData = [
             { month: '8월', quantity: 10, amount: 5890.00, products: ['Jeans', 'T-Shirt', 'Cookbook'] }
         ],
         nextMonthTarget: [ // September targets
-            { productName: 'Jeans', targetAmount: 4000 },
-            { productName: 'Gaming Console', targetAmount: 2500 },
+             { productName: 'Jeans', quantity: 50, price: 67.5, targetAmount: 3375 },
+             { productName: 'Gaming Console', quantity: 5, price: 450, targetAmount: 2250 },
         ]
     },
     { 
@@ -523,19 +524,19 @@ export const salesTargetHistoryData = [
             { month: '8월', quantity: 2, amount: 1530.25, products: ['Tablet', 'T-Shirt'] }
         ],
         nextMonthTarget: [ // September targets
-            { productName: 'Tablet', targetAmount: 1800 }
+            { productName: 'Tablet', quantity: 4, price: 427.5, targetAmount: 1710 }
         ]
     },
     {
-        customerCode: 'C-205',
-        customerName: 'New Customer Inc.',
+        customerCode: 'C-110',
+        customerName: 'Noah Williams',
         monthlySales: [
             { month: '6월', quantity: 0, amount: 0, products: [] },
             { month: '7월', quantity: 0, amount: 0, products: [] },
             { month: '8월', quantity: 0, amount: 0, products: [] }
         ],
         nextMonthTarget: [ // September targets
-            { productName: 'Initial Product', targetAmount: 5000 }
+            { productName: 'Laptop', quantity: 4, price: 1125, targetAmount: 4500 }
         ]
     }
 ];
