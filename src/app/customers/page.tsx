@@ -47,7 +47,7 @@ export default function CustomersPage() {
   const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
   const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
   const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
-  const [showMyCustomers, setShowMyCustomers] = useState(role === 'employee');
+  const [showMyCustomers, setShowMyCustomers] = useState(false);
   const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
 
   const loggedInEmployee = useMemo(() => {
@@ -61,6 +61,13 @@ export default function CustomersPage() {
       router.push('/login');
     }
   }, [auth, router]);
+  
+  // Set default state for my-customers-filter based on role
+  useEffect(() => {
+    if (role === 'employee') {
+      setShowMyCustomers(true);
+    }
+  }, [role]);
 
   const handleBack = () => {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
@@ -136,12 +143,7 @@ export default function CustomersPage() {
   };
 
   const filteredCustomerData = useMemo(() => {
-    if (role === 'employee') {
-      if (loggedInEmployee) {
-        return customerData.filter(customer => customer.employee === loggedInEmployee.name);
-      }
-      return [];
-    } else if (role === 'manager' && showMyCustomers) {
+    if (role === 'employee' || (role === 'manager' && showMyCustomers)) {
       if (loggedInEmployee) {
         return customerData.filter(customer => customer.employee === loggedInEmployee.name);
       }
@@ -163,6 +165,14 @@ export default function CustomersPage() {
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">고객 관리</h1>
                 <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" className="h-8 gap-1" asChild>
+                        <Link href="/customers/new">
+                            <PlusCircle className="h-3.5 w-3.5" />
+                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                                Add Customer
+                            </span>
+                        </Link>
+                    </Button>
                     {(role === 'manager' || role === 'admin') && (
                         <>
                              <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
@@ -186,14 +196,6 @@ export default function CustomersPage() {
                             />
                         </>
                     )}
-                     <Button asChild size="sm" className="h-8 gap-1">
-                        <Link href="/customers/new">
-                            <PlusCircle className="h-3.5 w-3.5" />
-                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                Add Customer
-                            </span>
-                        </Link>
-                    </Button>
                     <Button type="button" variant="outline" onClick={handleBack}>
                         Back to Dashboard
                     </Button>
@@ -266,8 +268,8 @@ export default function CustomersPage() {
                       const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
                       const isOpen = openCollapsible === customer.customerCode;
                       return (
-                      <Fragment key={customer.customerCode}>
-                        <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                      <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                        <Fragment>
                           <TableRow>
                             <TableCell>{customer.employee}</TableCell>
                             <TableCell>
@@ -307,9 +309,8 @@ export default function CustomersPage() {
                             <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
                             <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
                           </TableRow>
-                        </Collapsible>
-                        <CollapsibleContent asChild>
-                            <tr className="bg-muted/50">
+                          <CollapsibleContent asChild>
+                              <tr className="bg-muted/50">
                                 <TableCell colSpan={8}>
                                     <div className="grid grid-cols-2 gap-4 p-4">
                                         <Card>
@@ -334,9 +335,10 @@ export default function CustomersPage() {
                                         </Card>
                                     </div>
                                 </TableCell>
-                            </tr>
-                        </CollapsibleContent>
-                      </Fragment>
+                              </tr>
+                          </CollapsibleContent>
+                        </Fragment>
+                      </Collapsible>
                   )})}
                 </TableBody>
               </Table>
