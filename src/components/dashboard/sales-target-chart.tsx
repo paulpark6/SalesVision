@@ -1,6 +1,6 @@
 
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip, LabelList } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip } from 'recharts';
 import {
   Card,
   CardContent,
@@ -129,7 +129,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     <Card>
       <CardHeader>
         <CardTitle>9월 매출 현황</CardTitle>
-        <CardDescription>월간 매출 목표와 실적을 비교합니다.</CardDescription>
+        <CardDescription>월간 매출 목표 달성률을 나타냅니다.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -160,6 +160,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                 tickFormatter={(value) => `$${value / 1000}K`}
               />
               <Tooltip content={<ChartTooltipContent />} />
+              <Legend />
               <Bar dataKey="sales" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="매출" />
               <Bar dataKey="target" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="목표" />
             </BarChart>
