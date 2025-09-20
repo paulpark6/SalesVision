@@ -336,3 +336,32 @@ export const customerData = [
     creditBalance: 200.00,
   },
 ];
+
+export const commissionData = [
+  {
+    employeeId: 'emp-01',
+    employeeName: 'Jane Smith',
+    sales: [
+      { type: '수입', salePrice: 210000, costPrice: 150000 },
+      { type: '현지', salePrice: 5000, costPrice: 4600 }, // 마진 8%
+      { type: '현지', salePrice: 10000, costPrice: 8500 }, // 마진 15%
+    ],
+  },
+  {
+    employeeId: 'emp-02',
+    employeeName: 'Alex Ray',
+    sales: [
+      { type: '수입', salePrice: 180000, costPrice: 120000 },
+      { type: '현지', salePrice: 20000, costPrice: 15000 }, // 마진 25%
+      { type: '현지', salePrice: 15000, costPrice: 10000 }, // 마진 33.3%
+    ],
+  },
+  {
+    employeeId: 'emp-03',
+    employeeName: 'John Doe',
+    sales: [
+      { type: '수입', salePrice: 50000, costPrice: 30000 },
+      { type: '현지', salePrice: 30000, costPrice: 15000 }, // 마진 50%
+    ],
+  },
+];

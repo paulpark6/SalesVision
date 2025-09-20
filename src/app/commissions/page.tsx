@@ -21,31 +21,67 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { commissionData } from '@/lib/mock-data';
 
-// Mock data for commissions
-const commissionData = [
-  {
-    employeeId: 'emp-01',
-    employeeName: 'Jane Smith',
-    totalSales: 45231.89,
-    commissionRate: 0.05, // 5%
-  },
-  {
-    employeeId: 'emp-02',
-    employeeName: 'Alex Ray',
-    totalSales: 52000.00,
-    commissionRate: 0.05, // 5%
-  },
-  {
-    employeeId: 'emp-03',
-    employeeName: 'John Doe',
-    totalSales: 41000.00,
-    commissionRate: 0.04, // 4%
-  },
-];
+type Sale = {
+  type: '수입' | '현지';
+  salePrice: number;
+  costPrice: number;
+};
+
+// Function to calculate commission based on the new rules
+const calculateCommission = (sales: Sale[]) => {
+  let totalCommission = 0;
+  let totalSales = 0;
+  let importSalesTotal = 0;
+
+  // Separate sales by type to apply different rules
+  const importSales = sales.filter(s => s.type === '수입');
+  const localSales = sales.filter(s => s.type === '현지');
+
+  // Calculate commission for imported products
+  importSales.forEach(sale => {
+    importSalesTotal += sale.salePrice;
+  });
+
+  if (importSalesTotal > 200000) {
+    totalCommission += 200000 * 0.05;
+    totalCommission += (importSalesTotal - 200000) * 0.03;
+  } else {
+    totalCommission += importSalesTotal * 0.05;
+  }
+  
+  totalSales += importSalesTotal;
+
+  // Calculate commission for local products
+  localSales.forEach(sale => {
+    const grossMargin = sale.salePrice - sale.costPrice;
+    const marginPercentage = sale.salePrice > 0 ? (grossMargin / sale.salePrice) * 100 : 0;
+
+    let commissionRate = 0;
+    if (marginPercentage < 10) {
+      commissionRate = 0.03;
+    } else if (marginPercentage >= 10 && marginPercentage < 20) {
+      commissionRate = 0.10;
+    } else if (marginPercentage >= 20 && marginPercentage < 30) {
+      commissionRate = 0.12;
+    } else if (marginPercentage >= 30 && marginPercentage < 40) {
+      commissionRate = 0.15;
+    } else { // 40% or more
+      commissionRate = 0.18;
+    }
+    totalCommission += grossMargin * commissionRate;
+    totalSales += sale.salePrice;
+  });
+
+  const averageCommissionRate = totalSales > 0 ? (totalCommission / totalSales) * 100 : 0;
+
+  return { totalSales, totalCommission, averageCommissionRate };
+};
+
 
 export default function CommissionsPage() {
   const router = useRouter();
@@ -64,6 +100,18 @@ export default function CommissionsPage() {
     router.push(dashboardPath);
   };
   
+  const processedCommissionData = useMemo(() => {
+    return commissionData.map(employee => {
+      const { totalSales, totalCommission, averageCommissionRate } = calculateCommission(employee.sales);
+      return {
+        ...employee,
+        totalSales,
+        commissionEarned: totalCommission,
+        effectiveRate: averageCommissionRate,
+      };
+    });
+  }, []);
+
   if (!role || (role !== 'admin' && role !== 'manager')) {
     return null;
   }
@@ -84,7 +132,7 @@ export default function CommissionsPage() {
             <CardHeader>
               <CardTitle>Commission Overview</CardTitle>
               <CardDescription>
-                Review commission earnings for each employee for the current period.
+                Review commission earnings for each employee for the current period based on sales type and margins.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -93,14 +141,12 @@ export default function CommissionsPage() {
                   <TableRow>
                     <TableHead>Employee</TableHead>
                     <TableHead className="text-right">Total Sales</TableHead>
-                    <TableHead className="text-right">Commission Rate</TableHead>
+                    <TableHead className="text-right">Avg. Commission Rate</TableHead>
                     <TableHead className="text-right">Commission Earned</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {commissionData.map((commission) => {
-                    const commissionEarned = commission.totalSales * commission.commissionRate;
-                    return (
+                  {processedCommissionData.map((commission) => (
                       <TableRow key={commission.employeeId}>
                         <TableCell>
                           <div className="font-medium">{commission.employeeName}</div>
@@ -113,15 +159,14 @@ export default function CommissionsPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <Badge variant="secondary">
-                            {(commission.commissionRate * 100).toFixed(0)}%
+                            {commission.effectiveRate.toFixed(2)}%
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right font-semibold">
-                          ${commissionEarned.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ${commission.commissionEarned.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </TableCell>
                       </TableRow>
-                    );
-                  })}
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
