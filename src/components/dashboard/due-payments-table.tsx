@@ -109,7 +109,7 @@ export function DuePaymentsTable() {
                 '고객 이메일': p.customer.email,
                 '만기일': p.dueDate,
                 '금액': p.amount,
-                '수금 계획': p.collectionPlan || '없음',
+                '수금 활동 내용': p.collectionPlan || '없음',
             }));
 
         if (overduePayments.length === 0) {
@@ -121,7 +121,7 @@ export function DuePaymentsTable() {
         }
 
         const csv = Papa.unparse(overduePayments);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
@@ -145,7 +145,7 @@ export function DuePaymentsTable() {
         <div>
           <CardTitle>미수금 현황</CardTitle>
           <CardDescription>
-            매주 다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
+            다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
           </CardDescription>
         </div>
         <Button size="sm" variant="outline" className="ml-auto gap-1" onClick={handleExportOverdue}>
@@ -219,10 +219,10 @@ export function DuePaymentsTable() {
                 </TableCell>
               </TableRow>
                {isOpen && payment.collectionPlan && (
-                <TableRow className="bg-muted/30">
+                <TableRow className="bg-muted/30 hover:bg-muted/40">
                     <TableCell colSpan={6} className="py-2 px-8">
                         <div className="text-xs">
-                            <span className="font-semibold">수금 계획: </span>
+                            <span className="font-semibold">수금 활동 내용: </span>
                             <span className="text-muted-foreground">{payment.collectionPlan}</span>
                         </div>
                     </TableCell>

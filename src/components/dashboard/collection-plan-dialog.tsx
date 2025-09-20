@@ -41,12 +41,12 @@ export function CollectionPlanDialog({ isOpen, onOpenChange, payment, onSave }: 
         <DialogHeader>
           <DialogTitle>수금 계획 관리</DialogTitle>
           <DialogDescription>
-            {payment.customer.name} (${payment.amount.toFixed(2)})에 대한 수금 계획을 입력하고 제출합니다.
+            {payment.customer.name} (${payment.amount.toFixed(2)})에 대한 수금 계획/활동 내용을 입력하고 제출합니다.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid w-full gap-2">
-            <Label htmlFor="collection-plan">수금 계획</Label>
+            <Label htmlFor="collection-plan">수금 활동 내용</Label>
             <Textarea
               id="collection-plan"
               value={plan}
