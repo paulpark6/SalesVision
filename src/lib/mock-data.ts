@@ -24,11 +24,6 @@ export const salesTargetChartData = [
   { name: '전년 동월', sales: 42100.5, target: 40000 },
 ];
 
-export const teamSalesTargetChartData = [
-  { name: '9월', jane: 38000, alex: 52000, john: 41000, target: 135000 },
-  { name: '전년 동월', jane: 35000, alex: 48000, john: 42000, target: 120000 },
-];
-
 export const salesComparisonData = [
     { name: '9월 누적 목표', jane: 45000, alex: 50000, john: 40000 },
     { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 },
@@ -178,10 +173,10 @@ export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,
 2024-08-02,Fashion Forward,Clothing,c-008,Jeans,200,45
 `;
 
-export const customerUploadCsvData = `CustomerName,CustomerCode,Employee,Grade,CustomerType
-Tech Solutions,C-201,manager,A,own
-Retail Giant,C-202,employee,B,transfer
-Local Biz,C-203,employee,C,own
+export const customerUploadCsvData = `CustomerName,CustomerCode,Employee,Grade
+Tech Solutions,C-201,manager,A
+Retail Giant,C-202,employee,B
+Local Biz,C-203,employee,C
 `;
 
 const getLatestPrice = (history: { date: string; price: number }[]) => {
@@ -270,7 +265,7 @@ export type Customer = {
   customerName: string;
   customerCode: string;
   customerGrade: string;
-  customerType: 'own' | 'transfer';
+  customerType: 'own' | 'transfer' | 'pending';
   monthlySales: MonthlySale[];
   yearlySales: YearlySale[];
   creditBalance: number;
@@ -291,7 +286,7 @@ export const customerData: Customer[] = [
     customerName: 'Liam Johnson',
     customerCode: 'C-106',
     customerGrade: 'B',
-    customerType: 'own' as const,
+    customerType: 'own',
     monthlySales: [
         { month: 8, actual: 2450.50, average: 2350.00 },
         { month: 9, actual: 2600.00, average: 2400.00 },
@@ -315,7 +310,7 @@ export const customerData: Customer[] = [
     customerName: 'Emma Brown',
     customerCode: 'C-107',
     customerGrade: 'A',
-    customerType: 'transfer' as const,
+    customerType: 'transfer',
     monthlySales: [
         { month: 8, actual: 5890.00, average: 5500.00 },
         { month: 9, actual: 6100.00, average: 5600.00 },
@@ -339,7 +334,7 @@ export const customerData: Customer[] = [
     customerName: 'Olivia Smith',
     customerCode: 'C-108',
     customerGrade: 'B',
-    customerType: 'own' as const,
+    customerType: 'own',
     monthlySales: [
         { month: 8, actual: 1530.25, average: 1600.00 },
         { month: 9, actual: 1700.00, average: 1650.00 },
@@ -363,7 +358,7 @@ export const customerData: Customer[] = [
     customerName: 'Ava Jones',
     customerCode: 'C-109',
     customerGrade: 'C',
-    customerType: 'transfer' as const,
+    customerType: 'transfer',
     monthlySales: [
         { month: 8, actual: 780.00, average: 820.00 },
         { month: 9, actual: 810.00, average: 815.00 },
@@ -387,7 +382,7 @@ export const customerData: Customer[] = [
     customerName: 'Noah Williams',
     customerCode: 'C-110',
     customerGrade: 'A',
-    customerType: 'own' as const,
+    customerType: 'own',
     monthlySales: [
         { month: 8, actual: 8940.00, average: 8500.00 },
         { month: 9, actual: 9200.00, average: 8600.00 },
@@ -411,7 +406,7 @@ export const customerData: Customer[] = [
     customerName: 'James Wilson',
     customerCode: 'C-111',
     customerGrade: 'C',
-    customerType: 'own' as const,
+    customerType: 'own',
     monthlySales: [
         { month: 8, actual: 950.00, average: 900.00 },
         { month: 9, actual: 1000.00, average: 925.00 },

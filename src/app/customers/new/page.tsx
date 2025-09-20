@@ -45,8 +45,8 @@ export default function NewCustomerPage() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     toast({
-      title: 'Customer Added',
-      description: 'The new customer has been successfully registered.',
+      title: 'Approval Request Sent',
+      description: 'The new customer has been submitted for administrator approval.',
     });
     router.push('/customers'); 
   };
@@ -74,14 +74,14 @@ export default function NewCustomerPage() {
           <Card>
             <CardHeader>
               <CardTitle>Customer Details</CardTitle>
-              <CardDescription>Fill out the form to add a new customer.</CardDescription>
+              <CardDescription>Fill out the form to add a new customer. The request will be sent to an administrator for approval.</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Customer Information */}
                 <fieldset className="space-y-4">
                   <legend className="text-lg font-medium">Customer Information</legend>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="customerName">Customer Name</Label>
                       <Input id="customerName" placeholder="e.g., Acme Inc." required />
@@ -98,16 +98,6 @@ export default function NewCustomerPage() {
                           <SelectItem value="A">A</SelectItem>
                           <SelectItem value="B">B</SelectItem>
                           <SelectItem value="C">C</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="customerType">Type</Label>
-                       <Select name="customerType" required>
-                        <SelectTrigger><SelectValue placeholder="Select a type" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="own">Own</SelectItem>
-                          <SelectItem value="transfer">Transfer</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -170,7 +160,7 @@ export default function NewCustomerPage() {
                     <Button type="button" variant="outline" onClick={handleCancel}>
                       Cancel
                   </Button>
-                  <Button type="submit">Save Customer</Button>
+                  <Button type="submit">Submit for Approval</Button>
                 </div>
               </form>
             </CardContent>

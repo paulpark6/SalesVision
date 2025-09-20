@@ -96,7 +96,7 @@ export default function CustomersPage() {
 
   const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
 
-  const handleCustomerTypeChange = (customerCode: string, newType: 'own' | 'transfer') => {
+  const handleCustomerTypeChange = (customerCode: string, newType: 'own' | 'transfer' | 'pending') => {
     setCustomerData(prevData =>
       prevData.map(customer =>
         customer.customerCode === customerCode
@@ -104,10 +104,12 @@ export default function CustomersPage() {
           : customer
       )
     );
-    toast({
-        title: 'Customer Characteristic Changed',
-        description: `Customer (${customerCode}) characteristic changed to ${newType}.`
-    });
+    if (newType !== 'pending') {
+      toast({
+          title: 'Customer Type Approved',
+          description: `Customer (${customerCode}) type set to ${newType}.`
+      });
+    }
   };
 
   const handleUploadClick = () => {
@@ -128,7 +130,7 @@ export default function CustomersPage() {
               customerName: row.CustomerName,
               customerCode: row.CustomerCode,
               customerGrade: row.Grade,
-              customerType: row.CustomerType as 'own' | 'transfer',
+              customerType: 'pending' as 'own' | 'transfer' | 'pending',
               monthlySales: [],
               yearlySales: [],
               creditBalance: 0,
@@ -147,7 +149,7 @@ export default function CustomersPage() {
 
           toast({
             title: 'Upload Successful',
-            description: `${newCustomers.length} new customers have been added.`,
+            description: `${newCustomers.length} new customers have been added and are pending approval.`,
           });
         },
         error: (error: any) => {
@@ -320,10 +322,26 @@ export default function CustomersPage() {
                               <Badge variant="outline">{customer.customerGrade}</Badge>
                             </TableCell>
                             <TableCell>
-                                {role === 'admin' ? (
+                                {customer.customerType === 'pending' ? (
+                                    role === 'admin' ? (
+                                        <Select
+                                            onValueChange={(value: 'own' | 'transfer' | 'pending') => handleCustomerTypeChange(customer.customerCode, value)}
+                                        >
+                                            <SelectTrigger className="h-8 w-[130px] bg-yellow-100 dark:bg-yellow-900/50">
+                                                <SelectValue placeholder="Pending Approval" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="own">Approve as Own</SelectItem>
+                                                <SelectItem value="transfer">Approve as Transfer</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    ) : (
+                                        <Badge variant="secondary">Pending Approval</Badge>
+                                    )
+                                ) : role === 'admin' ? (
                                     <Select
                                         value={customer.customerType}
-                                        onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
+                                        onValueChange={(value: 'own' | 'transfer' | 'pending') => handleCustomerTypeChange(customer.customerCode, value)}
                                     >
                                         <SelectTrigger className="h-8 w-[100px]">
                                             <SelectValue placeholder="Select Type" />
@@ -383,5 +401,3 @@ export default function CustomersPage() {
     </SidebarProvider>
   );
 }
-
-    
