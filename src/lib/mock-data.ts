@@ -1,5 +1,6 @@
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -460,4 +461,38 @@ export const commissionData = [
       { type: '현지', salePrice: 100000, costPrice: 95000, customerType: 'transfer' }, // Margin 5% -> 3% rate * 50%
     ],
   },
+];
+
+
+export const salesTargetHistoryData = [
+    { 
+        customerCode: 'C-106', 
+        customerName: 'Liam Johnson', 
+        monthlySales: [
+            { month: '7월', amount: 2300.00, products: ['Laptop', 'T-Shirt'] },
+            { month: '8월', amount: 2450.50, products: ['Smartphone'] },
+            { month: '9월', amount: 2600.00, products: ['Laptop', 'Coffee Maker'] }
+        ],
+        nextMonthTarget: 2800.00
+    },
+    { 
+        customerCode: 'C-107', 
+        customerName: 'Emma Brown', 
+        monthlySales: [
+            { month: '7월', amount: 5400.00, products: ['Jeans', 'Winter Jacket'] },
+            { month: '8월', amount: 5890.00, products: ['Jeans', 'T-Shirt', 'Cookbook'] },
+            { month: '9월', amount: 6100.00, products: ['Jeans', 'Gaming Console'] }
+        ],
+        nextMonthTarget: 6500.00
+    },
+    { 
+        customerCode: 'C-108', 
+        customerName: 'Olivia Smith', 
+        monthlySales: [
+            { month: '7월', amount: 1500.00, products: ['Tablet'] },
+            { month: '8월', amount: 1530.25, products: ['Tablet', 'T-Shirt'] },
+            { month: '9월', amount: 1700.00, products: ['Tablet', 'Science Fiction Novel'] }
+        ],
+        nextMonthTarget: 1800.00
+    },
 ];
