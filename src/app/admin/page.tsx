@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { CumulativeSalesTargetChart } from '@/components/dashboard/cumulative-sales-target-chart';
 import { EmployeeSalesTarget } from '@/components/dashboard/employee-sales-target';
-import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
@@ -54,13 +53,12 @@ export default function EmployeeDashboardPage() {
             {role === 'manager' && (
               <>
                 <EmployeeSalesTarget />
-                <EmployeeCreditSummary />
               </>
             )}
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-                <SalesTargetChart />
-                <CumulativeSalesTargetChart />
+                <SalesTargetChart isTeamData={role === 'manager'} />
+                <CumulativeSalesTargetChart isTeamData={role === 'manager'} />
                 <DuePaymentsTable />
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">

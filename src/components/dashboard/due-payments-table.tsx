@@ -86,6 +86,7 @@ export function DuePaymentsTable() {
           <TableHeader>
             <TableRow>
               <TableHead>고객</TableHead>
+              <TableHead className="hidden md:table-cell">담당자</TableHead>
               <TableHead className="hidden md:table-cell">만기일</TableHead>
               <TableHead className="hidden md:table-cell">상태</TableHead>
               <TableHead className="text-right">금액</TableHead>
@@ -105,6 +106,7 @@ export function DuePaymentsTable() {
                     {payment.customer.email}
                   </div>
                 </TableCell>
+                <TableCell className="hidden md:table-cell">{payment.employee}</TableCell>
                 <TableCell className="hidden md:table-cell">
                   {payment.dueDate}
                 </TableCell>

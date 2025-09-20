@@ -12,9 +12,9 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { cumulativeSalesTargetChartData, overviewData, salesTargetData } from '@/lib/mock-data';
+import { cumulativeSalesTargetChartData, overviewData, salesTargetData, teamCumulativeSalesTargetChartData } from '@/lib/mock-data';
 
-export function CumulativeSalesTargetChart() {
+export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
   const chartConfig = {
     sales: {
       label: '매출',
@@ -26,23 +26,23 @@ export function CumulativeSalesTargetChart() {
     },
   };
   
-  const ytdActual = overviewData.totalRevenue * 6.5;
-  const ytdTarget = salesTargetData.target * 7;
-  const ytdAchievementRate = (ytdActual / ytdTarget) * 100;
+  const chartData = isTeamData ? teamCumulativeSalesTargetChartData : cumulativeSalesTargetChartData;
+  const cardTitle = isTeamData ? '팀 연간 누적 매출 목표' : '연간 누적 매출 목표';
+  const cardDescription = isTeamData ? '팀 전체의 연간 누적 매출과 목표를 비교합니다.' : '연간 누적 매출과 목표를 비교합니다.';
 
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>연간 누적 매출 목표</CardTitle>
+        <CardTitle>{cardTitle}</CardTitle>
         <CardDescription>
-          연간 누적 매출과 목표를 비교합니다.
+          {cardDescription}
         </CardDescription>
       </CardHeader>
       <CardContent>
          <ChartContainer config={chartConfig} className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={cumulativeSalesTargetChartData} margin={{ top: 20 }}>
+            <BarChart data={chartData} margin={{ top: 20 }}>
               <XAxis
                 dataKey="name"
                 stroke="#888888"

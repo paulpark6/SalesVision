@@ -12,13 +12,21 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
-import { salesTargetChartData, salesTargetData } from '@/lib/mock-data';
+import { salesTargetChartData, salesTargetData, teamSalesTargetData, teamSalesTargetChartData } from '@/lib/mock-data';
 import { Progress } from '../ui/progress';
 
-export function SalesTargetChart() {
-  const achievementRate = (salesTargetData.current / salesTargetData.target) * 100;
-  const lastYearAchievementRate =
-    (salesTargetData.lastYear / 40000) * 100;
+export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
+  const data = isTeamData ? teamSalesTargetData : salesTargetData;
+  const chartData = isTeamData ? teamSalesTargetChartData : salesTargetChartData;
+  
+  const achievementRate = (data.current / data.target) * 100;
+  const lastYearTarget = isTeamData ? 120000 : 40000;
+  const lastYearAchievementRate = (data.lastYear / lastYearTarget) * 100;
+
+  const cardTitle = isTeamData ? '팀 매출 목표' : '매출 목표';
+  const cardDescription = isTeamData 
+    ? '팀 전체의 월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.'
+    : '월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.';
 
   const chartConfig = {
     sales: {
@@ -34,10 +42,8 @@ export function SalesTargetChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>매출 목표</CardTitle>
-        <CardDescription>
-          월간 매출 목표 달성률. 현재 월과 작년 실적을 비교합니다.
-        </CardDescription>
+        <CardTitle>{cardTitle}</CardTitle>
+        <CardDescription>{cardDescription}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
@@ -47,7 +53,7 @@ export function SalesTargetChart() {
           </div>
           <Progress value={achievementRate} />
           <div className="text-xs text-muted-foreground">
-            목표: ${salesTargetData.target.toLocaleString()}
+            목표: ${data.target.toLocaleString()}
           </div>
         </div>
         <div className="space-y-2">
@@ -57,12 +63,12 @@ export function SalesTargetChart() {
           </div>
           <Progress value={lastYearAchievementRate} className="[&>div]:bg-secondary-foreground/50" />
            <div className="text-xs text-muted-foreground">
-            목표: $40,000.00
+            목표: ${lastYearTarget.toLocaleString()}
           </div>
         </div>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={salesTargetChartData} margin={{ top: 20 }}>
+            <BarChart data={chartData} margin={{ top: 20 }}>
               <XAxis
                 dataKey="name"
                 stroke="#888888"

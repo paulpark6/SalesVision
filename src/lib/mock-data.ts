@@ -12,14 +12,30 @@ export const salesTargetData = {
   lastYear: 42100.5,
 };
 
+export const teamSalesTargetData = {
+  target: 135000,
+  current: 131000,
+  lastYear: 125000,
+};
+
 export const salesTargetChartData = [
   { name: '당월', sales: 45231.89, target: 50000 },
   { name: '전년 동월', sales: 42100.5, target: 40000 },
 ];
 
+export const teamSalesTargetChartData = [
+  { name: '팀 당월', sales: 131000, target: 135000 },
+  { name: '팀 전년 동월', sales: 125000, target: 120000 },
+];
+
 export const cumulativeSalesTargetChartData = [
     { name: '당해년도', sales: 294000.5, target: 350000 },
     { name: '전년', sales: 273653.25, target: 300000 },
+];
+
+export const teamCumulativeSalesTargetChartData = [
+    { name: '팀 당해년도', sales: 851500, target: 945000 },
+    { name: '팀 전년', sales: 812500, target: 840000 },
 ];
 
 
@@ -28,6 +44,7 @@ export type DuePayment = {
     name: string;
     email: string;
   };
+  employee: string;
   amount: number;
   dueDate: string;
   status: 'due' | 'overdue' | 'nearing';
@@ -36,30 +53,35 @@ export type DuePayment = {
 export const duePaymentsData: DuePayment[] = [
   {
     customer: { name: 'Liam Johnson', email: 'liam@example.com' },
+    employee: 'Jane Smith',
     amount: 250.0,
     dueDate: '2024-07-10', // Overdue by more than 14 days
     status: 'overdue',
   },
   {
     customer: { name: 'Olivia Smith', email: 'olivia@example.com' },
+    employee: 'Alex Ray',
     amount: 150.75,
     dueDate: '2024-08-05', // due in < 14 days from now (assuming today is ~July 25-30)
     status: 'due',
   },
   {
     customer: { name: 'Noah Williams', email: 'noah@example.com' },
+    employee: 'John Doe',
     amount: 350.0,
     dueDate: '2024-08-15', // nearing
     status: 'nearing',
   },
   {
     customer: { name: 'Emma Brown', email: 'emma@example.com' },
+    employee: 'Jane Smith',
     amount: 450.0,
     dueDate: '2024-07-28', // due or overdue depending on current date
     status: 'due',
   },
   {
     customer: { name: 'Ava Jones', email: 'ava@example.com' },
+    employee: 'Alex Ray',
     amount: 550.0,
     dueDate: '2024-08-20', // nearing
     status: 'nearing',
