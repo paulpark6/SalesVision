@@ -24,9 +24,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { products as initialProducts } from '@/lib/mock-data';
+import { initialProducts, productUploadCsvData } from '@/lib/mock-data';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Upload } from 'lucide-react';
+import { MoreHorizontal, Upload, Download } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -80,6 +80,24 @@ export default function ProductsPage() {
     }
   };
 
+  const handleDownloadSample = () => {
+    const blob = new Blob([productUploadCsvData], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.href) {
+      URL.revokeObjectURL(link.href);
+    }
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', 'sample-products.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+        title: "Sample File Downloading",
+        description: "sample-products.csv has started downloading.",
+    })
+  }
+
   const canEditImportPrice = role === 'admin';
   const canEditLocalPrice = role === 'manager';
   const canEditCategory = role === 'admin' || role === 'manager';
@@ -98,6 +116,12 @@ export default function ProductsPage() {
             <div className="flex items-center">
               <h1 className="text-2xl font-semibold">Products</h1>
               <div className="ml-auto flex items-center gap-2">
+                 <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleDownloadSample}>
+                  <Download className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Download Sample
+                  </span>
+                </Button>
                 <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleImportClick}>
                   <Upload className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

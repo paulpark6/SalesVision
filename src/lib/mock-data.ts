@@ -154,6 +154,12 @@ export const salesTrendCsvData = `Date,Product Category,Product Code,Description
 2023-12-20,Electronics,E-004,Gaming Console,Jane Smith,C-102,B,1,500,500,Credit,EMP-02,INV-1007
 `;
 
+export const productUploadCsvData = `Category,Code,Description,ImportPrice,LocalPurchasePrice
+Electronics,e-001,Laptop,1200,1150
+Electronics,e-002,Smartphone,800,780
+Clothing,c-005,T-Shirt,25,22
+`;
+
 const getLatestPrice = (history: { date: string; price: number }[]) => {
     if (!history || history.length === 0) return 0;
     return [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0].price;
