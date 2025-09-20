@@ -89,7 +89,7 @@ export default function CustomersPage() {
                     <TableHead className="text-right">월 평균 매출</TableHead>
                     <TableHead className="text-right">연 매출 (2024)</TableHead>
                     <TableHead className="text-right">연 매출 (2023)</TableHead>
-                    <TableHead className="text-right">신용 잔액</TableHead>
+                    <TableHead className="text-right">신용 잔액 (9월)</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
