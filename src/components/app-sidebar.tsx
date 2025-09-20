@@ -54,13 +54,6 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     <ShoppingCart className="h-4 w-4" />
                     Sales
                 </Link>
-                <Link
-                    href="/products"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                >
-                    <Package className="h-4 w-4" />
-                    Products
-                </Link>
                 {(role === 'admin' || role === 'manager') && (
                     <>
                         <Link
@@ -85,7 +78,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                     >
                         <Truck className="h-4 w-4" />
-                        Imports
+                        Products Import
                     </Link>
                 )}
                 {role === 'admin' && (
