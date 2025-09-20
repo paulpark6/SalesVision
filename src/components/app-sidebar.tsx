@@ -124,6 +124,11 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     Products
                 </NavLink>
                 {(role === 'admin' || role === 'manager') && (
+                     <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
+                        매출 목표
+                    </NavLink>
+                )}
+                {(role === 'admin' || role === 'manager') && (
                     <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
                         Inventory
                     </NavLink>
