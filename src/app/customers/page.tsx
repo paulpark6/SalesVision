@@ -268,47 +268,48 @@ export default function CustomersPage() {
                       const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
                       const isOpen = openCollapsible === customer.customerCode;
                       return (
-                      <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
-                        <Fragment>
-                          <TableRow>
-                            <TableCell>{customer.employee}</TableCell>
-                            <TableCell>
-                              <CollapsibleTrigger asChild>
-                                <div className="flex items-center gap-2 cursor-pointer">
-                                  <span>{customer.customerName}</span>
-                                  <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
-                                  <div className="text-sm text-muted-foreground ml-auto">{customer.customerCode}</div>
-                                </div>
-                              </CollapsibleTrigger>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline">{customer.customerGrade}</Badge>
-                            </TableCell>
-                            <TableCell>
-                                {role === 'admin' ? (
-                                    <Select
-                                        value={customer.customerType}
-                                        onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
-                                    >
-                                        <SelectTrigger className="h-8 w-[100px]">
-                                            <SelectValue placeholder="Select Type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="own">Own</SelectItem>
-                                            <SelectItem value="transfer">Transfer</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                ) : (
-                                    <Badge variant={customer.customerType === 'own' ? 'default' : 'secondary'}>
-                                        {customer.customerType === 'own' ? 'Own' : 'Transfer'}
-                                    </Badge>
-                                )}
-                            </TableCell>
-                            <TableCell className="text-right">{monthlySales.actual}</TableCell>
-                            <TableCell className="text-right">{monthlySales.average}</TableCell>
-                            <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
-                          </TableRow>
+                      <Fragment key={customer.customerCode}>
+                          <Collapsible asChild open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                            <TableRow>
+                              <TableCell>{customer.employee}</TableCell>
+                              <TableCell>
+                                <CollapsibleTrigger asChild>
+                                  <div className="flex items-center gap-2 cursor-pointer">
+                                    <span>{customer.customerName}</span>
+                                    <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                                    <div className="text-sm text-muted-foreground ml-auto">{customer.customerCode}</div>
+                                  </div>
+                                </CollapsibleTrigger>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline">{customer.customerGrade}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                  {role === 'admin' ? (
+                                      <Select
+                                          value={customer.customerType}
+                                          onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
+                                      >
+                                          <SelectTrigger className="h-8 w-[100px]">
+                                              <SelectValue placeholder="Select Type" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                              <SelectItem value="own">Own</SelectItem>
+                                              <SelectItem value="transfer">Transfer</SelectItem>
+                                          </SelectContent>
+                                      </Select>
+                                  ) : (
+                                      <Badge variant={customer.customerType === 'own' ? 'default' : 'secondary'}>
+                                          {customer.customerType === 'own' ? 'Own' : 'Transfer'}
+                                      </Badge>
+                                  )}
+                              </TableCell>
+                              <TableCell className="text-right">{monthlySales.actual}</TableCell>
+                              <TableCell className="text-right">{monthlySales.average}</TableCell>
+                              <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
+                              <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
+                            </TableRow>
+                          </Collapsible>
                           <CollapsibleContent asChild>
                               <tr className="bg-muted/50">
                                 <TableCell colSpan={8}>
@@ -337,8 +338,7 @@ export default function CustomersPage() {
                                 </TableCell>
                               </tr>
                           </CollapsibleContent>
-                        </Fragment>
-                      </Collapsible>
+                      </Fragment>
                   )})}
                 </TableBody>
               </Table>
