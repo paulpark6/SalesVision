@@ -34,11 +34,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { AddProductDialog } from '@/components/products/add-product-dialog';
 
 export default function ProductsPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -57,6 +59,7 @@ export default function ProductsPage() {
   }
 
   return (
+    <>
     <SidebarProvider>
       <AppSidebar role={role} />
       <SidebarInset>
@@ -71,7 +74,7 @@ export default function ProductsPage() {
                   Import/Export
                 </span>
               </Button>
-              <Button size="sm" className="h-8 gap-1">
+              <Button size="sm" className="h-8 gap-1" onClick={() => setIsAddProductDialogOpen(true)}>
                 <span>Add Product</span>
               </Button>
             </div>
@@ -157,5 +160,7 @@ export default function ProductsPage() {
         </main>
       </SidebarInset>
     </SidebarProvider>
+    <AddProductDialog isOpen={isAddProductDialogOpen} onOpenChange={setIsAddProductDialogOpen} />
+    </>
   );
 }
