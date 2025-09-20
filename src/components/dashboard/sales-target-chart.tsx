@@ -13,7 +13,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
-import { salesComparisonData } from '@/lib/mock-data';
+import { salesComparisonData, salesTargetData, salesTargetChartData } from '@/lib/mock-data';
 import { Progress } from '../ui/progress';
 
 const CustomLabel = (props: any) => {
