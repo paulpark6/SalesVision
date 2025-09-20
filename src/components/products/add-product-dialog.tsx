@@ -14,8 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { Combobox } from '../ui/combobox';
 
 type AddProductDialogProps = {
   isOpen: boolean;
@@ -24,13 +24,23 @@ type AddProductDialogProps = {
   onProductAdded?: (newProduct: { label: string, value: string, basePrice: number }) => void;
 };
 
+const initialCategories = [
+    { value: 'electronics', label: 'Electronics' },
+    { value: 'clothing', label: 'Clothing' },
+    { value: 'books', label: 'Books' },
+    { value: 'home-goods', label: 'Home Goods' },
+];
+
 export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onProductAdded }: AddProductDialogProps) {
   const { toast } = useToast();
   const [name, setName] = React.useState('');
+  const [category, setCategory] = React.useState('');
+  const [categories, setCategories] = React.useState(initialCategories);
 
   React.useEffect(() => {
     if(isOpen) {
       setName(defaultName);
+      setCategory('');
     }
   }, [isOpen, defaultName]);
 
@@ -40,10 +50,11 @@ export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onPro
     const newProduct = {
       label: formData.get('productName') as string,
       value: (formData.get('productCode') as string).toLowerCase(),
-      basePrice: parseFloat(formData.get('importPrice') as string),
+      // Since local price is the only price, let's treat it as the base price
+      basePrice: parseFloat(formData.get('localPrice') as string),
     };
 
-    if (!newProduct.label || !newProduct.value || isNaN(newProduct.basePrice)) {
+    if (!newProduct.label || !newProduct.value || !category || isNaN(newProduct.basePrice)) {
        toast({
         title: 'Error',
         description: 'Please fill all fields correctly.',
@@ -60,6 +71,15 @@ export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onPro
     onProductAdded?.(newProduct);
     onOpenChange(false); // Close the dialog
   };
+
+  const handleAddCategory = (newCategoryLabel: string) => {
+    const newCategory = {
+        value: newCategoryLabel.toLowerCase().replace(/\s+/g, '-'),
+        label: newCategoryLabel
+    };
+    setCategories(prev => [...prev, newCategory]);
+    setCategory(newCategory.label);
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -90,29 +110,23 @@ export function AddProductDialog({ isOpen, onOpenChange, defaultName = '', onPro
               <Label htmlFor="category" className="text-right">
                 Category
               </Label>
-              <Select name="category" required>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="electronics">Electronics</SelectItem>
-                    <SelectItem value="clothing">Clothing</SelectItem>
-                    <SelectItem value="books">Books</SelectItem>
-                    <SelectItem value="home-goods">Home Goods</SelectItem>
-                  </SelectContent>
-              </Select>
+              <div className="col-span-3">
+                <Combobox
+                    items={categories}
+                    placeholder="Select or add category..."
+                    searchPlaceholder="Search categories..."
+                    noResultsMessage="No category found."
+                    value={category}
+                    onValueChange={setCategory}
+                    onAddNew={handleAddCategory}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="productCode" className="text-right">
                 Product Code
               </Label>
               <Input id="productCode" name="productCode" placeholder="e.g., e-005" className="col-span-3" required />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="importPrice" className="text-right">
-                Import Price
-              </Label>
-              <Input id="importPrice" name="importPrice" type="number" placeholder="e.g., 25.50" className="col-span-3" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="localPrice" className="text-right">
