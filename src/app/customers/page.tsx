@@ -169,7 +169,7 @@ export default function CustomersPage() {
             <CardHeader>
               <CardTitle>고객 목록</CardTitle>
               <CardDescription>
-                담당 직원별 고객 목록, 매출 및 신용 현황입니다. 매니저는 고객 특성을 변경할 수 있습니다.
+                담당 직원별 고객 목록, 매출 및 신용 현황입니다. 관리자만 고객 특성을 변경할 수 있습니다.
               </CardDescription>
               <div className="flex items-end gap-4 pt-2">
                 <div className="grid gap-2">
@@ -232,7 +232,7 @@ export default function CustomersPage() {
                           <Badge variant="secondary">{customer.customerGrade}</Badge>
                         </TableCell>
                         <TableCell>
-                            {role === 'manager' ? (
+                            {role === 'admin' ? (
                                 <Select 
                                     value={customer.customerType} 
                                     onValueChange={(value: 'own' | 'transfer') => handleCustomerTypeChange(customer.customerCode, value)}
