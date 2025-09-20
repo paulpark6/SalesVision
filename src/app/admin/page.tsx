@@ -15,9 +15,6 @@ import { useEffect } from 'react';
 import { EmployeeSalesTarget } from '@/components/dashboard/employee-sales-target';
 import { CumulativeSalesTargetChart } from '@/components/dashboard/cumulative-sales-target-chart';
 import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { DollarSign, Target } from 'lucide-react';
-import { monthlySalesData } from '@/lib/mock-data';
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
