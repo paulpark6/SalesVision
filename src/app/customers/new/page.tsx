@@ -17,12 +17,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Textarea } from '@/components/ui/textarea';
-import { employees } from '@/lib/mock-data';
+import { employees, customerData } from '@/lib/mock-data';
 import { PlusCircle, X } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 
 type ContactPoint = {
   name: string;
@@ -31,6 +30,20 @@ type ContactPoint = {
   address: string;
   email: string;
 };
+
+const getNextCustomerCode = () => {
+    // Find the highest numeric part from codes starting with 'A'
+    const maxCode = customerData
+        .map(c => c.customerCode)
+        .filter(code => code.toUpperCase().startsWith('A'))
+        .map(code => parseInt(code.substring(1), 10))
+        .filter(num => !isNaN(num))
+        .reduce((max, num) => Math.max(max, num), 0);
+
+    const nextNumber = maxCode + 1;
+    return `A${String(nextNumber).padStart(4, '0')}`;
+};
+
 
 export default function NewCustomerPage() {
   const { toast } = useToast();
@@ -42,6 +55,8 @@ export default function NewCustomerPage() {
   const [contactPoints, setContactPoints] = useState<ContactPoint[]>([
     { name: '', position: '', phone: '', address: '', email: '' }
   ]);
+  
+  const newCustomerCode = useMemo(() => getNextCustomerCode(), []);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -117,7 +132,7 @@ export default function NewCustomerPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="customerCode">Customer Code</Label>
-                      <Input id="customerCode" placeholder="e.g., C-123" required />
+                      <Input id="customerCode" value={newCustomerCode} readOnly required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="customerGrade">Grade</Label>
