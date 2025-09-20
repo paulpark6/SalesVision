@@ -41,7 +41,7 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
           className="w-full justify-between"
         >
           {value
-            ? items.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label
+            ? items.find((item) => item.label.toLowerCase() === value.toLowerCase())?.label
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -49,8 +49,8 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command filter={(value, search) => {
             const item = items.find(i => i.value === value);
-            if (item?.label.toLowerCase().includes(search.toLowerCase())) return 1
-            return 0
+            if (item?.label.toLowerCase().includes(search.toLowerCase())) return 1;
+            return 0;
         }}>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>

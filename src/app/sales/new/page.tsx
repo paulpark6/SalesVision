@@ -86,7 +86,7 @@ export default function NewSalePage() {
 
   useEffect(() => {
     if (productDescription) {
-        const selectedProduct = products.find(p => p.value.toLowerCase() === productDescription.toLowerCase());
+        const selectedProduct = products.find(p => p.label.toLowerCase() === productDescription.toLowerCase());
         setProductCode(selectedProduct ? selectedProduct.value : '');
     } else {
         setProductCode('');
@@ -95,7 +95,7 @@ export default function NewSalePage() {
 
   useEffect(() => {
     if (customerName) {
-        const selectedCustomer = customers.find(c => c.value.toLowerCase() === customerName.toLowerCase());
+        const selectedCustomer = customers.find(c => c.label.toLowerCase() === customerName.toLowerCase());
         if (selectedCustomer) {
             setCustomerCode(selectedCustomer.value);
             setCustomerGrade(selectedCustomer.grade);
@@ -214,7 +214,10 @@ export default function NewSalePage() {
                         searchPlaceholder="Search products..."
                         noResultsMessage="No product found."
                         value={productDescription}
-                        onValueChange={setProductDescription}
+                        onValueChange={(value) => {
+                            const selectedLabel = items.find(item => item.value.toLowerCase() === value.toLowerCase())?.label || '';
+                            setProductDescription(selectedLabel);
+                        }}
                     />
                   </div>
                 </div>
@@ -232,7 +235,10 @@ export default function NewSalePage() {
                             searchPlaceholder="Search customers..."
                             noResultsMessage="No customer found."
                             value={customerName}
-                            onValueChange={setCustomerName}
+                            onValueChange={(value) => {
+                                const selectedLabel = items.find(item => item.value.toLowerCase() === value.toLowerCase())?.label || '';
+                                setCustomerName(selectedLabel);
+                            }}
                         />
                     </div>
                     <div className="space-y-2">
@@ -268,11 +274,14 @@ export default function NewSalePage() {
                                 <SelectValue placeholder="Select a payment method" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="credit">Credit</SelectItem>
-                                <SelectItem value="cash">Cash</SelectItem>
-                                <SelectItem value="check">Check</SelectItem>
-                                <SelectItem value="prepayment">Prepayment</SelectItem>
-                                <SelectItem value="mixed">Mixed</SelectItem>
+                                <SelectItem value="credit">Credit (신용)</SelectItem>
+                                <SelectItem value="cash">Cash (현금)</SelectItem>
+                                <SelectItem value="check">Check (수표)</SelectItem>
+                                <SelectItem value="prepayment">Prepayment (선결제)</SelectItem>
+                                <SelectItem value="mixed-cash-credit">Cash + Credit (현금+신용)</SelectItem>
+                                <SelectItem value="mixed-cash-check">Cash + Check (현금+수표)</SelectItem>
+                                <SelectItem value="mixed-check-credit">Check + Credit (수표+신용)</SelectItem>
+                                <SelectItem value="mixed">Mixed (기타 혼합)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
