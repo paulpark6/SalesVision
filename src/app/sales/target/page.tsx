@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Combobox } from '@/components/ui/combobox';
+import { Label } from '@/components/ui/label';
 
 type TargetProduct = {
     productName: string;
@@ -161,11 +162,14 @@ export default function SalesTargetPage() {
   };
 
   const grandTotals = useMemo(() => {
+    if (!salesData || salesData.length === 0 || !salesData[0].monthlySales) {
+        return { totalQuantities: [0, 0, 0], totalAmounts: [0, 0, 0], totalSeptemberTarget: 0 };
+    }
     const totalQuantities = salesData[0].monthlySales.map((_, i) =>
-        salesData.reduce((sum, customer) => sum + customer.monthlySales[i].quantity, 0)
+        salesData.reduce((sum, customer) => sum + (customer.monthlySales[i]?.quantity || 0), 0)
     );
     const totalAmounts = salesData[0].monthlySales.map((_, i) =>
-        salesData.reduce((sum, customer) => sum + customer.monthlySales[i].amount, 0)
+        salesData.reduce((sum, customer) => sum + (customer.monthlySales[i]?.amount || 0), 0)
     );
     const totalSeptemberTarget = salesData.reduce((sum, customer) => sum + calculateTotalTarget(customer.nextMonthTarget), 0);
 
