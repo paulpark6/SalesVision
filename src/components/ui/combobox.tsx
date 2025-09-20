@@ -47,7 +47,11 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-        <Command>
+        <Command filter={(value, search) => {
+            const item = items.find(i => i.value === value);
+            if (item?.label.toLowerCase().includes(search.toLowerCase())) return 1
+            return 0
+        }}>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
             <CommandEmpty>{noResultsMessage}</CommandEmpty>
