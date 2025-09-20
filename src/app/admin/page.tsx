@@ -41,6 +41,16 @@ export default function EmployeeDashboardPage() {
              <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">{role === 'manager' ? 'Manager Dashboard' : 'My Sales Dashboard'}</h1>
                 <div className="flex gap-2">
+                    {role === 'manager' && (
+                        <>
+                            <Button asChild variant="outline">
+                                <Link href="/employees/new">Register Employee</Link>
+                            </Button>
+                            <Button asChild variant="outline">
+                                <Link href="/purchases/new">Local Purchase</Link>
+                            </Button>
+                        </>
+                    )}
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>
                     </Button>
