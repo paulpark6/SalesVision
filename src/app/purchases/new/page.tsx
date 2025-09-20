@@ -116,7 +116,7 @@ export default function NewPurchasePage() {
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="productCode">제품 코드</Label>
-                    <Input id="productCode" value={productCode} readOnly placeholder="e.g., E-001" required />
+                    <Input id="productCode" value={productCode} onChange={(e) => setProductCode(e.target.value)} placeholder="e.g., E-001" required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="productDescription">제품 설명</Label>
@@ -124,7 +124,7 @@ export default function NewPurchasePage() {
                         items={products}
                         placeholder="Select or type product..."
                         searchPlaceholder="Search products..."
-                        noResultsMessage="No product found. You can type a new one."
+                        noResultsMessage="제품을 찾을 수 없습니다. 직접 입력하여 새 제품을 추가할 수 있습니다."
                         value={productDescription}
                         onValueChange={(value) => {
                             const selectedProduct = products.find(p => p.label.toLowerCase() === value.toLowerCase());
