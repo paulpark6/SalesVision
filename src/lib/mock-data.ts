@@ -9,6 +9,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -632,14 +633,17 @@ export type CashSale = {
     customerName: string;
     employeeName: string;
     amount: number;
+    source: '현금 판매' | '신용 수금';
 };
 
 export const cashSalesData: CashSale[] = [
-    { id: 'cs-1', date: '2024-09-01', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 125.50 },
-    { id: 'cs-2', date: '2024-09-01', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 60.00 },
-    { id: 'cs-3', date: '2024-09-02', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 200.00 },
-    { id: 'cs-4', date: '2024-09-02', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 45.00 },
-    { id: 'cs-5', date: '2024-09-03', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 300.00 },
-    { id: 'cs-6', date: '2024-09-03', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 80.00 },
-    { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00 },
+    { id: 'cs-1', date: '2024-09-01', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 125.50, source: '현금 판매' },
+    { id: 'cs-2', date: '2024-09-01', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 60.00, source: '현금 판매' },
+    { id: 'cs-8', date: '2024-09-01', customerName: 'Liam Johnson', employeeName: 'Jane Smith', amount: 250.00, source: '신용 수금' },
+    { id: 'cs-3', date: '2024-09-02', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 200.00, source: '현금 판매' },
+    { id: 'cs-4', date: '2024-09-02', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 45.00, source: '현금 판매' },
+    { id: 'cs-9', date: '2024-09-02', customerName: 'James Wilson', employeeName: 'John Doe', amount: 200.00, source: '신용 수금' },
+    { id: 'cs-5', date: '2024-09-03', customerName: 'Alice Williams', employeeName: 'Jane Smith', amount: 300.00, source: '현금 판매' },
+    { id: 'cs-6', date: '2024-09-03', customerName: 'Peter Jones', employeeName: 'John Doe', amount: 80.00, source: '현금 판매' },
+    { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00, source: '현금 판매' },
 ];

@@ -25,6 +25,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useMemo, Fragment } from 'react';
 import { Button } from '@/components/ui/button';
 import { cashSalesData, employees } from '@/lib/mock-data';
+import type { CashSale } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -32,7 +33,7 @@ import { Label } from '@/components/ui/label';
 
 type GroupedSales = {
     [date: string]: {
-        sales: typeof cashSalesData;
+        sales: CashSale[];
         total: number;
     };
 };
@@ -75,7 +76,14 @@ export default function CashReportPage() {
   }, [role, loggedInEmployee]);
 
   const groupedSales = useMemo(() => {
-    return filteredSalesData.reduce((acc: GroupedSales, sale) => {
+    const sortedData = [...filteredSalesData].sort((a,b) => {
+        // Sort by source: Cash Sale before Credit Collection
+        if(a.source < b.source) return -1;
+        if(a.source > b.source) return 1;
+        return 0;
+    });
+
+    return sortedData.reduce((acc: GroupedSales, sale) => {
       const date = sale.date;
       if (!acc[date]) {
         acc[date] = { sales: [], total: 0 };
@@ -108,7 +116,7 @@ export default function CashReportPage() {
             <CardHeader>
               <CardTitle>현금 결제 내역</CardTitle>
               <CardDescription>
-                일별 현금 결제 합계 및 고객별 상세 내역입니다. 관리자는 전체 직원의 내역을 확인할 수 있습니다.
+                일별 현금 결제 합계 및 상세 내역입니다. 현금 출처는 '현금 판매'와 '신용 수금'으로 구분됩니다.
               </CardDescription>
                <div className="flex items-end gap-4 pt-2">
                 <div className="grid gap-2">
@@ -155,6 +163,7 @@ export default function CashReportPage() {
                                               <TableRow>
                                                 { (role === 'admin' || role === 'manager') && <TableHead>담당 직원</TableHead> }
                                                 <TableHead>고객명</TableHead>
+                                                <TableHead>구분</TableHead>
                                                 <TableHead className="text-right">금액</TableHead>
                                               </TableRow>
                                           </TableHeader>
@@ -163,6 +172,7 @@ export default function CashReportPage() {
                                                     <TableRow key={sale.id}>
                                                         { (role === 'admin' || role === 'manager') && <TableCell>{sale.employeeName}</TableCell> }
                                                         <TableCell>{sale.customerName}</TableCell>
+                                                        <TableCell>{sale.source}</TableCell>
                                                         <TableCell className="text-right">{formatCurrency(sale.amount)}</TableCell>
                                                     </TableRow>
                                                 ))}
