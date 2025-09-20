@@ -57,15 +57,17 @@ export default function NewSalePage() {
       default: return 0;
     }
   }
-
+  
   useEffect(() => {
-    const selectedProduct = products.find(p => p.value === productCode);
-    if (selectedProduct && customerGrade) {
-      const basePrice = selectedProduct.basePrice;
-      const discount = getDiscount(customerGrade);
-      const finalPrice = basePrice * (1 - discount);
-      setAutoCalculatedPrice(finalPrice);
-      setPrice(finalPrice); // Set initial price
+    if (productCode && customerGrade) {
+      const selectedProduct = products.find(p => p.value === productCode);
+      if (selectedProduct) {
+          const basePrice = selectedProduct.basePrice;
+          const discount = getDiscount(customerGrade);
+          const finalPrice = basePrice * (1 - discount);
+          setAutoCalculatedPrice(finalPrice);
+          setPrice(finalPrice); // Set initial unit price
+      }
     } else {
         setAutoCalculatedPrice(0);
         setPrice(0);
