@@ -269,8 +269,8 @@ export default function CustomersPage() {
                       const monthlySales = getMonthlySales(customer, parseInt(selectedMonth));
                       const isOpen = openCollapsible === customer.customerCode;
                       return (
-                      <Fragment key={customer.customerCode}>
-                        <Collapsible asChild open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                      <Collapsible asChild key={customer.customerCode} open={isOpen} onOpenChange={() => setOpenCollapsible(isOpen ? null : customer.customerCode)}>
+                        <Fragment>
                           <TableRow>
                             <TableCell>{customer.employee}</TableCell>
                             <TableCell>
@@ -310,8 +310,7 @@ export default function CustomersPage() {
                             <TableCell className="text-right">{getYearlySales(customer, parseInt(selectedYear))}</TableCell>
                             <TableCell className="text-right">{formatCurrency(customer.creditBalance)}</TableCell>
                           </TableRow>
-                        </Collapsible>
-                        <CollapsibleContent asChild>
+                          <CollapsibleContent asChild>
                             <tr className="bg-muted/50">
                               <TableCell colSpan={8}>
                                   <div className="grid grid-cols-2 gap-4 p-4">
@@ -338,8 +337,9 @@ export default function CustomersPage() {
                                   </div>
                               </TableCell>
                             </tr>
-                        </CollapsibleContent>
-                      </Fragment>
+                          </CollapsibleContent>
+                        </Fragment>
+                      </Collapsible>
                   )})}
                 </TableBody>
               </Table>
