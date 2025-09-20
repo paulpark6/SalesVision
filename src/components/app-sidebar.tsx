@@ -154,6 +154,11 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </NavLink>
                 )}
                  {role === 'admin' && (
+                    <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
+                        Products
+                    </NavLink>
+                )}
+                 {role === 'admin' && (
                     <NavLink href="#" icon={<LineChart className="h-4 w-4" />}>
                         Analytics
                     </NavLink>

@@ -57,11 +57,9 @@ export default function DashboardPage() {
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                 <EmployeeSalesTarget />
                 <SalesTargetChart isTeamData={true} />
-                <DuePaymentsTable />
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <RecentSalesTable />
-                <EmployeeCreditSummary />
                 <SalesTrendAnalysisCard />
               </div>
             </div>
