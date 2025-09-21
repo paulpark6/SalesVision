@@ -8,9 +8,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { CreditNoteReport } from '@/components/reports/credit-note-report';
+import { CreditAgingReport } from '@/components/reports/credit-aging-report';
 
-export default function CreditNoteReportPage() {
+export default function CreditReportPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
@@ -38,12 +38,12 @@ export default function CreditNoteReportPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Credit Note Aging Report</h1>
+                <h1 className="text-2xl font-semibold">Credit Aging Report</h1>
                 <Button type="button" variant="outline" onClick={handleBack}>
                   Back to Dashboard
               </Button>
             </div>
-            <CreditNoteReport />
+            <CreditAgingReport />
         </main>
       </SidebarInset>
     </SidebarProvider>

@@ -56,7 +56,7 @@ const formatCurrency = (amount: number) => {
 };
 
 
-export function CreditNoteReport() {
+export function CreditAgingReport() {
     const { toast } = useToast();
 
     const agingBuckets = React.useMemo(() => {
@@ -104,7 +104,7 @@ export function CreditNoteReport() {
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', 'credit_note_aging_report.csv');
+        link.setAttribute('download', 'credit_aging_report.csv');
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -112,7 +112,7 @@ export function CreditNoteReport() {
         
         toast({
             title: 'Report Exported',
-            description: 'The credit note aging report has been downloaded as a CSV file.',
+            description: 'The credit aging report has been downloaded as a CSV file.',
         });
     };
 
@@ -121,7 +121,7 @@ export function CreditNoteReport() {
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
-                <CardTitle>Credit Note Aging Report</CardTitle>
+                <CardTitle>Credit Aging Report</CardTitle>
                 <CardDescription>
                     This report shows outstanding credit notes grouped by their aging status.
                 </CardDescription>
@@ -206,5 +206,3 @@ export function CreditNoteReport() {
     </Card>
   );
 }
-
-    
