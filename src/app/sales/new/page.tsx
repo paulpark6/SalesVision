@@ -197,7 +197,7 @@ export default function NewSalePage() {
                     <DatePicker />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="saleOrReturn">매출/리턴</Label>
+                    <Label htmlFor="saleOrReturn">매출 유형</Label>
                     <RadioGroup defaultValue="sale" id="saleOrReturn" className="flex items-center flex-wrap gap-x-4 gap-y-2 pt-2">
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="sale" id="sale" />
@@ -219,11 +219,11 @@ export default function NewSalePage() {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="broken" id="broken" />
-                                    <Label htmlFor="broken">브로큰</Label>
+                                    <Label htmlFor="broken">파손</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="damaged" id="damaged" />
-                                    <Label htmlFor="damaged">데미지</Label>
+                                    <Label htmlFor="damaged">손상</Label>
                                 </div>
                             </>
                         )}
@@ -447,5 +447,7 @@ export default function NewSalePage() {
 }
 
 
+
+    
 
     
