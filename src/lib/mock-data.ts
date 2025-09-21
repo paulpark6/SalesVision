@@ -1,13 +1,13 @@
 
+
 // src/lib/mock-data.ts
 
-import { subMonths, format } from 'date-fns';
+import { subDays, format } from 'date-fns';
 
 export const overviewData = {
   totalRevenue: 45231.89,
-  newCustomers: 573,
-  sales: 12234,
-  pendingOrders: 239,
+  averageSale: 2389.5,
+  totalSales: 12234,
 };
 
 export const recentSalesData = [
@@ -48,485 +48,540 @@ export const recentSalesData = [
   },
 ];
 
-export const duePaymentsData = [
-    {
-        id: 'INV-001',
-        customer: { name: 'Tech Solutions Inc.', email: 'billing@techsolutions.com' },
-        employee: 'Jane Smith',
-        dueDate: '2023-09-15',
-        amount: 2500.00,
-        collectionPlan: 'Follow-up email sent on 9/10.',
-    },
-    {
-        id: 'INV-002',
-        customer: { name: 'Creative Designs LLC', email: 'accounts@creativedesigns.com' },
-        employee: 'Alex Ray',
-        dueDate: '2023-09-01',
-        amount: 1250.50,
-        collectionPlan: '',
-    },
-    {
-        id: 'INV-003',
-        customer: { name: 'Global Exports', email: 'payments@globalexports.net' },
-        employee: 'John Doe',
-        dueDate: '2023-08-25',
-        amount: 8500.00,
-        collectionPlan: 'Confirmed payment will be sent by 9/5.',
-    },
-    {
-        id: 'INV-004',
-        customer: { name: 'Retail Innovations', email: 'ap@retailinnovations.co' },
-        employee: 'Jane Smith',
-        dueDate: '2023-09-20',
-        amount: 500.75,
-        collectionPlan: '',
-    },
-    {
-        id: 'INV-005',
-        customer: { name: 'Marketing Pros', email: 'billing@marketingpros.org' },
-        employee: 'Alex Ray',
-        dueDate: '2023-09-10',
-        amount: 3200.00,
-        collectionPlan: '',
-    },
-    {
-        id: 'INV-006',
-        customer: { name: 'Westside Medical', email: 'accounts@westsidemed.com' },
-        employee: 'John Doe',
-        dueDate: '2022-08-01', // Over 1 year overdue
-        amount: 15000.00,
-        collectionPlan: 'Legal action pending.',
-    }
-];
-
-export type DuePayment = typeof duePaymentsData[0];
-
 
 export const salesTargetData = {
-    current: 45231.89,
-    target: 50000,
-}
+  current: 41000,
+  target: 45000,
+};
 
 export const salesTargetChartData = [
-    { name: '매출', sales: 45231.89 },
-    { name: '목표', target: 50000 },
+  { name: '1주차', sales: 18600, target: 20000 },
+  { name: '2주차', sales: 30500, target: 28000 },
+  { name: '3주차', sales: 23700, target: 25000 },
+  { name: '4주차', sales: 41000, target: 45000 },
 ];
 
 export const salesComparisonData = [
     { name: '9월 누적 목표', jane: 45000, alex: 50000, john: 40000 },
     { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 },
-    { name: '전년 동기 실적', jane: 35000, alex: 48000, john: 42000 },
+    { name: '전년 동기 실적', jane: 35000, alex: 55000, john: 38000 },
 ];
 
+export const duePaymentsData = [
+  {
+    id: 'inv-001',
+    customer: {
+      name: 'Ethan Williams',
+      email: 'ethan.williams@example.com',
+    },
+    employee: 'Jane Smith',
+    dueDate: '2024-08-25',
+    amount: 150.75,
+    collectionPlan: '8월 20일 전화 통화, 25일까지 입금 약속',
+  },
+  {
+    id: 'inv-002',
+    customer: {
+      name: 'Ava Brown',
+      email: 'ava.brown@example.com',
+    },
+     employee: 'Alex Ray',
+    dueDate: '2024-09-10',
+    amount: 250.0,
+    collectionPlan: '',
+  },
+  {
+    id: 'inv-003',
+    customer: {
+      name: 'Liam Jones',
+      email: 'liam.jones@example.com',
+    },
+     employee: 'John Doe',
+    dueDate: '2023-07-15',
+    amount: 475.5,
+    collectionPlan: '장기 연체, 법적 조치 검토 중',
+  },
+  {
+    id: 'inv-004',
+    customer: {
+      name: 'Mia Garcia',
+      email: 'mia.garcia@example.com',
+    },
+     employee: 'Jane Smith',
+    dueDate: '2024-09-20',
+    amount: 80.0,
+    collectionPlan: '',
+  },
+  {
+    id: 'inv-005',
+    customer: {
+      name: 'Noah Miller',
+      email: 'noah.miller@example.com',
+    },
+    employee: 'Alex Ray',
+    dueDate: '2024-08-30',
+    amount: 320.0,
+    collectionPlan: '분할 상환 논의 중',
+  },
+];
+export type DuePayment = typeof duePaymentsData[0];
 
 export const salesReportData = [
-    { employeeName: 'Jane Smith', customerName: 'Tech Solutions Inc.', customerCode: 'C-101', target: 2500, actual: 2800 },
-    { employeeName: 'Jane Smith', customerName: 'Retail Innovations', customerCode: 'C-104', target: 1000, actual: 800 },
-    { employeeName: 'Alex Ray', customerName: 'Creative Designs LLC', customerCode: 'C-102', target: 1500, actual: 1300 },
-    { employeeName: 'Alex Ray', customerName: 'Marketing Pros', customerCode: 'C-105', target: 3000, actual: 3500 },
-    { employeeName: 'John Doe', customerName: 'Global Exports', customerCode: 'C-103', target: 8000, actual: 9200 },
+  {
+    employeeName: 'Jane Smith',
+    customerName: 'Global Tech Inc.',
+    customerCode: 'C-101',
+    target: 5000,
+    actual: 4850,
+  },
+  {
+    employeeName: 'Jane Smith',
+    customerName: 'Innovate Solutions',
+    customerCode: 'C-102',
+    target: 3000,
+    actual: 3200,
+  },
+  {
+    employeeName: 'Alex Ray',
+    customerName: 'Quantum Industries',
+    customerCode: 'C-103',
+    target: 7000,
+    actual: 6500,
+  },
+  {
+    employeeName: 'John Doe',
+    customerName: 'Apex Corp',
+    customerCode: 'C-104',
+    target: 4000,
+    actual: 4100,
+  },
+   {
+    employeeName: 'Alex Ray',
+    customerName: 'Zenith Enterpises',
+    customerCode: 'C-105',
+    target: 6000,
+    actual: 6250,
+  },
 ];
 
-export const salesTrendCsvData = `Date,Product,Category,Units Sold,Revenue
-2023-01-15,Widget A,Electronics,50,5000
-2023-01-20,Widget B,Electronics,30,4500
-2023-02-10,Gadget X,Home Goods,100,7500
-2023-02-18,Widget A,Electronics,55,5500
-2023-03-05,Widget B,Electronics,40,6000
-2023-03-22,Gadget Y,Home Goods,120,9600
-2023-04-12,Widget A,Electronics,65,6500
-2023-05-15,Super-Fabric,Clothing,200,4000
-2023-05-25,Widget B,Electronics,45,6750
-2023-06-10,Gadget X,Home Goods,110,8250
-2023-06-18,Super-Fabric,Clothing,250,5000
-2023-07-05,Widget A,Electronics,70,7000`;
+export const cumulativeReportData = [
+    { month: 'Jan', target: 30000, actual: 28000, lastYear: 27000 },
+    { month: 'Feb', target: 32000, actual: 31000, lastYear: 29000 },
+    { month: 'Mar', target: 35000, actual: 36000, lastYear: 34000 },
+    { month: 'Apr', target: 38000, actual: 37000, lastYear: 36000 },
+    { month: 'May', target: 40000, actual: 42000, lastYear: 39000 },
+    { month: 'Jun', target: 42000, actual: 41000, lastYear: 40000 },
+    { month: 'Jul', target: 45000, actual: 46000, lastYear: 44000 },
+    { month: 'Aug', target: 48000, actual: 47000, lastYear: 46000 },
+    { month: 'Sep', target: 50000, actual: 49000, lastYear: 48000 },
+    { month: 'Oct', target: 52000, actual: 0, lastYear: 50000 },
+    { month: 'Nov', target: 55000, actual: 0, lastYear: 53000 },
+    { month: 'Dec', target: 60000, actual: 0, lastYear: 58000 },
+];
 
+export const monthlyDetailReportData = [
+  {
+    month: 'Jul',
+    details: [
+      {
+        customerName: 'Global Tech Inc.',
+        products: [
+          { productName: 'Laptop Model X', target: 10000, actual: 11000 },
+          { productName: 'Wireless Mouse', target: 500, actual: 450 },
+        ]
+      },
+      {
+        customerName: 'Innovate Solutions',
+        products: [
+          { productName: 'Cloud Service Plan', target: 8000, actual: 8500 },
+        ]
+      }
+    ]
+  },
+   {
+    month: 'Aug',
+    details: [
+      {
+        customerName: 'Global Tech Inc.',
+        products: [
+          { productName: 'Laptop Model X', target: 12000, actual: 11500 },
+          { productName: 'Docking Station', target: 1000, actual: 1200 },
+        ]
+      },
+      {
+        customerName: 'Apex Corp',
+        products: [
+          { productName: 'AI Software License', target: 15000, actual: 16000 },
+          { productName: 'Support Package', target: 2000, actual: 2000 },
+        ]
+      }
+    ]
+  },
+  // Data for other months...
+];
+
+export type MonthlyDetail = typeof monthlyDetailReportData[0];
+
+
+export const cashSalesData = [
+  { id: 'cs001', date: format(subDays(new Date(), 2), 'yyyy-MM-dd'), employeeName: 'Jane Smith', customerName: 'Global Tech Inc.', source: '현금 판매', amount: 1200.00 },
+  { id: 'cs002', date: format(subDays(new Date(), 2), 'yyyy-MM-dd'), employeeName: 'Alex Ray', customerName: 'Quantum Industries', source: '신용 수금', amount: 850.50 },
+  { id: 'cs003', date: format(subDays(new Date(), 3), 'yyyy-MM-dd'), employeeName: 'John Doe', customerName: 'Apex Corp', source: '현금 판매', amount: 500.00 },
+  { id: 'cs004', date: format(subDays(new Date(), 9), 'yyyy-MM-dd'), employeeName: 'Jane Smith', customerName: 'Innovate Solutions', source: '신용 수금', amount: 2000.00 },
+  { id: 'cs005', date: format(subDays(new Date(), 10), 'yyyy-MM-dd'), employeeName: 'Alex Ray', customerName: 'Zenith Enterpises', source: '현금 판매', amount: 750.00 },
+  { id: 'cs006', date: format(subDays(new Date(), 11), 'yyyy-MM-dd'), employeeName: 'Jane Smith', customerName: 'Global Tech Inc.', source: '신용 수금', amount: 600.00 },
+];
+export type CashSale = typeof cashSalesData[0];
+
+export const checkPaymentsData = [
+  { id: 'chk001', receiptDate: '2024-09-01', dueDate: '2024-10-01', salesperson: 'Jane Smith', customerName: 'Global Tech Inc.', issuingBank: 'Bank of America', checkNumber: '12345', amount: 5000.00, depositBank: '', depositDate: '', status: 'Pending' as CheckStatus, notes: '' },
+  { id: 'chk002', receiptDate: '2024-09-02', dueDate: '2024-09-17', salesperson: 'Alex Ray', customerName: 'Quantum Industries', issuingBank: 'Chase', checkNumber: '67890', amount: 3200.00, depositBank: 'Wells Fargo', depositDate: '2024-09-03', status: 'Confirmed' as CheckStatus, notes: '조기 입금' },
+  { id: 'chk003', receiptDate: '2024-08-28', dueDate: '2024-09-28', salesperson: 'John Doe', customerName: 'Apex Corp', issuingBank: 'Citibank', checkNumber: '11223', amount: 1500.00, depositBank: '', depositDate: '', status: 'Pending' as CheckStatus, notes: '분할 결제' },
+  { id: 'chk004', receiptDate: '2024-08-25', dueDate: '2024-09-10', salesperson: 'Jane Smith', customerName: 'Innovate Solutions', issuingBank: 'Bank of America', checkNumber: '44556', amount: 7800.00, depositBank: 'Self', depositDate: '2024-08-26', status: 'Rejected' as CheckStatus, notes: '부도 처리. 패널티 부과 예정.' },
+];
+export type CheckPayment = typeof checkPaymentsData[0];
+export type CheckStatus = 'Pending' | 'Confirmed' | 'Rejected';
+
+
+export const commissionData = [
+  {
+    employeeId: 'EMP-001',
+    employeeName: 'Jane Smith',
+    sales: [
+      { type: '수입' as '수입' | '현지', salePrice: 150000, costPrice: 100000, customerType: 'own' as 'own' | 'transfer' },
+      { type: '수입' as '수입' | '현지', salePrice: 80000, costPrice: 60000, customerType: 'own' as 'own' | 'transfer' },
+      { type: '수입' as '수입' | '현지', salePrice: 120000, costPrice: 90000, customerType: 'transfer' as 'own' | 'transfer' },
+      { type: '현지' as '수입' | '현지', salePrice: 5000, costPrice: 4000, customerType: 'own' as 'own' | 'transfer' }, // Margin 20% -> Rate 12%
+      { type: '현지' as '수입' | '현지', salePrice: 8000, costPrice: 4500, customerType: 'own' as 'own' | 'transfer' }, // Margin 43.75% -> Rate 18%
+      { type: '현지' as '수입' | '현지', salePrice: 6000, costPrice: 5500, customerType: 'transfer' as 'own' | 'transfer' }, // Margin 8.3% -> Rate 3% * 0.5
+    ]
+  },
+  {
+    employeeId: 'EMP-002',
+    employeeName: 'Alex Ray',
+    sales: [
+      { type: '수입' as '수입' | '현지', salePrice: 250000, costPrice: 180000, customerType: 'own' as 'own' | 'transfer' },
+      { type: '현지' as '수입' | '현지', salePrice: 12000, costPrice: 10000, customerType: 'own' as 'own' | 'transfer' }, // Margin 16.6% -> Rate 10%
+      { type: '현지' as '수입' | '현지', salePrice: 15000, costPrice: 10000, customerType: 'transfer' as 'own' | 'transfer' },// Margin 33.3% -> Rate 15% * 0.5
+    ]
+  },
+  {
+    employeeId: 'EMP-003',
+    employeeName: 'John Doe',
+    sales: [
+      { type: '수입' as '수입' | '현지', salePrice: 50000, costPrice: 40000, customerType: 'transfer' as 'own' | 'transfer' },
+      { type: '현지' as '수입' | '현지', salePrice: 20000, costPrice: 15000, customerType: 'own' as 'own' | 'transfer' }, // Margin 25% -> Rate 12%
+    ]
+  },
+];
+
+
+// Data for Sales -> Target
+export type SalesTarget = {
+    customerId: string;
+    customerName: string;
+    productId: string;
+    productName: string;
+    targetQuantity: number;
+    targetAmount: number;
+};
+export type SalesTargetData = {
+    month: number;
+    year: number;
+    targets: SalesTarget[];
+};
+
+export const employeeCustomerSales = [
+  {
+    id: 1,
+    customerName: 'Global Tech Inc.',
+    salesTarget: 15000,
+    salesAmount: 18500,
+  },
+  {
+    id: 2,
+    customerName: 'Innovate Solutions',
+    salesTarget: 10000,
+    salesAmount: 8200,
+  },
+  {
+    id: 3,
+    customerName: 'Quantum Industries',
+    salesTarget: 12000,
+    salesAmount: 12000,
+  },
+];
+export type EmployeeCustomerSale = typeof employeeCustomerSales[0];
+
+export const customerProductSalesDetails = {
+  1: [ // Global Tech Inc.
+    { productName: 'Laptop Model X', salesTarget: 10000, salesAmount: 12000 },
+    { productName: 'Wireless Mouse', salesTarget: 1000, salesAmount: 1500 },
+    { productName: 'USB-C Hub', salesTarget: 4000, salesAmount: 5000 },
+  ],
+  2: [ // Innovate Solutions
+    { productName: 'Cloud Service Plan', salesTarget: 8000, salesAmount: 7000 },
+    { productName: 'API Access Key', salesTarget: 2000, salesAmount: 1200 },
+  ],
+  3: [ // Quantum Industries
+    { productName: 'Quantum Processor v3', salesTarget: 12000, salesAmount: 12000 },
+  ],
+};
+export type CustomerProductSale = typeof customerProductSalesDetails[1][0];
 
 export const products = [
-    { value: 'p-001', label: 'Wireless Mouse', basePrice: 25.99 },
-    { value: 'p-002', label: 'Mechanical Keyboard', basePrice: 120.00 },
-    { value: 'p-003', label: '4K Monitor', basePrice: 350.50 },
-    { value: 'p-004', label: 'USB-C Hub', basePrice: 45.00 },
-    { value: 'p-005', label: 'Laptop Stand', basePrice: 35.00 },
+  { value: 'p-001', label: 'Laptop Model X', basePrice: 1200 },
+  { value: 'p-002', label: 'Wireless Mouse', basePrice: 25 },
+  { value: 'p-003', label: 'USB-C Hub', basePrice: 45 },
+  { value: 'p-004', label: 'Cloud Service Plan', basePrice: 500 },
+  { value: 'p-005', label: 'Quantum Processor v3', basePrice: 2500 },
+  { value: 'p-006', label: 'AI Software License', basePrice: 1500 },
+  { value: 'p-007', label: 'Support Package', basePrice: 300 },
 ];
+export type Product = typeof products[0];
 
 export const customers = [
-    { value: 'c-101', label: 'Tech Solutions Inc.', grade: 'A' },
-    { value: 'c-102', label: 'Creative Designs LLC', grade: 'B' },
-    { value: 'c-103', label: 'Global Exports', grade: 'A' },
-    { value: 'c-104', label: 'Retail Innovations', grade: 'C' },
-    { value: 'c-105', label: 'Marketing Pros', grade: 'B' },
-    { value: 'c-106', label: 'Westside Medical', grade: 'A' },
+    { value: 'c-101', label: 'Global Tech Inc.', grade: 'A' },
+    { value: 'c-102', label: 'Innovate Solutions', grade: 'B' },
+    { value: 'c-103', label: 'Quantum Industries', grade: 'A' },
+    { value: 'c-104', label: 'Apex Corp', grade: 'C' },
+    { value: 'c-105', label: 'Zenith Enterpises', grade: 'B' },
 ];
 
 export const employees = [
   { value: 'emp-001', label: 'Jane Smith (EMP-001)', role: 'employee', name: 'Jane Smith' },
   { value: 'emp-002', label: 'Alex Ray (EMP-002)', role: 'manager', name: 'Alex Ray' },
   { value: 'emp-003', label: 'John Doe (EMP-003)', role: 'employee', name: 'John Doe' },
-  { value: 'admin', label: 'Admin User', role: 'admin', name: 'Admin User' },
+  { value: 'admin', label: 'Admin User', role: 'admin', name: 'Admin User'},
 ];
+
 
 export const customerData = [
-    {
-      employee: 'Jane Smith',
-      customerName: 'Tech Solutions Inc.',
-      customerCode: 'A0001',
-      customerGrade: 'A',
-      customerType: 'own' as 'own' | 'transfer' | 'pending',
-      monthlySales: [
-        { month: 9, actual: 2800, average: 2500 },
-        { month: 8, actual: 2600, average: 2500 },
-        { month: 7, actual: 2400, average: 2500 },
-      ],
-      yearlySales: [
-        { year: 2023, amount: 25000 },
-        { year: 2022, amount: 22000 },
-      ],
-      creditBalance: 5200.00,
-      contact: { name: 'John Smith', position: 'CEO', phone: '123-456-7890', address: '123 Tech Rd, Silicon Valley', email: 'john.s@techsolutions.com' },
-      companyOverview: 'Provides cutting-edge software solutions for enterprise clients. Strong focus on AI and machine learning applications.'
-    },
-    {
-      employee: 'Alex Ray',
-      customerName: 'Creative Designs LLC',
-      customerCode: 'B0002',
-      customerGrade: 'B',
-      customerType: 'transfer' as 'own' | 'transfer' | 'pending',
-      monthlySales: [
-        { month: 9, actual: 1300, average: 1500 },
-        { month: 8, actual: 1600, average: 1500 },
-      ],
-      yearlySales: [
-        { year: 2023, amount: 14000 },
-      ],
-      creditBalance: 1250.50,
-      contact: { name: 'Jane Doe', position: 'Art Director', phone: '234-567-8901', address: '456 Design Ave, Arts District', email: 'jane.d@creativedesigns.com' },
-      companyOverview: 'A boutique design agency specializing in branding and web design for startups.'
-    },
-    {
-      employee: 'John Doe',
-      customerName: 'Global Exports',
-      customerCode: 'C0003',
-      customerGrade: 'A',
-      customerType: 'own' as 'own' | 'transfer' | 'pending',
-      monthlySales: [
-         { month: 9, actual: 9200, average: 8000 },
-      ],
-      yearlySales: [
-        { year: 2023, amount: 85000 },
-        { year: 2022, amount: 78000 },
-        { year: 2021, amount: 75000 },
-      ],
-      creditBalance: 15300.75,
-      contact: { name: 'Peter Jones', position: 'Logistics Manager', phone: '345-678-9012', address: '789 Export Plaza, Port City', email: null },
-      companyOverview: 'Manages international shipping and logistics for large-scale manufacturing companies.'
-    },
-     {
-      employee: 'Jane Smith',
-      customerName: 'Innovate Inc.',
-      customerCode: 'A0004',
-      customerGrade: 'C',
-      customerType: 'pending' as 'own' | 'transfer' | 'pending',
-      monthlySales: [],
-      yearlySales: [],
-      creditBalance: 0,
-      contact: { name: 'Emily White', position: 'Operations', phone: '456-789-0123', address: '101 Innovation Dr', email: 'emily.w@innovate.com' },
-      companyOverview: 'A new startup in the renewable energy sector, currently in the R&D phase.'
-    }
-];
-
-export const importUploadCsvData = `Date,Supplier,ProductCategory,ProductCode,ProductDescription,Quantity,UnitPrice
-2023-09-01,Global Imports,Electronics,E-001,Wireless Mouse,500,15.50
-2023-09-02,TechSupply Co,Electronics,E-002,Mechanical Keyboard,100,80.00
-2023-09-03,Fashion Forward,Clothing,C-001,Summer Dress,200,25.00`;
-
-export const productUploadCsvData = `Category,Code,Description,ImportPrice,LocalPrice
-Electronics,E-006,Noise-Cancelling Headphones,150.00,180.00
-Home Goods,H-003,Smart LED Bulb,12.50,15.00
-`;
-
-export const customerUploadCsvData = `CustomerName,CustomerCode,Grade,Employee
-New Age Tech,A0005,A,emp-001
-Downtown Cafe,B0006,B,emp-002
-`;
-
-export type CashSale = {
-  id: string;
-  date: string;
-  employeeName: string;
-  customerName: string;
-  amount: number;
-  source: '현금 판매' | '신용 수금';
-};
-
-export const cashSalesData: CashSale[] = [
-    { id: 'cs-001', date: '2023-09-01', employeeName: 'Jane Smith', customerName: 'Tech Solutions Inc.', amount: 500, source: '신용 수금' },
-    { id: 'cs-002', date: '2023-09-01', employeeName: 'Alex Ray', customerName: 'Quick Mart', amount: 150, source: '현금 판매' },
-    { id: 'cs-003', date: '2023-09-02', employeeName: 'John Doe', customerName: 'Global Exports', amount: 1200, source: '신용 수금' },
-    { id: 'cs-004', date: '2023-09-02', employeeName: 'Jane Smith', customerName: 'Walk-in Customer', amount: 75.50, source: '현금 판매' },
-    { id: 'cs-005', date: '2023-09-05', employeeName: 'Alex Ray', customerName: 'Creative Designs LLC', amount: 300, source: '신용 수금' },
-    { id: 'cs-006', date: '2023-08-28', employeeName: 'Jane Smith', customerName: 'Tech Solutions Inc.', amount: 450, source: '신용 수금' },
-    { id: 'cs-007', date: '2023-08-29', employeeName: 'John Doe', customerName: 'Global Exports', amount: 2000, source: '신용 수금' },
-];
-
-export type CheckStatus = 'Pending' | 'Confirmed' | 'Rejected';
-
-export type CheckPayment = {
-  id: string;
-  receiptDate: string;
-  dueDate: string;
-  salesperson: string;
-  customerName: string;
-  issuingBank: string;
-  checkNumber: string;
-  amount: number;
-  depositBank: string;
-  depositDate: string;
-  status: CheckStatus;
-  notes: string;
-};
-
-export const checkPaymentsData: CheckPayment[] = [
-    { id: 'chk-001', receiptDate: '2023-09-01', dueDate: '2023-10-01', salesperson: 'Jane Smith', customerName: 'Tech Solutions Inc.', issuingBank: 'Bank of America', checkNumber: '12345', amount: 1500.00, depositBank: 'Chase', depositDate: '2023-09-02', status: 'Pending', notes: 'Awaiting clearance' },
-    { id: 'chk-002', receiptDate: '2023-09-03', dueDate: '2023-09-18', salesperson: 'Alex Ray', customerName: 'Creative Designs LLC', issuingBank: 'Wells Fargo', checkNumber: '54321', amount: 800.50, depositBank: 'Chase', depositDate: '2023-09-04', status: 'Confirmed', notes: '' },
-    { id: 'chk-003', receiptDate: '2023-09-05', dueDate: '2023-11-05', salesperson: 'John Doe', customerName: 'Global Exports', issuingBank: 'Citibank', checkNumber: '67890', amount: 5000.00, depositBank: 'Bank of America', depositDate: '2023-09-06', status: 'Pending', notes: 'Post-dated' },
-    { id: 'chk-004', receiptDate: '2023-08-15', dueDate: '2023-08-20', salesperson: 'Jane Smith', customerName: 'Retail Innovations', issuingBank: 'Local Credit Union', checkNumber: '11223', amount: 250.00, depositBank: '', depositDate: '', status: 'Rejected', notes: 'Insufficient funds' },
-];
-
-export const cumulativeReportData = [
-  { month: 'Jan', target: 30000, actual: 28000, lastYear: 25000 },
-  { month: 'Feb', target: 32000, actual: 31000, lastYear: 29000 },
-  { month: 'Mar', target: 35000, actual: 36000, lastYear: 33000 },
-  { month: 'Apr', target: 38000, actual: 37000, lastYear: 36000 },
-  { month: 'May', target: 40000, actual: 42000, lastYear: 39000 },
-  { month: 'Jun', target: 42000, actual: 41000, lastYear: 40000 },
-  { month: 'Jul', target: 45000, actual: 46000, lastYear: 43000 },
-  { month: 'Aug', target: 48000, actual: 47000, lastYear: 46000 },
-  { month: 'Sep', target: 50000, actual: 45231, lastYear: 48000 },
-  { month: 'Oct', target: 55000, actual: 0, lastYear: 52000 },
-  { month: 'Nov', target: 58000, actual: 0, lastYear: 55000 },
-  { month: 'Dec', target: 60000, actual: 0, lastYear: 58000 },
-];
-
-export type CustomerProductSale = {
-  productName: string;
-  salesTarget: number;
-  salesAmount: number;
-};
-
-export type MonthlyDetail = {
-  month: string;
-  details: {
-    customerName: string;
-    products: CustomerProductSale[];
-  }[];
-};
-
-export const monthlyDetailReportData: MonthlyDetail[] = [
-    { 
-      month: 'Sep',
-      details: [
-        { customerName: 'Tech Solutions Inc.', products: [ { productName: 'Wireless Mouse', salesTarget: 1000, salesAmount: 1200 }, { productName: '4K Monitor', salesTarget: 1500, salesAmount: 1600 } ] },
-        { customerName: 'Retail Innovations', products: [ { productName: 'Laptop Stand', salesTarget: 1000, salesAmount: 800 } ] },
-      ]
-    },
-    {
-      month: 'Aug',
-      details: [
-         { customerName: 'Tech Solutions Inc.', products: [ { productName: 'Wireless Mouse', salesTarget: 1000, salesAmount: 1100 }, { productName: '4K Monitor', salesTarget: 1500, salesAmount: 1500 } ] },
-      ]
-    }
-];
-
-export type SalesTarget = {
-  id: string;
-  employeeId: string;
-  customerId: string;
-  customerName: string;
-  month: string;
-  productId: string;
-  productName: string;
-  quantity: number;
-  price: number;
-  total: number;
-};
-
-export const monthlySalesTargetData: SalesTarget[] = [
-  { id: 'st-1', employeeId: 'emp-001', customerId: 'c-101', customerName: 'Tech Solutions Inc.', month: '2023-09', productId: 'p-001', productName: 'Wireless Mouse', quantity: 50, price: 25, total: 1250 },
-  { id: 'st-2', employeeId: 'emp-001', customerId: 'c-101', customerName: 'Tech Solutions Inc.', month: '2023-09', productId: 'p-003', productName: '4K Monitor', quantity: 10, price: 350, total: 3500 },
-  { id: 'st-3', employeeId: 'emp-001', customerId: 'c-104', customerName: 'Retail Innovations', month: '2023-09', productId: 'p-005', productName: 'Laptop Stand', quantity: 20, price: 30, total: 600 },
-  { id: 'st-4', employeeId: 'emp-002', customerId: 'c-102', customerName: 'Creative Designs LLC', month: '2023-09', productId: 'p-002', productName: 'Mechanical Keyboard', quantity: 5, price: 120, total: 600 },
-];
-
-
-export type CommissionSale = {
-  type: '수입' | '현지';
-  salePrice: number;
-  costPrice: number;
-  customerType: 'own' | 'transfer';
-};
-
-export const commissionData = [
   {
-    employeeId: 'emp-001',
-    employeeName: 'Jane Smith',
-    sales: [
-      { type: '수입', salePrice: 150000, costPrice: 100000, customerType: 'own' },
-      { type: '수입', salePrice: 80000, costPrice: 60000, customerType: 'own' },
-      { type: '수입', salePrice: 120000, costPrice: 90000, customerType: 'transfer' },
-      { type: '현지', salePrice: 5000, costPrice: 4000, customerType: 'own' }, // margin 20% -> 12%
-      { type: '현지', salePrice: 10000, costPrice: 8500, customerType: 'own' }, // margin 15% -> 10%
-      { type: '현지', salePrice: 20000, costPrice: 12000, customerType: 'own' }, // margin 40% -> 18%
-      { type: '현지', salePrice: 8000, costPrice: 6000, customerType: 'transfer' }, // margin 25% -> 12% * 0.5
-    ] as CommissionSale[]
+    employee: 'Jane Smith',
+    customerName: 'Global Tech Inc.',
+    customerCode: 'A0001',
+    customerGrade: 'A',
+    customerType: 'own' as 'own' | 'transfer' | 'pending',
+    monthlySales: [
+      { month: 9, actual: 18500, average: 17000 },
+      { month: 8, actual: 17800, average: 16900 },
+    ],
+    yearlySales: [
+      { year: 2024, amount: 150000 },
+      { year: 2023, amount: 135000 },
+    ],
+    creditBalance: 12500.50,
+    contact: {
+        name: 'John Smith',
+        position: 'Purchasing Head',
+        phone: '123-456-7890',
+        address: '123 Tech Park, Silicon Valley, CA',
+        email: 'john.s@globaltech.com'
+    },
+    companyOverview: 'A leading provider of enterprise software solutions.'
   },
   {
-    employeeId: 'emp-003',
-    employeeName: 'John Doe',
-    sales: [
-       { type: '수입', salePrice: 180000, costPrice: 120000, customerType: 'own' },
-       { type: '현지', salePrice: 15000, costPrice: 9000, customerType: 'own' }, // margin 40% -> 18%
-       { type: '현지', salePrice: 12000, costPrice: 11000, customerType: 'transfer' }, // margin < 10% -> 3% * 0.5
-    ] as CommissionSale[]
+    employee: 'Alex Ray',
+    customerName: 'Quantum Industries',
+    customerCode: 'A0002',
+    customerGrade: 'A',
+    customerType: 'transfer' as 'own' | 'transfer' | 'pending',
+    monthlySales: [
+       { month: 9, actual: 12000, average: 11500 },
+       { month: 8, actual: 11000, average: 11200 },
+    ],
+    yearlySales: [
+      { year: 2024, amount: 110000 },
+      { year: 2023, amount: 95000 },
+    ],
+    creditBalance: 8200.00,
+     contact: {
+        name: 'Maria Garcia',
+        position: 'Supply Chain Director',
+        phone: '987-654-3210',
+        address: '456 Innovation Dr, Boston, MA',
+        email: 'maria.g@quantum.com'
+    },
+    companyOverview: 'Specializes in next-generation quantum computing hardware.'
+  },
+  {
+    employee: 'John Doe',
+    customerName: 'Apex Corp',
+    customerCode: 'B0001',
+    customerGrade: 'B',
+    customerType: 'own' as 'own' | 'transfer' | 'pending',
+    monthlySales: [
+       { month: 9, actual: 8500, average: 8000 },
+       { month: 8, actual: 7800, average: 7900 },
+    ],
+    yearlySales: [
+      { year: 2024, amount: 75000 },
+      { year: 2023, amount: 70000 },
+    ],
+    creditBalance: 5300.75,
+     contact: {
+        name: 'David Chen',
+        position: 'Operations Manager',
+        phone: '555-123-4567',
+        address: '789 Business Blvd, Chicago, IL',
+        email: 'david.c@apexcorp.com'
+    },
+    companyOverview: 'A multinational conglomerate with diverse business interests.'
+  },
+  {
+    employee: 'Jane Smith',
+    customerName: 'Innovate Solutions',
+    customerCode: 'B0002',
+    customerGrade: 'B',
+    customerType: 'pending' as 'own' | 'transfer' | 'pending',
+    monthlySales: [],
+    yearlySales: [],
+    creditBalance: 0,
+    contact: {
+        name: 'Sarah Jenkins',
+        position: 'Lead Buyer',
+        phone: '555-987-6543',
+        address: '101 Venture Way, Austin, TX',
+        email: null
+    },
+    companyOverview: 'A startup focused on renewable energy technologies.'
   }
 ];
 
-export type EmployeeCustomerSale = {
-  id: string;
-  customerName: string;
-  salesTarget: number;
-  salesAmount: number;
-};
+export const salesTrendCsvData = `Date,Category,Product,Quantity,Unit Price,Total Sales
+2023-01-15,Electronics,Laptop Model X,50,1200,60000
+2023-01-20,Clothing,Branded T-Shirt,200,25,5000
+2023-02-10,Electronics,Wireless Mouse,150,20,3000
+2023-02-18,Home Goods,Smart Thermostat,80,150,12000
+2023-03-05,Books,Sci-Fi Novel "Galaxy's Edge",300,15,4500
+2023-03-22,Electronics,Laptop Model X,60,1180,70800
+2023-04-10,Clothing,Branded Hoodie,180,45,8100
+2023-04-25,Electronics,USB-C Hub,250,40,10000
+2023-05-15,Home Goods,Smart Lightbulbs (4-pack),120,50,6000
+2023-05-30,Electronics,Laptop Model X,70,1150,80500
+2023-06-12,Books,Mystery Novel "The Silent Witness",400,12,4800
+2023-06-20,Electronics,Wireless Mouse,200,22,4400
+2023-07-07,Clothing,Branded T-Shirt,250,25,6250
+2023-07-19,Electronics,Laptop Model X,80,1120,89600
+2023-08-01,Home Goods,Smart Thermostat,100,145,14500
+2023-08-21,Electronics,USB-C Hub,300,38,11400
+2023-09-05,Books,Sci-Fi Novel "Galaxy's Edge",350,15,5250
+2023-09-18,Electronics,Laptop Model X,90,1100,99000
+2023-10-10,Clothing,Branded Hoodie,200,45,9000
+2023-10-28,Electronics,Wireless Mouse,220,20,4400
+2023-11-15,Home Goods,Smart Lightbulbs (4-pack),150,48,7200
+2023-11-25,Electronics,Laptop Model X,100,1080,108000
+2023-12-10,Books,Mystery Novel "The Silent Witness",500,12,6000
+2023-12-20,Clothing,Branded T-Shirt,300,25,7500`;
 
-export const employeeCustomerSales: EmployeeCustomerSale[] = [
-  { id: 'ecs-001', customerName: 'Tech Solutions Inc.', salesTarget: 20000, salesAmount: 18500 },
-  { id: 'ecs-002', customerName: 'Retail Innovations', salesTarget: 15000, salesAmount: 16200 },
-  { id: 'ecs-003', customerName: 'Westside Medical', salesTarget: 10000, salesAmount: 8000 },
-];
+export const productUploadCsvData = `Category,Product Code,Description,Import Price,Local Purchase Price
+Electronics,E-006,4K Monitor,450,420
+Electronics,E-007,Mechanical Keyboard,120,110
+Home Goods,H-001,Air Purifier,250,235`;
 
-export const customerProductSalesDetails: Record<string, CustomerProductSale[]> = {
-    'ecs-001': [
-        { productName: 'Wireless Mouse', salesTarget: 8000, salesAmount: 9500 },
-        { productName: '4K Monitor', salesTarget: 12000, salesAmount: 9000 },
-    ],
-    'ecs-002': [
-        { productName: 'Laptop Stand', salesTarget: 10000, salesAmount: 12000 },
-        { productName: 'USB-C Hub', salesTarget: 5000, salesAmount: 4200 },
-    ],
-    'ecs-003': [
-        { productName: 'Mechanical Keyboard', salesTarget: 10000, salesAmount: 8000 },
-    ]
-};
+export const customerUploadCsvData = `CustomerName,CustomerCode,Grade,Employee
+"Starlight Supplies","A0005","A","emp-001"
+"Phoenix Retail","B0003","B","emp-002"
+"Neptune Goods","C0001","C","emp-003"`;
 
-// --- START: Data for Sales Target Page ---
+export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,Product Description,Quantity,Unit Price
+2024-09-15,"Global Imports Inc.","Electronics","E-006","4K Monitor",50,450
+2024-09-16,"Tech Distributors","Electronics","E-007","Mechanical Keyboard",100,110`;
 
-// Helper to get month name
-const getMonthName = (date: Date) => format(date, 'MMMM');
-const currentMonth = new Date(2023, 8, 1); // September
-const prevMonth1 = subMonths(currentMonth, 1); // August
-const prevMonth2 = subMonths(currentMonth, 2); // July
-const prevMonth3 = subMonths(currentMonth, 3); // June
-
-export const monthNames = {
-    current: getMonthName(currentMonth),
-    prev1: getMonthName(prevMonth1),
-    prev2: getMonthName(prevMonth2),
-    prev3: getMonthName(prevMonth3),
-};
-
-type SalesDetail = {
+export type PastSaleProduct = {
   productId: string;
   productName: string;
   quantity: number;
-  total: number;
+  sales: number;
 };
-
-type MonthlySales = {
-  month: string;
-  sales: SalesDetail[];
+export type PastSaleMonth = {
+  month: number; // 6 for June, 7 for July, 8 for August
+  products: PastSaleProduct[];
 };
-
-type PastSalesCustomer = {
+export type PastSalesDetail = {
   customerId: string;
   customerName: string;
-  sales: MonthlySales[];
+  employeeName: string;
+  monthlySales: PastSaleMonth[];
 };
 
-export const pastSalesDetails: PastSalesCustomer[] = [
+export const pastSalesDetails: PastSalesDetail[] = [
   {
     customerId: 'c-101',
-    customerName: 'Tech Solutions Inc.',
-    sales: [
+    customerName: 'Global Tech Inc.',
+    employeeName: 'Jane Smith',
+    monthlySales: [
       {
-        month: monthNames.prev3, // June
-        sales: [
-          { productId: 'p-001', productName: 'Wireless Mouse', quantity: 20, total: 519.8 },
-          { productId: 'p-003', productName: '4K Monitor', quantity: 5, total: 1752.5 },
+        month: 6,
+        products: [
+          { productId: 'p-001', productName: 'Laptop Model X', quantity: 5, sales: 6000 },
+          { productId: 'p-002', productName: 'Wireless Mouse', quantity: 20, sales: 500 },
         ],
       },
       {
-        month: monthNames.prev2, // July
-        sales: [
-          { productId: 'p-001', productName: 'Wireless Mouse', quantity: 25, total: 649.75 },
+        month: 7,
+        products: [
+          { productId: 'p-001', productName: 'Laptop Model X', quantity: 8, sales: 9600 },
         ],
       },
       {
-        month: monthNames.prev1, // August
-        sales: [
-          { productId: 'p-001', productName: 'Wireless Mouse', quantity: 30, total: 779.7 },
-          { productId: 'p-002', productName: 'Mechanical Keyboard', quantity: 10, total: 1200.0 },
-          { productId: 'p-003', productName: '4K Monitor', quantity: 8, total: 2804.0 },
-        ],
-      },
-    ],
-  },
-  {
-    customerId: 'c-102',
-    customerName: 'Creative Designs LLC',
-    sales: [
-      {
-        month: monthNames.prev3, // June
-        sales: [],
-      },
-      {
-        month: monthNames.prev2, // July
-        sales: [
-          { productId: 'p-005', productName: 'Laptop Stand', quantity: 50, total: 1750.0 },
-        ],
-      },
-      {
-        month: monthNames.prev1, // August
-        sales: [
-          { productId: 'p-004', productName: 'USB-C Hub', quantity: 20, total: 900.0 },
-          { productId: 'p-005', productName: 'Laptop Stand', quantity: 30, total: 1050.0 },
+        month: 8,
+        products: [
+          { productId: 'p-001', productName: 'Laptop Model X', quantity: 6, sales: 7200 },
+          { productId: 'p-003', productName: 'USB-C Hub', quantity: 15, sales: 675 },
         ],
       },
     ],
   },
   {
     customerId: 'c-103',
-    customerName: 'Global Exports',
-    sales: [
-       {
-        month: monthNames.prev3, // June
-        sales: [
-            { productId: 'p-002', productName: 'Mechanical Keyboard', quantity: 100, total: 12000.0 },
+    customerName: 'Quantum Industries',
+    employeeName: 'Alex Ray',
+    monthlySales: [
+      {
+        month: 6,
+        products: [],
+      },
+      {
+        month: 7,
+        products: [
+          { productId: 'p-005', productName: 'Quantum Processor v3', quantity: 2, sales: 5000 },
         ],
       },
       {
-        month: monthNames.prev2, // July
-        sales: [
-            { productId: 'p-002', productName: 'Mechanical Keyboard', quantity: 120, total: 14400.0 },
+        month: 8,
+        products: [
+          { productId: 'p-005', productName: 'Quantum Processor v3', quantity: 3, sales: 7500 },
+          { productId: 'p-006', productName: 'AI Software License', quantity: 1, sales: 1500 },
+        ],
+      },
+    ],
+  },
+  {
+    customerId: 'c-104',
+    customerName: 'Apex Corp',
+    employeeName: 'John Doe',
+    monthlySales: [
+      {
+        month: 6,
+        products: [
+           { productId: 'p-007', productName: 'Support Package', quantity: 10, sales: 3000 },
         ],
       },
       {
-        month: monthNames.prev1, // August
-        sales: [
-            { productId: 'p-002', productName: 'Mechanical Keyboard', quantity: 150, total: 18000.0 },
+        month: 7,
+        products: [
+           { productId: 'p-007', productName: 'Support Package', quantity: 12, sales: 3600 },
         ],
       },
-    ]
-  }
+      {
+        month: 8,
+        products: [
+           { productId: 'p-002', productName: 'Wireless Mouse', quantity: 50, sales: 1250 },
+           { productId: 'p-007', productName: 'Support Package', quantity: 5, sales: 1500 },
+        ],
+      },
+    ],
+  },
 ];
-
-// --- END: Data for Sales Target Page ---
