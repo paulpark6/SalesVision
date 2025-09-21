@@ -304,6 +304,5 @@ export default function NewCustomerPage() {
     </SidebarProvider>
   );
 }
-
     
     
