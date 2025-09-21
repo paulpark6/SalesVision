@@ -21,16 +21,23 @@ import {
 } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { checkPaymentsData, employees } from '@/lib/mock-data';
-import type { CheckPayment } from '@/lib/mock-data';
+import { checkPaymentsData as initialCheckPaymentsData, employees } from '@/lib/mock-data';
+import type { CheckPayment, CheckStatus } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { Check, X } from 'lucide-react';
 
 export default function CheckReportPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const { toast } = useToast();
+
+  const [checkData, setCheckData] = useState<CheckPayment[]>(initialCheckPaymentsData);
 
   const loggedInEmployee = useMemo(() => {
     if (!auth?.role) return null;
@@ -39,7 +46,7 @@ export default function CheckReportPage() {
 
   useEffect(() => {
     if (auth === undefined) return;
-    if (!auth || (role !== 'admin' && role !== 'manager')) {
+    if (!auth) {
       router.push('/login');
     }
   }, [auth, router, role]);
@@ -55,15 +62,47 @@ export default function CheckReportPage() {
       currency: 'USD',
     }).format(amount);
   };
+  
+  const handleStatusChange = (id: string, status: CheckStatus) => {
+    const check = checkData.find(c => c.id === id);
+    if (!check) return;
+    
+    setCheckData(prevData => prevData.map(c => c.id === id ? { ...c, status } : c));
+    
+    if (status === 'Confirmed') {
+        toast({ title: 'Check Approved', description: `Check #${check.checkNumber} has been confirmed.` });
+    } else if (status === 'Rejected') {
+        toast({
+            title: 'Check Rejected',
+            description: `Check #${check.checkNumber} was rejected. A penalty may apply. Notifying manager and salesperson.`,
+            variant: 'destructive',
+        });
+    }
+  };
+
+  const handleFieldChange = (id: string, field: keyof CheckPayment, value: string) => {
+    setCheckData(prevData =>
+      prevData.map(c => (c.id === id ? { ...c, [field]: value } : c))
+    );
+  };
+
 
   const filteredCheckData = useMemo(() => {
     if (role === 'employee' && loggedInEmployee) {
-      return checkPaymentsData.filter(check => check.salesperson === loggedInEmployee.name);
+      return checkData.filter(check => check.salesperson === loggedInEmployee.name);
     }
-    return checkPaymentsData;
-  }, [role, loggedInEmployee]);
+    return checkData;
+  }, [role, loggedInEmployee, checkData]);
   
-  if (!role || (role !== 'admin' && role !== 'manager')) {
+  const getStatusVariant = (status: CheckStatus) => {
+    switch (status) {
+        case 'Confirmed': return 'default';
+        case 'Pending': return 'secondary';
+        case 'Rejected': return 'destructive';
+    }
+  }
+
+  if (!role) {
     return null;
   }
 
@@ -83,35 +122,68 @@ export default function CheckReportPage() {
             <CardHeader>
               <CardTitle>수표 결제 내역</CardTitle>
               <CardDescription>
-                수취된 수표의 상세 내역입니다. 해당 내역은 관리자에게 보고됩니다.
+                수취된 수표의 상세 내역입니다. 해당 내역은 관리자에게 보고되며, 오너(Admin)가 최종 확정합니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>수취일자</TableHead>
+                    <TableHead>수취일</TableHead>
+                    <TableHead>만기일</TableHead>
                     {(role === 'admin' || role === 'manager') && <TableHead>영업담당자</TableHead>}
                     <TableHead>고객</TableHead>
                     <TableHead>발급은행</TableHead>
                     <TableHead>수표번호</TableHead>
                     <TableHead className="text-right">금액</TableHead>
-                    <TableHead>예정 Deposit 일자</TableHead>
+                    <TableHead>입금은행</TableHead>
+                    <TableHead>입금일자</TableHead>
+                    <TableHead>상태</TableHead>
                     <TableHead>비고</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredCheckData.map((check) => (
-                    <TableRow key={check.id}>
+                    <TableRow key={check.id} className={cn(check.status === 'Rejected' && 'bg-red-100/50 dark:bg-red-900/30')}>
                         <TableCell>{check.receiptDate}</TableCell>
+                        <TableCell>{check.dueDate}</TableCell>
                         {(role === 'admin' || role === 'manager') && <TableCell>{check.salesperson}</TableCell>}
                         <TableCell>{check.customerName}</TableCell>
                         <TableCell>{check.issuingBank}</TableCell>
                         <TableCell>{check.checkNumber}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(check.amount)}</TableCell>
-                        <TableCell>{check.depositDate}</TableCell>
+                        <TableCell className="text-right font-medium">{formatCurrency(check.amount)}</TableCell>
                         <TableCell>
-                            <Input defaultValue={check.notes} className="h-8" />
+                           <Input 
+                             defaultValue={check.depositBank} 
+                             className="h-8" 
+                             disabled={role !== 'admin'} 
+                             onChange={(e) => handleFieldChange(check.id, 'depositBank', e.target.value)}
+                           />
+                        </TableCell>
+                        <TableCell>
+                           <Input 
+                            defaultValue={check.depositDate} 
+                            className="h-8" 
+                            disabled={role !== 'admin'} 
+                            onChange={(e) => handleFieldChange(check.id, 'depositDate', e.target.value)}
+                            />
+                        </TableCell>
+                         <TableCell>
+                          {role === 'admin' && check.status === 'Pending' ? (
+                            <div className="flex gap-1">
+                               <Button variant="ghost" size="icon" className="h-7 w-7 text-green-600 hover:bg-green-100" onClick={() => handleStatusChange(check.id, 'Confirmed')}>
+                                    <Check className="h-4 w-4" />
+                               </Button>
+                               <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-red-100" onClick={() => handleStatusChange(check.id, 'Rejected')}>
+                                    <X className="h-4 w-4" />
+                               </Button>
+                            </div>
+                          ) : (
+                            <Badge variant={getStatusVariant(check.status)}>{check.status}</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                            <Input defaultValue={check.notes} className="h-8" disabled={role === 'employee'} />
                         </TableCell>
                     </TableRow>
                   ))}

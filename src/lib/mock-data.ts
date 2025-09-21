@@ -15,6 +15,7 @@
 
 
 
+
 export const overviewData = {
   totalRevenue: 45231.89,
   subscriptions: 2350,
@@ -468,23 +469,28 @@ export const cashSalesData: CashSale[] = [
     { id: 'cs-7', date: '2024-09-03', customerName: 'Michael Brown', employeeName: 'Alex Ray', amount: 50.00, source: '현금 판매' },
 ];
 
+export type CheckStatus = 'Pending' | 'Confirmed' | 'Rejected';
+
 export type CheckPayment = {
     id: string;
     receiptDate: string;
+    dueDate: string;
     salesperson: string;
     customerName: string;
     amount: number;
     issuingBank: string;
     checkNumber: string;
+    depositBank: string;
     depositDate: string;
+    status: CheckStatus;
     notes?: string;
 };
 
 export const checkPaymentsData: CheckPayment[] = [
-    { id: 'chk-1', receiptDate: '2024-09-01', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 500.00, issuingBank: 'Bank of America', checkNumber: '12345', depositDate: '2024-09-10', notes: 'Partial payment for INV-1008' },
-    { id: 'chk-2', receiptDate: '2024-09-02', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, issuingBank: 'Chase', checkNumber: '67890', depositDate: '2024-09-12', notes: 'Full payment for INV-1009' },
-    { id: 'chk-3', receiptDate: '2024-09-03', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 1000.00, issuingBank: 'Wells Fargo', checkNumber: '101112', depositDate: '2024-09-15', notes: '' },
-    { id: 'chk-4', receiptDate: '2024-09-04', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, issuingBank: 'Citibank', checkNumber: '131415', depositDate: '2024-09-11', notes: 'Payment for overdue balance' },
+    { id: 'chk-1', receiptDate: '2024-09-01', dueDate: '2024-09-08', salesperson: 'Jane Smith', customerName: 'Liam Johnson', amount: 500.00, issuingBank: 'Bank of America', checkNumber: '12345', depositBank: 'Chase', depositDate: '2024-09-10', status: 'Pending', notes: 'Partial payment for INV-1008' },
+    { id: 'chk-2', receiptDate: '2024-09-02', dueDate: '2024-09-09', salesperson: 'Alex Ray', customerName: 'Olivia Smith', amount: 150.75, issuingBank: 'Chase', checkNumber: '67890', depositBank: 'Wells Fargo', depositDate: '2024-09-12', status: 'Pending', notes: 'Full payment for INV-1009' },
+    { id: 'chk-3', receiptDate: '2024-09-03', dueDate: '2024-09-10', salesperson: 'John Doe', customerName: 'Noah Williams', amount: 1000.00, issuingBank: 'Wells Fargo', checkNumber: '101112', depositBank: '', depositDate: '', status: 'Pending', notes: '' },
+    { id: 'chk-4', receiptDate: '2024-09-04', dueDate: '2024-09-11', salesperson: 'Jane Smith', customerName: 'Emma Brown', amount: 450.00, issuingBank: 'Citibank', checkNumber: '131415', depositBank: '', depositDate: '', status: 'Pending', notes: 'Payment for overdue balance' },
 ];
 
 export type CreditNote = {
