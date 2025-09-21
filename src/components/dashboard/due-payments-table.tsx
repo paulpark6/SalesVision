@@ -1,6 +1,6 @@
 
 'use client';
-import { MoreHorizontal, ChevronDown, Download } from 'lucide-react';
+import { MoreHorizontal, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,97 +11,81 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from '@/components/ui/table';
-import { duePaymentsData as initialDuePaymentsData, DuePayment } from '@/lib/mock-data';
-import { cn } from '@/lib/utils';
+import { duePaymentsData as initialDuePaymentsData } from '@/lib/mock-data';
 import { differenceInDays, parseISO } from 'date-fns';
-import { useState, Fragment } from 'react';
-import { CollectionPlanDialog } from './collection-plan-dialog';
+import { useState, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Papa from 'papaparse';
 
+type CustomerCredit = {
+  customerName: string;
+  nearing: number;
+  due: number;
+  overdue: number;
+  total: number;
+};
+
+const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
+  const due = parseISO(dueDate);
+  const today = new Date();
+  const daysDiff = differenceInDays(due, today);
+
+  if (daysDiff < 0) return 'overdue';
+  if (daysDiff <= 14) return 'due';
+  return 'nearing';
+};
+
+const formatCurrency = (amount: number) => {
+    if (amount === 0) return '-';
+    return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+
 export function DuePaymentsTable() {
     const { toast } = useToast();
-    const [duePaymentsData, setDuePaymentsData] = useState<DuePayment[]>(initialDuePaymentsData);
-    const [selectedPayment, setSelectedPayment] = useState<DuePayment | null>(null);
-    const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
-
-    const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
-        const due = parseISO(dueDate);
-        const today = new Date();
-        const daysDiff = differenceInDays(due, today);
-
-        if (daysDiff < 0) return 'overdue';
-        if (daysDiff <= 14) return 'due';
-        return 'nearing';
-    };
-
-    const getStatusVariant = (status: 'due' | 'overdue' | 'nearing') => {
-        switch (status) {
-        case 'overdue':
-            return 'destructive';
-        case 'due':
-            return 'default';
-        case 'nearing':
-        default:
-            return 'secondary';
-        }
-    };
     
-    const getStatusRowClass = (status: 'due' | 'overdue' | 'nearing') => {
-        switch (status) {
-        case 'overdue':
-            return 'bg-destructive/10 hover:bg-destructive/20';
-        case 'due':
-            return 'bg-yellow-100/50 dark:bg-yellow-900/50';
-        default:
-            return '';
+    const customerSummary = useMemo(() => {
+        const summary: Record<string, Omit<CustomerCredit, 'customerName'>> = {};
+
+        initialDuePaymentsData.forEach(payment => {
+        if (!summary[payment.customer.name]) {
+            summary[payment.customer.name] = { nearing: 0, due: 0, overdue: 0, total: 0 };
         }
-    };
 
-    const getStatusText = (status: 'due' | 'overdue' | 'nearing') => {
-        switch (status) {
-            case 'overdue':
-                return '연체';
-            case 'due':
-                return '만기 임박';
-            case 'nearing':
-                return '정상';
-        }
-    }
-    
-    const sortedPayments = [...duePaymentsData].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
-
-    const handleOpenDialog = (payment: DuePayment) => {
-        setSelectedPayment(payment);
-    };
-
-    const handleSavePlan = (paymentId: string, plan: string) => {
-        setDuePaymentsData(prevData =>
-            prevData.map(p => (p.id === paymentId ? { ...p, collectionPlan: plan } : p))
-        );
-        setSelectedPayment(null);
-        toast({
-            title: '수금 계획 제출됨',
-            description: '계획이 관리자에게 전달되었습니다.',
+        const status = getStatus(payment.dueDate);
+        summary[payment.customer.name][status] += payment.amount;
+        summary[payment.customer.name].total += payment.amount;
         });
-    };
+
+        return Object.entries(summary)
+        .map(([customerName, data]) => ({ customerName, ...data }))
+        .sort((a, b) => b.total - a.total);
+    }, []);
+
+    const grandTotals = useMemo(() => {
+        return customerSummary.reduce(
+        (acc, customer) => {
+            acc.nearing += customer.nearing;
+            acc.due += customer.due;
+            acc.overdue += customer.overdue;
+            acc.total += customer.total;
+            return acc;
+        },
+        { nearing: 0, due: 0, overdue: 0, total: 0 }
+        );
+    }, [customerSummary]);
+
 
     const handleExportOverdue = () => {
-        const overduePayments = sortedPayments
+        const overduePayments = initialDuePaymentsData
             .filter(p => getStatus(p.dueDate) === 'overdue')
             .map(p => ({
                 '담당자': p.employee,
@@ -143,9 +127,9 @@ export function DuePaymentsTable() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>미수금 현황</CardTitle>
+          <CardTitle>고객별 미수금 요약</CardTitle>
           <CardDescription>
-            다가오는 만기 및 연체된 신용 결제를 모니터링하고 관리합니다. 만기가 2주 내외로 도래하는 건은 '만기 임박'으로 표시됩니다.
+            고객별 미수금 현황을 만기 상태에 따라 요약합니다.
           </CardDescription>
         </div>
         <Button size="sm" variant="outline" className="ml-auto gap-1" onClick={handleExportOverdue}>
@@ -158,90 +142,47 @@ export function DuePaymentsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>담당자</TableHead>
-              <TableHead>고객</TableHead>
-              <TableHead className="hidden md:table-cell">만기일</TableHead>
-              <TableHead className="hidden md:table-cell">상태</TableHead>
-              <TableHead className="text-right">금액</TableHead>
-              <TableHead>
-                <span className="sr-only">Actions</span>
-              </TableHead>
+              <TableHead>고객명</TableHead>
+              <TableHead className="text-right">만기 전</TableHead>
+              <TableHead className="text-right">만기 임박</TableHead>
+              <TableHead className="text-right">연체</TableHead>
+              <TableHead className="text-right">총 미수금</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedPayments.map((payment) => {
-                const status = getStatus(payment.dueDate);
-                const isOpen = openCollapsible === payment.id;
-              return (
-              <Fragment key={payment.id}>
-              <TableRow className={cn(getStatusRowClass(status))} onClick={() => setOpenCollapsible(isOpen ? null : payment.id)}>
-                <TableCell className="font-medium">{payment.employee}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180", !payment.collectionPlan && "invisible")} />
-                    <div>
-                        <div className="font-medium">{payment.customer.name}</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                            {payment.customer.email}
-                        </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {payment.dueDate}
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  <Badge
-                    variant={getStatusVariant(status)}
-                    className="capitalize"
-                  >
-                    {getStatusText(status)}
-                  </Badge>
+            {customerSummary.map(customer => (
+              <TableRow key={customer.customerName}>
+                <TableCell className="font-medium">{customer.customerName}</TableCell>
+                <TableCell className="text-right">{formatCurrency(customer.nearing)}</TableCell>
+                <TableCell className="text-right">
+                    {customer.due > 0 ? (
+                        <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
+                            {formatCurrency(customer.due)}
+                        </Badge>
+                    ) : '-'}
                 </TableCell>
                 <TableCell className="text-right">
-                  ${payment.amount.toFixed(2)}
+                    {customer.overdue > 0 ? (
+                        <Badge variant="destructive">{formatCurrency(customer.overdue)}</Badge>
+                    ) : '-'}
                 </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button aria-haspopup="true" size="icon" variant="ghost">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleOpenDialog(payment)}>수금 계획 관리</DropdownMenuItem>
-                      <DropdownMenuItem>View Details</DropdownMenuItem>
-                      <DropdownMenuItem>Send Reminder</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                <TableCell className="text-right font-semibold">{formatCurrency(customer.total)}</TableCell>
               </TableRow>
-               {isOpen && payment.collectionPlan && (
-                <TableRow className="bg-muted/30 hover:bg-muted/40">
-                    <TableCell colSpan={6} className="py-2 px-8">
-                        <div className="text-xs">
-                            <span className="font-semibold">수금 활동 내용: </span>
-                            <span className="text-muted-foreground">{payment.collectionPlan}</span>
-                        </div>
-                    </TableCell>
-                </TableRow>
-               )}
-              </Fragment>
-            )})}
+            ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="font-bold">총계</TableCell>
+              <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
+              <TableCell className="text-right font-bold">{formatCurrency(grandTotals.due)}</TableCell>
+              <TableCell className="text-right font-bold">{formatCurrency(grandTotals.overdue)}</TableCell>
+              <TableCell className="text-right font-bold">{formatCurrency(grandTotals.total)}</TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </CardContent>
     </Card>
-     {selectedPayment && (
-        <CollectionPlanDialog
-            isOpen={!!selectedPayment}
-            onOpenChange={(isOpen) => !isOpen && setSelectedPayment(null)}
-            payment={selectedPayment}
-            onSave={handleSavePlan}
-        />
-    )}
     </>
   );
 }
+

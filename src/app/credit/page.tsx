@@ -8,7 +8,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { DuePaymentsTable } from '@/components/dashboard/due-payments-table';
-import { CustomerCreditSummary } from '@/components/dashboard/customer-credit-summary';
 
 export default function CreditManagementPage() {
   const router = useRouter();
@@ -41,9 +40,6 @@ export default function CreditManagementPage() {
                  <Button type="button" variant="outline" onClick={handleBack}>
                   Back to Dashboard
               </Button>
-            </div>
-            <div className="grid gap-4 md:gap-8">
-                <CustomerCreditSummary />
             </div>
              <div className="grid gap-4 md:gap-8">
                 <DuePaymentsTable />
