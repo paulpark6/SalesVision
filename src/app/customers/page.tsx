@@ -44,11 +44,12 @@ export default function CustomersPage() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
   const [selectedYear, setSelectedYear] = useState<string>(String(new Date().getFullYear()));
   const [selectedMonth, setSelectedMonth] = useState<string>(String(new Date().getMonth() + 1));
   const [showMyCustomers, setShowMyCustomers] = useState(false);
   const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
+
+  const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
 
   const loggedInEmployee = useMemo(() => {
     if (!auth?.role) return null;
@@ -183,14 +184,11 @@ export default function CustomersPage() {
   };
 
   const filteredCustomerData = useMemo(() => {
-    if (role === 'employee' || (role === 'manager' && showMyCustomers)) {
-      if (loggedInEmployee) {
-        return customerData.filter(customer => customer.employee === loggedInEmployee.name);
-      }
-      return [];
+    if (showMyCustomers && loggedInEmployee) {
+      return customerData.filter(customer => customer.employee === loggedInEmployee.name);
     }
     return customerData;
-  }, [customerData, showMyCustomers, loggedInEmployee, role]);
+  }, [customerData, showMyCustomers, loggedInEmployee]);
   
   if (!role) {
     return null;
@@ -273,7 +271,7 @@ export default function CustomersPage() {
                     </Select>
                     </div>
                 </div>
-                {role === 'manager' && (
+                {(role === 'manager' || role === 'employee') && (
                   <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4" />
                       <Label htmlFor="my-customers-filter">내 고객만 보기</Label>
@@ -281,6 +279,7 @@ export default function CustomersPage() {
                           id="my-customers-filter"
                           checked={showMyCustomers}
                           onCheckedChange={setShowMyCustomers}
+                          disabled={role === 'employee'}
                       />
                   </div>
                 )}
@@ -297,7 +296,7 @@ export default function CustomersPage() {
                     <TableHead className="text-right">당월 매출</TableHead>
                     <TableHead className="text-right">월 평균 매출</TableHead>
                     <TableHead className="text-right">연 매출 ({selectedYear})</TableHead>
-                    <TableHead className="text-right">신용 잔액 (9월)</TableHead>
+                    <TableHead className="text-right">신용 잔액</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

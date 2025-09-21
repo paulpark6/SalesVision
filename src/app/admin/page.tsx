@@ -61,9 +61,7 @@ export default function EmployeeDashboardPage() {
                 </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-                {role === 'manager' && (
-                    <OverviewCards />
-                )}
+                <OverviewCards />
             </div>
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
@@ -75,11 +73,9 @@ export default function EmployeeDashboardPage() {
                  <Link href="/sales/report" className="cursor-pointer">
                     <SalesTargetChart isTeamData={role === 'manager'} />
                  </Link>
-                 {role === 'employee' && (
-                    <Link href="/sales/cumulative-report" className="cursor-pointer">
-                      <CumulativeSalesTargetChart />
-                    </Link>
-                 )}
+                 <Link href="/sales/cumulative-report" className="cursor-pointer">
+                    <CumulativeSalesTargetChart />
+                 </Link>
                 <DuePaymentsTable />
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
