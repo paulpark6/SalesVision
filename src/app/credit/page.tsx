@@ -32,6 +32,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Users } from 'lucide-react';
+import { DatePicker } from '@/components/ui/date-picker';
 
 
 type CustomerCredit = {
@@ -42,6 +43,7 @@ type CustomerCredit = {
   overdue: number; // 만기 후
   total: number;
   collectedAmount: number;
+  collectionDate?: Date;
 };
 
 const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
@@ -66,7 +68,7 @@ export default function CreditReportPage() {
   const loggedInEmployeeId = auth?.userId;
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [showMyCollections, setShowMyCollections] = useState(false);
-  const [collectedAmounts, setCollectedAmounts] = useState<Record<string, number>>({});
+  const [customerCreditData, setCustomerCreditData] = useState<CustomerCredit[]>([]);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -75,12 +77,7 @@ export default function CreditReportPage() {
     }
   }, [auth, router]);
   
-  const handleBack = () => {
-    const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
-    router.push(dashboardPath);
-  };
-
-  const customerSummary = useMemo(() => {
+  useEffect(() => {
     const summary: Record<string, Omit<CustomerCredit, 'customerName'>> = {};
 
     duePaymentsData.forEach(payment => {
@@ -91,7 +88,8 @@ export default function CreditReportPage() {
             due: 0, 
             overdue: 0, 
             total: 0,
-            collectedAmount: collectedAmounts[payment.customer.name] || 0 
+            collectedAmount: 0,
+            collectionDate: undefined,
         };
       }
 
@@ -100,17 +98,25 @@ export default function CreditReportPage() {
       summary[payment.customer.name].total += payment.amount;
     });
 
-    return Object.entries(summary)
+    const initialData = Object.entries(summary)
       .map(([customerName, data]) => ({ customerName, ...data }))
       .sort((a, b) => b.total - a.total);
-  }, [collectedAmounts]);
+      
+    setCustomerCreditData(initialData);
+
+  }, []);
+
+  const handleBack = () => {
+    const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
+    router.push(dashboardPath);
+  };
   
   const filteredCustomerSummary = useMemo(() => {
     if (role === 'admin' && showMyCollections) {
-      return customerSummary.filter(c => c.employeeId === loggedInEmployeeId);
+      return customerCreditData.filter(c => c.employeeId === loggedInEmployeeId);
     }
-    return customerSummary;
-  }, [customerSummary, role, showMyCollections, loggedInEmployeeId]);
+    return customerCreditData;
+  }, [customerCreditData, role, showMyCollections, loggedInEmployeeId]);
 
 
   const overdueDetails = useMemo(() => {
@@ -134,22 +140,30 @@ export default function CreditReportPage() {
   
   const totalMyCollections = useMemo(() => {
       if (!loggedInEmployeeId) return 0;
-      return customerSummary
+      return customerCreditData
         .filter(c => c.employeeId === loggedInEmployeeId)
         .reduce((sum, cust) => sum + cust.collectedAmount, 0)
-  }, [customerSummary, loggedInEmployeeId]);
+  }, [customerCreditData, loggedInEmployeeId]);
   
   const totalAllCollections = useMemo(() => {
-      return customerSummary.reduce((sum, cust) => sum + cust.collectedAmount, 0)
-  }, [customerSummary]);
+      return customerCreditData.reduce((sum, cust) => sum + cust.collectedAmount, 0)
+  }, [customerCreditData]);
 
 
-  const handleCollectionChange = (customerName: string, amount: string) => {
-    const newAmount = parseFloat(amount) || 0;
-    setCollectedAmounts(prev => ({
-        ...prev,
-        [customerName]: newAmount
-    }));
+  const handleCollectionChange = (customerName: string, field: 'collectedAmount' | 'collectionDate', value: number | Date | undefined) => {
+      setCustomerCreditData(prev => 
+        prev.map(c => {
+            if (c.customerName === customerName) {
+                if (field === 'collectedAmount') {
+                    return { ...c, collectedAmount: value as number || 0 };
+                }
+                if (field === 'collectionDate') {
+                    return { ...c, collectionDate: value as Date | undefined };
+                }
+            }
+            return c;
+        })
+      );
   };
 
   if (!role) {
@@ -188,74 +202,80 @@ export default function CreditReportPage() {
                         )}
                   </CardHeader>
                   <CardContent>
-                      <Table>
-                      <TableHeader>
-                          <TableRow>
-                          <TableHead>고객명</TableHead>
-                          <TableHead className="text-right">만기 전</TableHead>
-                          <TableHead className="text-right">도래 예정 (2주 내)</TableHead>
-                          <TableHead className="text-right">연체</TableHead>
-                          <TableHead className="text-right">총 신용 잔액</TableHead>
-                           {role === 'admin' && <TableHead className="text-right w-[150px]">수금액 (당월)</TableHead>}
-                          </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                          {filteredCustomerSummary.map(customer => (
-                          <TableRow key={customer.customerName}>
-                              <TableCell className="font-medium">{customer.customerName}</TableCell>
-                              <TableCell className="text-right">{formatCurrency(customer.nearing)}</TableCell>
-                              <TableCell className="text-right">
-                                  {customer.due > 0 ? (
-                                      <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
-                                          {formatCurrency(customer.due)}
-                                      </Badge>
-                                  ) : '-'}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                  {customer.overdue > 0 ? (
-                                      <Badge 
-                                        variant="destructive" 
-                                        onClick={() => setSelectedCustomer(customer.customerName)}
-                                        className="cursor-pointer"
-                                      >
-                                        {formatCurrency(customer.overdue)}
-                                      </Badge>
-                                  ) : '-'}
-                              </TableCell>
-                              <TableCell className="text-right font-semibold">{formatCurrency(customer.total)}</TableCell>
-                              {role === 'admin' && (
+                      <div className="overflow-x-auto">
+                        <Table className="min-w-max">
+                        <TableHeader>
+                            <TableRow>
+                            <TableHead>고객명</TableHead>
+                            <TableHead className="text-right">만기 전</TableHead>
+                            <TableHead className="text-right">도래 예정 (2주 내)</TableHead>
+                            <TableHead className="text-right">연체</TableHead>
+                            <TableHead className="w-[150px]">수금액</TableHead>
+                            <TableHead className="w-[200px]">수금일</TableHead>
+                            <TableHead className="text-right">총 신용 잔액</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredCustomerSummary.map(customer => (
+                            <TableRow key={customer.customerName}>
+                                <TableCell className="font-medium">{customer.customerName}</TableCell>
+                                <TableCell className="text-right">{formatCurrency(customer.nearing)}</TableCell>
                                 <TableCell className="text-right">
+                                    {customer.due > 0 ? (
+                                        <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
+                                            {formatCurrency(customer.due)}
+                                        </Badge>
+                                    ) : '-'}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    {customer.overdue > 0 ? (
+                                        <Badge 
+                                          variant="destructive" 
+                                          onClick={() => setSelectedCustomer(customer.customerName)}
+                                          className="cursor-pointer"
+                                        >
+                                          {formatCurrency(customer.overdue)}
+                                        </Badge>
+                                    ) : '-'}
+                                </TableCell>
+                                <TableCell>
                                     <Input
                                         type="number"
                                         placeholder="0.00"
                                         className="h-8 text-right"
                                         value={customer.collectedAmount || ''}
-                                        onChange={(e) => handleCollectionChange(customer.customerName, e.target.value)}
+                                        onChange={(e) => handleCollectionChange(customer.customerName, 'collectedAmount', parseFloat(e.target.value))}
                                     />
                                 </TableCell>
-                              )}
-                          </TableRow>
-                          ))}
-                      </TableBody>
-                      <TableFooter>
-                          <TableRow>
-                          <TableCell className="font-bold">총계</TableCell>
-                          <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
-                          <TableCell className="text-right font-bold">
-                               <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
-                                  {formatCurrency(grandTotals.due)}
-                              </Badge>
-                          </TableCell>
-                          <TableCell className="text-right font-bold">
-                              <Badge variant="destructive">{formatCurrency(grandTotals.overdue)}</Badge>
-                          </TableCell>
-                          <TableCell className="text-right font-bold">{formatCurrency(grandTotals.total)}</TableCell>
-                           {role === 'admin' && (
-                                <TableCell className="text-right font-bold">{formatCurrency(grandTotals.collectedAmount)}</TableCell>
-                           )}
-                          </TableRow>
-                      </TableFooter>
-                      </Table>
+                                 <TableCell>
+                                    <DatePicker
+                                        value={customer.collectionDate}
+                                        onSelect={(date) => handleCollectionChange(customer.customerName, 'collectionDate', date)}
+                                    />
+                                </TableCell>
+                                <TableCell className="text-right font-semibold">{formatCurrency(customer.total)}</TableCell>
+                            </TableRow>
+                            ))}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                            <TableCell className="font-bold">총계</TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
+                            <TableCell className="text-right font-bold">
+                                 <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
+                                    {formatCurrency(grandTotals.due)}
+                                </Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-bold">
+                                <Badge variant="destructive">{formatCurrency(grandTotals.overdue)}</Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.collectedAmount)}</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell className="text-right font-bold">{formatCurrency(grandTotals.total)}</TableCell>
+                            </TableRow>
+                        </TableFooter>
+                        </Table>
+                      </div>
                       {role === 'admin' && !showMyCollections && (
                         <div className="flex justify-end gap-6 font-bold text-base mt-6 pr-4 border-t pt-4">
                             <span>본인 수금 합계: {formatCurrency(totalMyCollections)}</span>
@@ -277,5 +297,3 @@ export default function CreditReportPage() {
     </>
   );
 }
-
-    
