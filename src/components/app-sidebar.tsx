@@ -136,7 +136,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     <NavLink href="/reports/checks" icon={<Landmark className="h-4 w-4" />}>
                         Check Report
                     </NavLink>
-                    <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
+                    <NavLink href="/reports/credit" icon={<CreditCard className="h-4 w-4" />}>
                         Credit Report
                     </NavLink>
                 </NavCollapsible>
