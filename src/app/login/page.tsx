@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -21,7 +22,7 @@ import { useAuth } from '@/hooks/use-auth';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = React.useState('admin');
+  const [role, setRole] = React.useState('admin-john');
   const { login, auth } = useAuth();
 
   useEffect(() => {
@@ -36,8 +37,8 @@ export default function LoginPage() {
   }, [auth, router]);
 
   const handleLogin = () => {
-    login(role as 'admin' | 'employee' | 'manager'); // Save role to localStorage
-    if (role === 'admin') {
+    login(role as 'admin-john' | 'admin-user' | 'employee' | 'manager'); // Save role to localStorage
+    if (role.startsWith('admin')) {
       router.push('/dashboard');
     } else {
       router.push('/admin');
@@ -78,7 +79,8 @@ export default function LoginPage() {
                     <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="admin-john">Admin (John Doe)</SelectItem>
+                    <SelectItem value="admin-user">Admin (Admin User)</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
                     <SelectItem value="employee">Employee</SelectItem>
                 </SelectContent>

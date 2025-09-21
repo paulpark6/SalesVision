@@ -32,12 +32,25 @@ export function useAuth() {
     }
   }, []);
 
-  const login = useCallback((role: 'admin' | 'employee' | 'manager') => {
+  const login = useCallback((role: 'admin-john' | 'admin-user' | 'employee' | 'manager') => {
     let name = 'Admin User';
-    if (role === 'manager') name = 'Alex Ray';
-    if (role === 'employee') name = 'Jane Smith';
+    let finalRole: 'admin' | 'employee' | 'manager' = 'admin';
+
+    if (role === 'manager') {
+      name = 'Alex Ray';
+      finalRole = 'manager';
+    } else if (role === 'employee') {
+      name = 'Jane Smith';
+      finalRole = 'employee';
+    } else if (role === 'admin-john') {
+        name = 'John Doe';
+        finalRole = 'admin';
+    } else if (role === 'admin-user') {
+        name = 'Admin User';
+        finalRole = 'admin';
+    }
     
-    const newAuth = { role, name };
+    const newAuth = { role: finalRole, name };
     localStorage.setItem(AUTH_KEY, JSON.stringify(newAuth));
     setAuth(newAuth);
   }, []);
