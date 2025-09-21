@@ -18,7 +18,10 @@ import { useAuth } from '@/hooks/use-auth';
 import { DatePicker } from '@/components/ui/date-picker';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Combobox } from '@/components/ui/combobox';
-import { customers, products, employees } from '@/lib/mock-data';
+import { customers, products, employees, duePaymentsData } from '@/lib/mock-data';
+import { differenceInDays, parseISO } from 'date-fns';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { TriangleAlert } from 'lucide-react';
 
 export default function NewSalePage() {
   const { toast } = useToast();
@@ -39,6 +42,7 @@ export default function NewSalePage() {
   const [employee, setEmployee] = useState('');
   const [needsApproval, setNeedsApproval] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [isCustomerBlocked, setIsCustomerBlocked] = useState(false);
 
   const [cashAmount, setCashAmount] = useState<number | undefined>();
   const [creditAmount, setCreditAmount] = useState<number | undefined>();
@@ -93,6 +97,21 @@ export default function NewSalePage() {
     }
   }, [quantity, price, autoCalculatedPrice]);
 
+  const checkCustomerStatus = (customerName: string) => {
+    const customerPayments = duePaymentsData.filter(p => p.customer.name === customerName);
+    if (customerPayments.length === 0) {
+        setIsCustomerBlocked(false);
+        return;
+    }
+    const today = new Date();
+    const isBlocked = customerPayments.some(p => {
+        const daysOverdue = differenceInDays(today, parseISO(p.dueDate));
+        return daysOverdue > 365;
+    });
+    setIsCustomerBlocked(isBlocked);
+  };
+
+
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10) || 0;
     setQuantity(value);
@@ -105,6 +124,15 @@ export default function NewSalePage() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isCustomerBlocked) {
+        toast({
+          title: '승인 요청됨',
+          description: '해당 고객의 거래는 관리자 승인이 필요하여 요청이 전송되었습니다.',
+          variant: 'default'
+        });
+        return;
+    }
 
     if (isMixedPayment) {
         const sum = (cashAmount || 0) + (creditAmount || 0);
@@ -246,10 +274,12 @@ export default function NewSalePage() {
                                     setCustomerName(selectedCustomer.label);
                                     setCustomerCode(selectedCustomer.value);
                                     setCustomerGrade(selectedCustomer.grade);
+                                    checkCustomerStatus(selectedCustomer.label);
                                 } else {
                                     setCustomerName(value);
                                     setCustomerCode('');
                                     setCustomerGrade('');
+                                    setIsCustomerBlocked(false);
                                 }
                             }}
                         />
@@ -259,6 +289,15 @@ export default function NewSalePage() {
                         <Input id="customerGrade" value={customerGrade} readOnly required />
                     </div>
                 </div>
+                 {isCustomerBlocked && (
+                    <Alert variant="destructive">
+                        <TriangleAlert className="h-4 w-4" />
+                        <AlertTitle>거래 중지 고객</AlertTitle>
+                        <AlertDescription>
+                            이 고객은 1년 이상 연체된 미수금이 있어 거래가 중지되었습니다. 매출을 등록하려면 관리자 승인이 필요합니다.
+                        </AlertDescription>
+                    </Alert>
+                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
@@ -367,8 +406,17 @@ export default function NewSalePage() {
                     <Button type="button" variant="outline" onClick={handleCancel}>
                       Cancel
                   </Button>
-                  <Button type="submit">Save Sale</Button>
+                  {isCustomerBlocked ? (
+                    <Button type="submit">Request Approval</Button>
+                  ) : (
+                    <Button type="submit" disabled={needsApproval}>Save Sale</Button>
+                  )}
                 </div>
+                 {needsApproval && !isCustomerBlocked && (
+                    <div className="text-right text-destructive font-medium">
+                        Special discount requires manager approval.
+                    </div>
+                )}
               </form>
             </CardContent>
           </Card>
@@ -378,3 +426,6 @@ export default function NewSalePage() {
   );
 }
 
+
+
+    
