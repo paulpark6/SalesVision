@@ -38,7 +38,7 @@ export function EmployeeSalesTarget() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>팀원별 9월 매출 실적</CardTitle>
+        <CardTitle>팀원별 9월 목표 달성 현황</CardTitle>
         <CardDescription>
           팀원별 월간 매출 목표 달성 현황입니다. 이름을 클릭하면 상세 실적을 볼 수 있습니다.
         </CardDescription>
