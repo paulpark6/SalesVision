@@ -1,37 +1,23 @@
+import type { SidebarMenuItemProps, SidebarMenuSubButtonProps } from "@/components/ui/sidebar";
 
-// @/lib/mock-data.ts
-
-import type { DuePayment, CashSale, CheckPayment, CheckStatus } from './types';
-
-export const overviewData = {
-  totalRevenue: 45231.89,
-  subscriptions: 2350,
-  sales: 12234,
-  activeNow: 573,
-};
-
-export const salesTargetData = {
-  current: 45231.89,
-  target: 50000,
-};
-
-export const salesTargetChartData = [
-    { name: 'Jan', sales: 4000, target: 5000 },
-    { name: 'Feb', sales: 3000, target: 4000 },
-    { name: 'Mar', sales: 4500, target: 4500 },
-    { name: 'Apr', sales: 5000, target: 5500 },
-    { name: 'May', sales: 4800, target: 5000 },
-    { name: 'Jun', sales: 5200, target: 5200 },
-    { name: 'Jul', sales: 5500, target: 6000 },
-    { name: 'Aug', sales: 5800, target: 6000 },
-    { name: 'Sep', sales: 45231.89, target: 50000 },
-];
-
-export const salesComparisonData = [
-  { name: '9월 누적 목표', jane: 45000, alex: 50000, john: 40000 },
-  { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 },
-  { name: '전년 동기 실적', jane: 35000, alex: 48000, john: 42000 },
-];
+export const salesTrendCsvData = `Date,Product,Category,Price,Quantity,Total
+2023-01-15,Laptop,Electronics,1200,10,12000
+2023-01-17,Smartphone,Electronics,800,15,12000
+2023-01-20,Headphones,Accessories,150,30,4500
+2023-02-10,Laptop,Electronics,1200,12,14400
+2023-02-12,Keyboard,Accessories,75,50,3750
+2023-03-18,Smartphone,Electronics,850,20,17000
+2023-03-22,Laptop,Electronics,1250,8,10000
+2023-04-05,Mouse,Accessories,25,100,2500
+2023-04-09,Headphones,Accessories,160,25,4000
+2023-05-15,Laptop,Electronics,1150,15,17250
+2023-05-20,Smartphone,Electronics,820,18,14760
+2023-06-11,Webcam,Accessories,85,40,3400
+2023-06-25,Laptop,Electronics,1300,10,13000
+2023-07-13,Smartphone,Electronics,880,22,19360
+2023-07-21,Keyboard,Accessories,80,45,3600
+2023-08-10,Laptop,Electronics,1220,14,17080
+2023-08-19,Mouse,Accessories,30,80,2400`;
 
 export const recentSalesData = [
   {
@@ -71,433 +57,481 @@ export const recentSalesData = [
   },
 ];
 
+export const overviewData = {
+  totalRevenue: 45231.89,
+  subscriptions: 2350,
+  sales: 12234,
+  activeNow: 573,
+};
+
+export const salesTargetData = {
+  current: 41250,
+  target: 50000,
+}
+
+export const salesTargetChartData = [
+    { name: 'Jan', sales: 4000, target: 5000 },
+    { name: 'Feb', sales: 3000, target: 4000 },
+    { name: 'Mar', sales: 5000, target: 6000 },
+    { name: 'Apr', sales: 4500, target: 5500 },
+    { name: 'May', sales: 6000, target: 7000 },
+    { name: 'Jun', sales: 5500, target: 6500 },
+    { name: 'Jul', sales: 7000, target: 8000 },
+    { name: 'Aug', sales: 6500, target: 7500 },
+    { name: 'Sep', sales: 8000, target: 9000 },
+]
+
 export const duePaymentsData: DuePayment[] = [
   {
-    id: 'inv-001',
-    customer: {
-      name: 'Acme Inc.',
-      email: 'contact@acme.inc',
-    },
+    id: 'INV-001',
+    customer: { name: 'Acme Inc.', email: 'contact@acme.com' },
     employee: 'John Doe',
     employeeId: 'john-doe',
-    dueDate: '2024-08-15',
+    dueDate: '2023-10-15',
     amount: 2500.0,
-    collectionPlan: '8월 10일 이메일 발송 완료',
+    collectionPlan: 'Follow up on 10/10'
   },
   {
-    id: 'inv-002',
-    customer: {
-      name: 'Stark Industries',
-      email: 'tony@stark.com',
-    },
+    id: 'INV-002',
+    customer: { name: 'Stark Industries', email: 'tony@stark.com' },
     employee: 'Jane Smith',
     employeeId: 'jane-smith',
-    dueDate: '2024-09-20',
-    amount: 1500.5,
+    dueDate: '2023-09-28',
+    amount: 450.75,
+    collectionPlan: ''
   },
   {
-    id: 'inv-003',
-    customer: {
-      name: 'Wayne Enterprises',
-      email: 'bruce@wayne.com',
-    },
+    id: 'INV-003',
+    customer: { name: 'Wayne Enterprises', email: 'bruce@wayne.com' },
     employee: 'Alex Ray',
     employeeId: 'alex-ray',
-    dueDate: '2024-09-30',
-    amount: 5500.0,
+    dueDate: '2024-08-20',
+    amount: 1200.0,
+    collectionPlan: ''
   },
   {
-    id: 'inv-004',
-    customer: {
-      name: 'Ollivanders',
-      email: 'contact@ollivanders.co.uk',
-    },
-    employee: 'John Doe',
-    employeeId: 'john-doe',
-    dueDate: '2023-07-01',
-    amount: 300.0,
-    collectionPlan: '담당자 부재, 9월 15일 재연락 예정',
-  },
-   {
-    id: 'inv-005',
-    customer: {
-      name: 'Cyberdyne Systems',
-      email: 'info@cyberdyne.com',
-    },
+    id: 'INV-004',
+    customer: { name: 'Ollivanders Wand Shop', email: 'ollivander@wands.co.uk' },
     employee: 'Jane Smith',
     employeeId: 'jane-smith',
-    dueDate: '2022-01-10',
-    amount: 12500.0,
-    collectionPlan: '장기 연체. 법적 조치 검토 중.',
+    dueDate: '2023-01-05',
+    amount: 800.0,
+    collectionPlan: 'Customer unresponsive. Manager notified.'
+  },
+  {
+    id: 'INV-005',
+    customer: { name: 'Gringotts Bank', email: 'accounts@gringotts.wiz' },
+    employee: 'John Doe',
+    employeeId: 'john-doe',
+    dueDate: '2024-09-10',
+    amount: 5000.0,
+    collectionPlan: ''
+  },
+  {
+    id: 'INV-006',
+    customer: { name: 'Cyberdyne Systems', email: 'info@cyberdyne.com' },
+    employee: 'Alex Ray',
+    employeeId: 'alex-ray',
+    dueDate: '1997-08-29',
+    amount: 150000.0,
+    collectionPlan: 'Considered unrecoverable.'
   },
 ];
+export type DuePayment = {
+  id: string;
+  customer: {
+    name: string;
+    email: string;
+  };
+  employee: string;
+  employeeId: string;
+  dueDate: string;
+  amount: number;
+  collectionPlan?: string;
+};
 
-export const salesTrendCsvData = `Date,Category,Product,Customer,Quantity,Price
-2023-01-15,Electronics,Laptop,Customer A,2,2400
-2023-01-20,Books,Fiction Novel,Customer B,5,75
-2023-02-10,Electronics,Smartphone,Customer A,3,2100
-2023-02-18,Clothing,T-Shirt,Customer C,10,250
-2023-03-05,Electronics,Laptop,Customer D,1,1200
-2023-07-21,Electronics,Headphones,Customer B,4,400
-2023-07-25,Books,Cookbook,Customer E,2,50
-2023-08-01,Clothing,Jeans,Customer F,3,210
-2023-08-15,Electronics,Smartphone,Customer G,2,1500
-2023-12-10,Electronics,Laptop,Customer H,3,3600
-2023-12-20,Toys,Action Figure,Customer I,10,200`;
-
-export const employees = [
-  { value: 'all', label: '전체', role: 'all', name: 'All' },
-  { value: 'john-doe', label: 'John Doe (Admin)', role: 'admin', name: 'John Doe', manager: null },
-  { value: 'alex-ray', label: 'Alex Ray (Manager)', role: 'manager', name: 'Alex Ray', manager: 'john-doe' },
-  { value: 'jane-smith', label: 'Jane Smith (Employee)', role: 'employee', name: 'Jane Smith', manager: 'alex-ray' },
-  { value: 'admin-user', label: 'Admin User (Admin)', role: 'admin', name: 'Admin User', manager: null },
+export const salesComparisonData = [
+  { name: '9월 누적 목표', jane: 45000, alex: 50000, john: 40000 },
+  { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 },
+  { name: '전년 동기 실적', jane: 35000, alex: 48000, john: 42000 },
 ];
 
 export const products = [
-    { value: 'e-001', label: 'Laptop Pro 15"', basePrice: 1200, categoryCode: 'electronics' },
-    { value: 'e-002', label: 'Smartphone X', basePrice: 850, categoryCode: 'electronics' },
-    { value: 'h-001', label: 'Ergonomic Chair', basePrice: 450, categoryCode: 'home-goods' },
-    { value: 'b-001', label: 'The Last Server', basePrice: 15.99, categoryCode: 'books' },
-    { value: 'e-003', label: 'Wireless Earbuds', basePrice: 129.99, categoryCode: 'electronics' },
-    { value: 'c-001', label: 'Branded Hoodie', basePrice: 45, categoryCode: 'clothing' },
+    { value: 'p-001', label: '15" Laptop', basePrice: 1200.00 },
+    { value: 'p-002', label: 'Wireless Mouse', basePrice: 25.00 },
+    { value: 'p-003', label: 'Mechanical Keyboard', basePrice: 150.00 },
+    { value: 'p-004', label: '27" 4K Monitor', basePrice: 450.00 },
+    { value: 'p-005', label: 'Docking Station', basePrice: 250.00 },
+    { value: 'p-006', label: 'Webcam', basePrice: 85.00 },
 ];
 
 export const customers = [
     { value: 'c-101', label: 'Acme Inc.', grade: 'A' },
-    { value: 'c-102', label: 'Stark Industries', grade: 'A' },
-    { value: 'c-103', label: 'Wayne Enterprises', grade: 'B' },
+    { value: 'c-102', label: 'Stark Industries', grade: 'B' },
+    { value: 'c-103', label: 'Wayne Enterprises', grade: 'A' },
     { value: 'c-104', label: 'Cyberdyne Systems', grade: 'C' },
-    { value: 'c-105', label: 'Gekko & Co', grade: 'B' },
+    { value: 'c-105', label: 'Gringotts Bank', grade: 'B' },
+];
+
+export const employees = [
+    { value: 'john-doe', label: 'John Doe', name: 'John Doe', role: 'admin', manager: null },
+    { value: 'alex-ray', label: 'Alex Ray', name: 'Alex Ray', role: 'manager', manager: 'john-doe' },
+    { value: 'jane-smith', label: 'Jane Smith', name: 'Jane Smith', role: 'employee', manager: 'alex-ray' },
 ];
 
 export const salesReportData = [
-  { employeeName: 'Jane Smith', customerName: 'Acme Inc.', customerCode: 'C-101', target: 15000, actual: 16500 },
-  { employeeName: 'Jane Smith', customerName: 'Stark Industries', customerCode: 'C-102', target: 10000, actual: 9500 },
-  { employeeName: 'Alex Ray', customerName: 'Wayne Enterprises', customerCode: 'C-103', target: 20000, actual: 21000 },
-  { employeeName: 'Alex Ray', customerName: 'Cyberdyne Systems', customerCode: 'C-104', target: 5000, actual: 6000 },
-  { employeeName: 'John Doe', customerName: 'Gekko & Co', customerCode: 'C-105', target: 8000, actual: 8000 },
-  { employeeName: 'Jane Smith', customerName: 'Globex Corporation', customerCode: 'C-106', target: 7000, actual: 5500 },
+  {
+    employeeName: "Jane Smith",
+    customerName: "Acme Inc.",
+    customerCode: "C-101",
+    target: 5000,
+    actual: 5500,
+  },
+  {
+    employeeName: "Jane Smith",
+    customerName: "Stark Industries",
+    customerCode: "C-102",
+    target: 8000,
+    actual: 7500,
+  },
+  {
+    employeeName: "Alex Ray",
+    customerName: "Wayne Enterprises",
+    customerCode: "C-103",
+    target: 12000,
+    actual: 13000,
+  },
+  {
+    employeeName: "Alex Ray",
+    customerName: "Cyberdyne Systems",
+    customerCode: "C-104",
+    target: 3000,
+    actual: 2500,
+  },
+  {
+    employeeName: "John Doe",
+    customerName: "Gringotts Bank",
+    customerCode: "C-105",
+    target: 10000,
+    actual: 11000,
+  },
+   {
+    employeeName: "Jane Smith",
+    customerName: "Ollivanders Wand Shop",
+    customerCode: "C-106",
+    target: 1500,
+    actual: 1800,
+  },
 ];
 
 export const cumulativeReportData = [
-    { month: 'Jan', target: 50000, actual: 48000, lastYear: 45000 },
-    { month: 'Feb', target: 50000, actual: 51000, lastYear: 47000 },
-    { month: 'Mar', target: 50000, actual: 55000, lastYear: 52000 },
-    { month: 'Apr', target: 55000, actual: 56000, lastYear: 54000 },
-    { month: 'May', target: 55000, actual: 58000, lastYear: 56000 },
-    { month: 'Jun', target: 60000, actual: 61000, lastYear: 58000 },
-    { month: 'Jul', target: 60000, actual: 63000, lastYear: 61000 },
-    { month: 'Aug', target: 60000, actual: 65000, lastYear: 62000 },
-    { month: 'Sep', target: 65000, actual: 45231.89, lastYear: 63000 },
-    { month: 'Oct', target: 65000, actual: 0, lastYear: 67000 },
-    { month: 'Nov', target: 70000, actual: 0, lastYear: 72000 },
-    { month: 'Dec', target: 80000, actual: 0, lastYear: 78000 },
+    { month: '1월', target: 20000, actual: 18000, lastYear: 17000 },
+    { month: '2월', target: 22000, actual: 23000, lastYear: 20000 },
+    { month: '3월', target: 25000, actual: 26000, lastYear: 24000 },
+    { month: '4월', target: 24000, actual: 23500, lastYear: 22000 },
+    { month: '5월', target: 28000, actual: 29000, lastYear: 27000 },
+    { month: '6월', target: 27000, actual: 28000, lastYear: 26000 },
+    { month: '7월', target: 30000, actual: 31000, lastYear: 29000 },
+    { month: '8월', target: 32000, actual: 31500, lastYear: 30000 },
+    { month: '9월', target: 35000, actual: 38000, lastYear: 33000 },
+    { month: '10월', target: 33000, actual: 0, lastYear: 31000 },
+    { month: '11월', target: 38000, actual: 0, lastYear: 36000 },
+    { month: '12월', target: 40000, actual: 0, lastYear: 38000 },
 ];
+
+export type ProductTarget = {
+    categoryCode: string;
+    categoryName: string;
+    productCode: string;
+    productName: string;
+    pastSales: { [month: number]: number };
+    monthlyTarget: { [month: number]: number };
+    monthlyActual: { [month: number]: number };
+};
+
+export type CustomerTarget = {
+    customerCode: string;
+    customerName: string;
+    employeeId: string;
+    products: ProductTarget[];
+};
+
+export const salesTargetManagementData: CustomerTarget[] = [
+    {
+        customerCode: 'C-101',
+        customerName: 'Acme Inc.',
+        employeeId: 'jane-smith',
+        products: [
+            { 
+                categoryCode: 'electronics', 
+                categoryName: 'Electronics', 
+                productCode: 'P-001', 
+                productName: '15" Laptop', 
+                pastSales: { 6: 2400, 7: 3600, 8: 3000 },
+                monthlyTarget: { 9: 3500 }, 
+                monthlyActual: { 9: 3800 } 
+            },
+            { 
+                categoryCode: 'accessories', 
+                categoryName: 'Accessories', 
+                productCode: 'P-002', 
+                productName: 'Wireless Mouse', 
+                pastSales: { 6: 100, 7: 150, 8: 120 },
+                monthlyTarget: { 9: 200 }, 
+                monthlyActual: { 9: 180 } 
+            },
+        ]
+    },
+    {
+        customerCode: 'C-102',
+        customerName: 'Stark Industries',
+        employeeId: 'jane-smith',
+        products: [
+            { 
+                categoryCode: 'electronics', 
+                categoryName: 'Electronics', 
+                productCode: 'P-004', 
+                productName: '27" 4K Monitor', 
+                pastSales: { 6: 4500, 7: 5400, 8: 4800 },
+                monthlyTarget: { 9: 6000 }, 
+                monthlyActual: { 9: 5500 } 
+            },
+        ]
+    },
+    {
+        customerCode: 'C-103',
+        customerName: 'Wayne Enterprises',
+        employeeId: 'alex-ray',
+        products: [
+            { 
+                categoryCode: 'electronics', 
+                categoryName: 'Electronics', 
+                productCode: 'P-005', 
+                productName: 'Docking Station', 
+                pastSales: { 6: 2500, 7: 3000, 8: 2800 },
+                monthlyTarget: { 9: 3200 }, 
+                monthlyActual: { 9: 3400 } 
+            },
+        ]
+    },
+];
+
+export const employeeCustomerSales = [
+  { id: 1, customerName: 'Acme Inc.', salesTarget: 15000, salesAmount: 16500 },
+  { id: 2, customerName: 'Stark Industries', salesTarget: 20000, salesAmount: 18200 },
+  { id: 3, customerName: 'Ollivanders Wand Shop', salesTarget: 10000, salesAmount: 12300 },
+];
+
+export type CustomerProductSale = {
+  productName: string;
+  salesTarget: number;
+  salesAmount: number;
+};
+
+export const customerProductSalesDetails: { [key: number]: CustomerProductSale[] } = {
+  1: [
+    { productName: '15" Laptop', salesTarget: 10000, salesAmount: 11000 },
+    { productName: 'Wireless Mouse', salesTarget: 5000, salesAmount: 5500 },
+  ],
+  2: [
+    { productName: '27" 4K Monitor', salesTarget: 15000, salesAmount: 14000 },
+    { productName: 'Mechanical Keyboard', salesTarget: 5000, salesAmount: 4200 },
+  ],
+  3: [
+    { productName: 'Docking Station', salesTarget: 8000, salesAmount: 9000 },
+    { productName: 'Webcam', salesTarget: 2000, salesAmount: 3300 },
+  ],
+};
+
+export type MonthlyDetail = {
+  month: string;
+  details: Array<{
+    customerName: string;
+    products: Array<{
+      productName: string;
+      target: number;
+      actual: number;
+    }>
+  }>
+};
+
+export const monthlyDetailReportData: MonthlyDetail[] = [
+    { 
+        month: '9월', 
+        details: [
+            { 
+                customerName: 'Acme Inc.',
+                products: [
+                    { productName: '15" Laptop', target: 10000, actual: 11000 },
+                    { productName: 'Wireless Mouse', target: 500, actual: 600 },
+                ]
+            },
+            { 
+                customerName: 'Stark Industries',
+                products: [
+                    { productName: '27" 4K Monitor', target: 15000, actual: 14000 },
+                    { productName: 'Mechanical Keyboard', target: 1000, actual: 800 },
+                ]
+            },
+             { 
+                customerName: 'Wayne Enterprises',
+                products: [
+                    { productName: 'Docking Station', target: 3000, actual: 3500 },
+                ]
+            }
+        ]
+    },
+    // Add data for other months as needed
+];
+
 
 export const commissionData = [
   {
     employeeId: 'EMP-001',
     employeeName: 'Jane Smith',
     sales: [
-      { type: '수입', salePrice: 150000, costPrice: 100000, customerType: 'own' },
-      { type: '수입', salePrice: 80000, costPrice: 60000, customerType: 'own' },
-      { type: '수입', salePrice: 50000, costPrice: 40000, customerType: 'transfer' },
-      { type: '현지', salePrice: 10000, costPrice: 8000, customerType: 'own' }, // margin 20% -> 12%
-      { type: '현지', salePrice: 12000, costPrice: 9000, customerType: 'transfer' }, // margin 25% -> 12% * 0.5
+      { type: '수입' as '수입' | '현지', salePrice: 150000, costPrice: 0, customerType: 'own' as 'own' | 'transfer' },
+      { type: '수입' as '수입' | '현지', salePrice: 80000, costPrice: 0, customerType: 'transfer' as 'own' | 'transfer' },
+      { type: '현지' as '수입' | '현지', salePrice: 5000, costPrice: 4000, customerType: 'own' as 'own' | 'transfer' }, // margin 20% -> 12%
+      { type: '현지' as '수입' | '현지', salePrice: 2000, costPrice: 1500, customerType: 'transfer' as 'own' | 'transfer' }, // margin 25% -> 12% * 0.5
     ],
   },
   {
     employeeId: 'EMP-002',
     employeeName: 'Alex Ray',
     sales: [
-      { type: '수입', salePrice: 250000, costPrice: 180000, customerType: 'own' },
-      { type: '현지', salePrice: 20000, costPrice: 12000, customerType: 'own' }, // margin 40% -> 18%
-      { type: '현지', salePrice: 5000, costPrice: 4800, customerType: 'own' }, // margin 4% -> 3%
-    ],
-  },
-  {
-    employeeId: 'EMP-003',
-    employeeName: 'John Doe',
-    sales: [
-      { type: '수입', salePrice: 300000, costPrice: 200000, customerType: 'transfer' },
-      { type: '현지', salePrice: 15000, costPrice: 10000, customerType: 'transfer' }, // margin 33.3% -> 15% * 0.5
+      { type: '수입' as '수입' | '현지', salePrice: 250000, costPrice: 0, customerType: 'own' as 'own' | 'transfer' }, // 200k @ 5%, 50k @ 3%
+      { type: '현지' as '수입' | '현지', salePrice: 10000, costPrice: 5000, customerType: 'own' as 'own' | 'transfer' }, // margin 50% -> 18%
     ],
   },
 ];
-
 
 export const cashSalesData: CashSale[] = [
-  { id: 'CS-001', date: '2024-09-02', employeeName: 'Jane Smith', customerName: 'Walk-in Customer', amount: 150.00, source: '현금 판매' },
-  { id: 'CS-002', date: '2024-09-02', employeeName: 'Alex Ray', customerName: 'Acme Inc.', amount: 500.00, source: '신용 수금' },
-  { id: 'CS-003', date: '2024-09-03', employeeName: 'Jane Smith', customerName: 'Stark Industries', amount: 300.50, source: '신용 수금' },
-  { id: 'CS-004', date: '2024-09-05', employeeName: 'John Doe', customerName: 'QuickMart', amount: 85.75, source: '현금 판매' },
-  { id: 'CS-005', date: '2024-09-09', employeeName: 'Alex Ray', customerName: 'Wayne Enterprises', amount: 1200.00, source: '신용 수금' },
-  { id: 'CS-006', date: '2024-09-10', employeeName: 'Jane Smith', customerName: 'Walk-in Customer', amount: 200.00, source: '현금 판매' },
+    { id: 'CS001', date: '2023-09-01', employeeName: 'Jane Smith', customerName: 'Acme Inc.', source: '현금 판매', amount: 500 },
+    { id: 'CS002', date: '2023-09-01', employeeName: 'Alex Ray', customerName: 'Stark Industries', source: '신용 수금', amount: 1200 },
+    { id: 'CS003', date: '2023-09-02', employeeName: 'Jane Smith', customerName: 'Local Shop', source: '현금 판매', amount: 350 },
+    { id: 'CS004', date: '2023-09-08', employeeName: 'John Doe', customerName: 'Wayne Enterprises', source: '신용 수금', amount: 2000 },
+    { id: 'CS005', date: '2023-09-08', employeeName: 'Alex Ray', customerName: 'Cyberdyne', source: '현금 판매', amount: 800 },
+    { id: 'CS006', date: '2023-09-09', employeeName: 'Jane Smith', customerName: 'Acme Inc.', source: '신용 수금', amount: 1000 },
+    { id: 'CS007', date: '2023-08-28', employeeName: 'Jane Smith', customerName: 'Gringotts', source: '현금 판매', amount: 750 },
 ];
+export type CashSale = {
+    id: string;
+    date: string;
+    employeeName: string;
+    customerName: string;
+    source: '현금 판매' | '신용 수금';
+    amount: number;
+};
+
+export type CheckStatus = 'Pending' | 'Confirmed' | 'Rejected';
+
+export type CheckPayment = {
+    id: string;
+    receiptDate: string;
+    dueDate: string;
+    salesperson: string;
+    customerName: string;
+    issuingBank: string;
+    checkNumber: string;
+    amount: number;
+    depositBank?: string;
+    depositDate?: string;
+    status: CheckStatus;
+    notes?: string;
+};
 
 export const checkPaymentsData: CheckPayment[] = [
-    { id: 'CHK-001', receiptDate: '2024-09-01', dueDate: '2024-10-01', salesperson: 'Jane Smith', customerName: 'Acme Inc.', issuingBank: 'Bank of America', checkNumber: '12345', amount: 1500.00, depositBank: 'Chase', depositDate: '2024-09-02', status: 'Confirmed', notes: '' },
-    { id: 'CHK-002', receiptDate: '2024-09-03', dueDate: '2024-09-18', salesperson: 'Alex Ray', customerName: 'Wayne Enterprises', issuingBank: 'Citi', checkNumber: '67890', amount: 3200.50, depositBank: '', depositDate: '', status: 'Pending', notes: '' },
-    { id: 'CHK-003', receiptDate: '2024-09-05', dueDate: '2024-09-20', salesperson: 'Jane Smith', customerName: 'Stark Industries', issuingBank: 'Wells Fargo', checkNumber: '54321', amount: 800.00, depositBank: 'Chase', depositDate: '2024-09-06', status: 'Confirmed', notes: '' },
-    { id: 'CHK-004', receiptDate: '2024-08-20', dueDate: '2024-09-05', salesperson: 'John Doe', customerName: 'Ollivanders', issuingBank: 'Gringotts', checkNumber: '11235', amount: 50.25, depositBank: 'Bank of America', depositDate: '2024-08-21', status: 'Rejected', notes: '부도 처리. 패널티 적용.' },
+    { id: 'CHK001', receiptDate: '2023-09-01', dueDate: '2023-10-01', salesperson: 'Jane Smith', customerName: 'Acme Inc.', issuingBank: 'Bank of America', checkNumber: '12345', amount: 5000, depositBank: '', depositDate: '', status: 'Pending', notes: '' },
+    { id: 'CHK002', receiptDate: '2023-09-03', dueDate: '2023-09-18', salesperson: 'Alex Ray', customerName: 'Stark Industries', issuingBank: 'Chase', checkNumber: '67890', amount: 12500, depositBank: 'Wells Fargo', depositDate: '2023-09-05', status: 'Confirmed', notes: '' },
+    { id: 'CHK003', receiptDate: '2023-09-05', dueDate: '2023-11-05', salesperson: 'Jane Smith', customerName: 'Wayne Enterprises', issuingBank: 'Citibank', checkNumber: '54321', amount: 8200, depositBank: '', depositDate: '', status: 'Pending', notes: 'Customer has post-dated' },
+    { id: 'CHK004', receiptDate: '2023-08-20', dueDate: '2023-09-20', salesperson: 'John Doe', customerName: 'Gringotts Bank', issuingBank: 'Wizarding Bank', checkNumber: '98765', amount: 25000, depositBank: 'Bank of America', depositDate: '2023-08-22', status: 'Rejected', notes: 'Bounced. Penalty applied.' },
 ];
 
-export const productUploadCsvData = `Category,Code,Description,Import Price,Local Purchase Price
-Electronics,e-006,4K Monitor,450,480
-Home Goods,h-002,Standing Desk,350,380
+export const productUploadCsvData = `Category,Product Code,Description,Import Price,Local Purchase Price
+Electronics,E-001,15" Laptop,1100,1150
+Electronics,E-002,27" 4K Monitor,400,420
+Accessories,A-001,Wireless Mouse,20,22
+Accessories,A-002,Mechanical Keyboard,130,140
 `;
 
-export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,Product Description,Quantity,Unit Price (Import)
-2024-09-28,Global Imports Ltd,Electronics,e-007,Gaming Mouse,150,45
-2024-09-29,Component Solutions,Electronics,e-008,Mechanical Keyboard,100,75
+export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,Product Description,Quantity,Unit Price
+2023-10-01,Global Imports,Electronics,E-001,15" Laptop,50,1100
+2023-10-01,Tech Suppliers,Accessories,A-001,Wireless Mouse,200,20
 `;
-
-export type EmployeeCustomerSale = {
-  id: string;
-  customerName: string;
-  salesAmount: number;
-  salesTarget: number;
-};
-
-export const employeeCustomerSales: EmployeeCustomerSale[] = [
-    { id: 'cust-001', customerName: 'Acme Inc.', salesAmount: 16500, salesTarget: 15000 },
-    { id: 'cust-002', customerName: 'Stark Industries', salesAmount: 9500, salesTarget: 10000 },
-    { id: 'cust-003', customerName: 'Globex Corporation', salesAmount: 5500, salesTarget: 7000 },
-];
-
-export type CustomerProductSale = {
-    productName: string;
-    salesAmount: number;
-    salesTarget: number;
-};
-
-export const customerProductSalesDetails: Record<string, CustomerProductSale[]> = {
-    'cust-001': [ // Acme Inc.
-        { productName: 'Laptop Pro 15"', salesAmount: 12000, salesTarget: 10000 },
-        { productName: 'Wireless Earbuds', salesAmount: 4500, salesTarget: 5000 },
-    ],
-    'cust-002': [ // Stark Industries
-        { productName: 'Smartphone X', salesAmount: 8500, salesTarget: 8000 },
-        { productName: 'Branded Hoodie', salesAmount: 1000, salesTarget: 2000 },
-    ],
-    'cust-003': [ // Globex Corporation
-        { productName: 'Ergonomic Chair', salesAmount: 4500, salesTarget: 5000 },
-        { productName: 'The Last Server', salesAmount: 1000, salesTarget: 2000 },
-    ],
-};
-
-
-export const monthlyDetailReportData = [
-  {
-    month: 'Sep',
-    details: [
-      {
-        customerName: 'Acme Inc.',
-        products: [
-          { productName: 'Laptop Pro 15"', target: 10000, actual: 12000 },
-          { productName: 'Wireless Earbuds', target: 5000, actual: 4500 },
-        ],
-      },
-      {
-        customerName: 'Stark Industries',
-        products: [
-          { productName: 'Smartphone X', target: 8000, actual: 8500 },
-          { productName: 'Branded Hoodie', target: 2000, actual: 1000 },
-        ],
-      },
-    ],
-  },
-  // Other months would follow here...
-];
-
-export type MonthlyDetail = typeof monthlyDetailReportData[0];
 
 
 export const customerData = [
-  {
-    employee: 'John Doe',
-    employeeId: 'john-doe',
-    customerName: 'Acme Inc.',
-    customerCode: 'C-101',
-    customerGrade: 'A',
-    customerType: 'own' as 'own' | 'transfer' | 'pending',
-    monthlySales: [
-      { month: 9, actual: 16500, average: 15500 },
-    ],
-    yearlySales: [
-      { year: 2023, amount: 180000 },
-    ],
-    creditBalance: 2500.00,
-    contact: {
-      name: 'John Smith',
-      position: 'Lead Buyer',
-      phone: '123-456-7890',
-      address: '123 Acme St, NY',
-      email: 'john.smith@acme.inc'
+    {
+        employee: 'Jane Smith',
+        employeeId: 'jane-smith',
+        customerName: 'Acme Inc.',
+        customerCode: 'A0001',
+        customerGrade: 'A',
+        customerType: 'own' as 'own' | 'transfer' | 'pending',
+        monthlySales: [
+            { month: 9, actual: 5500, average: 5200 },
+            { month: 8, actual: 5100, average: 5150 },
+        ],
+        yearlySales: [
+            { year: 2023, amount: 45000 },
+            { year: 2022, amount: 42000 },
+        ],
+        creditBalance: 15230.50,
+        contact: {
+            name: 'W. E. Coyote',
+            position: 'Chief Buyer',
+            phone: '123-456-7890',
+            address: '123 Desert Rd, AZ',
+            email: 'coyote@acme.com',
+        },
+        companyOverview: 'A leading manufacturer of elaborate contraptions and devices. Frequent purchaser of high-end electronics and industrial components. Known for ambitious projects and a high budget, but sometimes experiences cash flow issues related to said projects.'
     },
-    companyOverview: 'Leader in cartoon-style physics-defying gadgets.'
-  },
-  {
-    employee: 'Jane Smith',
-    employeeId: 'jane-smith',
-    customerName: 'Stark Industries',
-    customerCode: 'C-102',
-    customerGrade: 'A',
-    customerType: 'own' as 'own' | 'transfer' | 'pending',
-    monthlySales: [
-      { month: 9, actual: 9500, average: 10000 },
-    ],
-    yearlySales: [
-      { year: 2023, amount: 120000 },
-    ],
-    creditBalance: 1500.50,
-     contact: {
-      name: 'Pepper Potts',
-      position: 'CEO',
-      phone: '987-654-3210',
-      address: '1 Stark Tower, NY',
-      email: 'pepper.potts@stark.com'
+    {
+        employee: 'Alex Ray',
+        employeeId: 'alex-ray',
+        customerName: 'Stark Industries',
+        customerCode: 'B0001',
+        customerGrade: 'A',
+        customerType: 'transfer' as 'own' | 'transfer' | 'pending',
+        monthlySales: [
+            { month: 9, actual: 8200, average: 8000 },
+        ],
+        yearlySales: [
+            { year: 2023, amount: 75000 },
+        ],
+        creditBalance: 32000.00,
+        contact: {
+            name: 'Pepper Potts',
+            position: 'CEO',
+            phone: '987-654-3210',
+            address: '10880 Malibu Point, CA',
+            email: 'pepper.potts@starkind.com',
+        },
+        companyOverview: 'Global leader in technology, defense, and clean energy. Requires cutting-edge components and custom solutions. High volume, high value client with a strong payment history.'
     },
-    companyOverview: 'Advanced technology and defense contractor.'
-  },
-  {
-    employee: 'Alex Ray',
-    employeeId: 'alex-ray',
-    customerName: 'Wayne Enterprises',
-    customerCode: 'C-103',
-    customerGrade: 'B',
-    customerType: 'transfer' as 'own' | 'transfer' | 'pending',
-    monthlySales: [
-      { month: 9, actual: 21000, average: 18000 },
-    ],
-    yearlySales: [
-      { year: 2023, amount: 200000 },
-    ],
-    creditBalance: 5500.00,
-     contact: {
-      name: 'Lucius Fox',
-      position: 'CEO',
-      phone: '555-123-4567',
-      address: '1007 Mountain Drive, Gotham',
-      email: 'lucius.fox@wayne.com'
-    },
-    companyOverview: 'Multinational conglomerate with a focus on applied sciences.'
-  },
-   {
-    employee: 'Jane Smith',
-    employeeId: 'jane-smith',
-    customerName: 'New Customer LLC',
-    customerCode: 'C-107',
-    customerGrade: 'C',
-    customerType: 'pending' as 'own' | 'transfer' | 'pending',
-    monthlySales: [],
-    yearlySales: [],
-    creditBalance: 0,
-     contact: {
-      name: 'Pending Contact',
-      position: 'N/A',
-      phone: 'N/A',
-      address: 'N/A',
-      email: null
-    },
-    companyOverview: 'A newly registered customer awaiting approval.'
-  },
+     {
+        employee: 'John Doe',
+        employeeId: 'john-doe',
+        customerName: 'Wayne Enterprises',
+        customerCode: 'C0001',
+        customerGrade: 'B',
+        customerType: 'pending' as 'own' | 'transfer' | 'pending',
+        monthlySales: [],
+        yearlySales: [],
+        creditBalance: 0,
+        contact: {
+            name: 'Lucius Fox',
+            position: 'CEO',
+            phone: '555-0100',
+            address: '1007 Mountain Drive, Gotham',
+            email: null,
+        },
+        companyOverview: 'A multinational conglomerate with diverse holdings in technology, shipping, and research. Currently pending final approval for their account.'
+    }
 ];
 
-export const customerUploadCsvData = `CustomerName,CustomerCode,Grade,Employee
-Dynamic Corp,C-201,A,jane-smith
-Innovate LLC,C-202,B,alex-ray
-Synergy Inc,C-203,C,john-doe`;
-
-
-export const salesTargetManagementData = [
-  {
-    employeeId: 'jane-smith',
-    customerName: 'Acme Inc.',
-    customerCode: 'C-101',
-    products: [
-      {
-        categoryCode: 'electronics',
-        productName: 'Laptop Pro 15"',
-        productCode: 'e-001',
-        pastSales: { 6: 10000, 7: 11000, 8: 10500 },
-        monthlyTarget: { 9: 12000, 10: 12000, 11: 13000 },
-        monthlyActual: { 9: 12500, 10: 0, 11: 0 },
-        quantity: { 9: 10, 10: 10, 11: 11 },
-      },
-      {
-        categoryCode: 'electronics',
-        productName: 'Wireless Earbuds',
-        productCode: 'e-003',
-        pastSales: { 6: 4000, 7: 4200, 8: 4100 },
-        monthlyTarget: { 9: 5000, 10: 5500, 11: 6000 },
-        monthlyActual: { 9: 4500, 10: 0, 11: 0 },
-        quantity: { 9: 35, 10: 40, 11: 45 },
-      },
-    ]
-  },
-  {
-    employeeId: 'jane-smith',
-    customerName: 'Stark Industries',
-    customerCode: 'C-102',
-    products: [
-      {
-        categoryCode: 'electronics',
-        productName: 'Smartphone X',
-        productCode: 'e-002',
-        pastSales: { 6: 8000, 7: 8500, 8: 8200 },
-        monthlyTarget: { 9: 8000, 10: 9000, 11: 9500 },
-        monthlyActual: { 9: 8500, 10: 0, 11: 0 },
-        quantity: { 9: 10, 10: 11, 11: 12 },
-      }
-    ]
-  },
-  {
-    employeeId: 'alex-ray',
-    customerName: 'Wayne Enterprises',
-    customerCode: 'C-103',
-    products: [
-      {
-        categoryCode: 'home-goods',
-        productName: 'Ergonomic Chair',
-        productCode: 'h-001',
-        pastSales: { 6: 15000, 7: 16000, 8: 15500 },
-        monthlyTarget: { 9: 18000, 10: 18000, 11: 20000 },
-        monthlyActual: { 9: 17500, 10: 0, 11: 0 },
-        quantity: { 9: 40, 10: 40, 11: 45 },
-      }
-    ]
-  },
-  {
-    employeeId: 'john-doe',
-    customerName: 'Gekko & Co',
-    customerCode: 'C-105',
-    products: [
-      {
-        categoryCode: 'books',
-        productName: 'The Last Server',
-        productCode: 'b-001',
-        pastSales: { 6: 7000, 7: 7500, 8: 7200 },
-        monthlyTarget: { 9: 8000, 10: 8000, 11: 8500 },
-        monthlyActual: { 9: 8000, 10: 0, 11: 0 },
-        quantity: { 9: 500, 10: 500, 11: 530 },
-      }
-    ]
-  },
-  {
-    employeeId: 'john-doe',
-    customerName: 'Acme Inc.',
-    customerCode: 'C-101',
-    products: [
-      {
-        categoryCode: 'home-goods',
-        productName: 'Ergonomic Chair',
-        productCode: 'h-001',
-        pastSales: { 6: 0, 7: 0, 8: 0 },
-        monthlyTarget: { 9: 2000, 10: 2500, 11: 3000 },
-        monthlyActual: { 9: 0, 10: 0, 11: 0 },
-        quantity: { 9: 4, 10: 5, 11: 6 },
-      }
-    ]
-  },
-];
+export const customerUploadCsvData = `Employee,CustomerName,CustomerCode,Grade
+jane-smith,Globex Corporation,A0002,A
+alex-ray,Soylent Corp,B0002,C
+`;
