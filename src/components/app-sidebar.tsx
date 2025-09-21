@@ -142,29 +142,30 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 </NavCollapsible>
 
                 {(role === 'admin' || role === 'manager') && (
-                    <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
-                        Inventory
-                    </NavLink>
+                    <>
+                        <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
+                            Inventory
+                        </NavLink>
+                        <NavLink href="/commissions" icon={<BadgePercent className="h-4 w-4" />}>
+                            Commissions
+                        </NavLink>
+                    </>
                 )}
                 {role === 'admin' && (
-                     <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
-                        Products Import
-                    </NavLink>
-                )}
-                {(role === 'admin' || role === 'manager') && (
-                     <NavLink href="/commissions" icon={<BadgePercent className="h-4 w-4" />}>
-                        Commissions
-                    </NavLink>
-                )}
-                 {role === 'admin' && (
-                    <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
-                        Products
-                    </NavLink>
-                )}
-                 {role === 'admin' && (
-                    <NavLink href="#" icon={<LineChart className="h-4 w-4" />}>
-                        Analytics
-                    </NavLink>
+                    <>
+                        <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
+                            Products Import
+                        </NavLink>
+                        <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
+                            Products
+                        </NavLink>
+                        <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
+                            Credit Report
+                        </NavLink>
+                        <NavLink href="#" icon={<LineChart className="h-4 w-4" />}>
+                            Analytics
+                        </NavLink>
+                    </>
                 )}
             </nav>
         </div>
@@ -188,5 +189,3 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
     </Sidebar>
   );
 }
-
-    
