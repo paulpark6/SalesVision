@@ -6,7 +6,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -23,16 +23,32 @@ import {
   TableRow,
   TableFooter,
 } from '@/components/ui/table';
-import { customerData } from '@/lib/mock-data';
+import { duePaymentsData } from '@/lib/mock-data';
+import { differenceInDays, parseISO } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
 
-const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    });
+type CustomerCredit = {
+  customerName: string;
+  nearing: number;
+  due: number;
+  overdue: number;
+  total: number;
 };
 
-const totalCredit = customerData.reduce((sum, customer) => sum + customer.creditBalance, 0);
+const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
+  const due = parseISO(dueDate);
+  const today = new Date();
+  const daysDiff = differenceInDays(due, today);
+
+  if (daysDiff < 0) return 'overdue';
+  if (daysDiff <= 14) return 'due';
+  return 'nearing';
+};
+
+const formatCurrency = (amount: number) => {
+    if (amount === 0) return '-';
+    return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
 
 export default function CreditManagementPage() {
   const router = useRouter();
@@ -45,6 +61,38 @@ export default function CreditManagementPage() {
       router.push('/login');
     }
   }, [auth, router, role]);
+  
+  const customerSummary = useMemo(() => {
+    const summary: Record<string, Omit<CustomerCredit, 'customerName'>> = {};
+
+    duePaymentsData.forEach(payment => {
+      if (!summary[payment.customer.name]) {
+        summary[payment.customer.name] = { nearing: 0, due: 0, overdue: 0, total: 0 };
+      }
+
+      const status = getStatus(payment.dueDate);
+      summary[payment.customer.name][status] += payment.amount;
+      summary[payment.customer.name].total += payment.amount;
+    });
+
+    return Object.entries(summary)
+      .map(([customerName, data]) => ({ customerName, ...data }))
+      .sort((a, b) => b.total - a.total);
+  }, []);
+
+  const grandTotals = useMemo(() => {
+    return customerSummary.reduce(
+      (acc, customer) => {
+        acc.nearing += customer.nearing;
+        acc.due += customer.due;
+        acc.overdue += customer.overdue;
+        acc.total += customer.total;
+        return acc;
+      },
+      { nearing: 0, due: 0, overdue: 0, total: 0 }
+    );
+  }, [customerSummary]);
+
 
   const handleBack = () => {
     router.push('/dashboard');
@@ -69,9 +117,9 @@ export default function CreditManagementPage() {
              <div className="grid gap-4 md:gap-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>고객별 총 신용 잔액</CardTitle>
+                        <CardTitle>고객별 미수금 현황</CardTitle>
                         <CardDescription>
-                            각 고객의 총 미수금 잔액을 표시합니다. 이 금액은 만기일과 관계없이 모든 신용 판매의 합계입니다.
+                           고객별 미수금 현황을 만기전, 도래예정, 만기후(연체)로 구분하여 표시합니다.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -79,26 +127,40 @@ export default function CreditManagementPage() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>고객명</TableHead>
-                                    <TableHead>담당 직원</TableHead>
-                                    <TableHead className="text-right">총 신용 잔액</TableHead>
+                                    <TableHead className="text-right">만기 전</TableHead>
+                                    <TableHead className="text-right">도래 예정</TableHead>
+                                    <TableHead className="text-right">연체</TableHead>
+                                    <TableHead className="text-right">총 미수금</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {customerData.sort((a,b) => b.creditBalance - a.creditBalance).map(customer => (
-                                    <TableRow key={customer.customerCode}>
-                                        <TableCell>
-                                            <div className="font-medium">{customer.customerName}</div>
-                                            <div className="text-sm text-muted-foreground">{customer.customerCode}</div>
+                                {customerSummary.map(customer => (
+                                    <TableRow key={customer.customerName}>
+                                        <TableCell className="font-medium">{customer.customerName}</TableCell>
+                                        <TableCell className="text-right">{formatCurrency(customer.nearing)}</TableCell>
+                                        <TableCell className="text-right">
+                                            {customer.due > 0 ? (
+                                                <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
+                                                    {formatCurrency(customer.due)}
+                                                </Badge>
+                                            ) : '-'}
                                         </TableCell>
-                                        <TableCell>{customer.employee}</TableCell>
-                                        <TableCell className="text-right font-semibold">{formatCurrency(customer.creditBalance)}</TableCell>
+                                        <TableCell className="text-right">
+                                            {customer.overdue > 0 ? (
+                                                <Badge variant="destructive">{formatCurrency(customer.overdue)}</Badge>
+                                            ) : '-'}
+                                        </TableCell>
+                                        <TableCell className="text-right font-semibold">{formatCurrency(customer.total)}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                             <TableFooter>
                                 <TableRow>
-                                    <TableCell colSpan={2} className="font-bold">총계</TableCell>
-                                    <TableCell className="text-right font-bold">{formatCurrency(totalCredit)}</TableCell>
+                                    <TableCell className="font-bold">총계</TableCell>
+                                    <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
+                                    <TableCell className="text-right font-bold">{formatCurrency(grandTotals.due)}</TableCell>
+                                    <TableCell className="text-right font-bold">{formatCurrency(grandTotals.overdue)}</TableCell>
+                                    <TableCell className="text-right font-bold">{formatCurrency(grandTotals.total)}</TableCell>
                                 </TableRow>
                             </TableFooter>
                         </Table>
