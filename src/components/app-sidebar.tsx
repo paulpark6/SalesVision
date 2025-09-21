@@ -136,8 +136,8 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     <NavLink href="/reports/checks" icon={<Landmark className="h-4 w-4" />}>
                         Check Report
                     </NavLink>
-                    <NavLink href="/reports/credit" icon={<FileClock className="h-4 w-4" />}>
-                        Credit Aging Report
+                    <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
+                        Credit Report
                     </NavLink>
                 </NavCollapsible>
 
@@ -158,9 +158,6 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         </NavLink>
                         <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
                             Products
-                        </NavLink>
-                        <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
-                            Credit Report
                         </NavLink>
                         <NavLink href="#" icon={<LineChart className="h-4 w-4" />}>
                             Analytics

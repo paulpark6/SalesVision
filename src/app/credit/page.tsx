@@ -35,14 +35,14 @@ const formatCurrency = (amount: number) => {
     return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
-export default function CreditManagementPage() {
+export default function CreditReportPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
 
   useEffect(() => {
     if (auth === undefined) return;
-    if (!auth || role !== 'admin') {
+    if (!auth) {
       router.push('/login');
     }
   }, [auth, router, role]);
@@ -68,10 +68,11 @@ export default function CreditManagementPage() {
 
 
   const handleBack = () => {
-    router.push('/dashboard');
+    const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
+    router.push(dashboardPath);
   };
 
-  if (!role || role !== 'admin') {
+  if (!role) {
     return null;
   }
 
