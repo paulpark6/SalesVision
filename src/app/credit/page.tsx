@@ -61,7 +61,7 @@ export default function CreditManagementPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Credit Management</h1>
+                <h1 className="text-2xl font-semibold">Credit Report</h1>
                  <Button type="button" variant="outline" onClick={handleBack}>
                   Back to Dashboard
               </Button>
@@ -71,7 +71,7 @@ export default function CreditManagementPage() {
                     <CardHeader>
                         <CardTitle>고객별 총 신용 잔액</CardTitle>
                         <CardDescription>
-                            각 고객의 총 미수금 잔액을 표시합니다.
+                            각 고객의 총 미수금 잔액을 표시합니다. 이 금액은 만기일과 관계없이 모든 신용 판매의 합계입니다.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
