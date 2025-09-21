@@ -22,7 +22,6 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useMemo, Fragment } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -31,115 +30,101 @@ import { useToast } from '@/hooks/use-toast';
 import { salesTargetManagementData, employees } from '@/lib/mock-data';
 import { Progress } from '@/components/ui/progress';
 
-type Target = (typeof salesTargetManagementData)[0];
+type Target = typeof salesTargetManagementData[0];
 type ProductTarget = Target['products'][0];
-
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-};
-
 
 export default function SalesTargetPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
   const { toast } = useToast();
+  
+  const currentMonth = new Date().getMonth() + 1;
+  const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+  const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
 
   const [targets, setTargets] = useState<Target[]>(salesTargetManagementData);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [originalTargets, setOriginalTargets] = useState<Target[]>([]);
 
-  const currentYear = new Date().getFullYear();
-  const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
-  const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
+  const loggedInEmployee = useMemo(() => {
+    if (!auth?.userId) return null;
+    return employees.find(e => e.value === auth.userId);
+  }, [auth]);
 
-  const [selectedYear, setSelectedYear] = useState<string>(String(currentYear));
-  const [selectedMonth, setSelectedMonth] = useState<string>('9');
-  const [selectedEmployee, setSelectedEmployee] = useState('all');
-
-  const employeeOptions = useMemo(() => {
-    if (role === 'admin') {
-      return employees;
-    } else if (role === 'manager') {
-      const manager = employees.find(e => e.role === 'manager');
-      const team = employees.filter(e => e.manager === manager?.value || e.value === manager?.value);
-      return team;
-    } else {
-        const employee = employees.find(e => e.role === 'employee');
-        return employee ? [employee] : [];
-    }
-  }, [role]);
-
+  // Set initial filter based on role
   useEffect(() => {
-    if (auth === undefined) return;
-    if (!auth) {
-      router.push('/login');
+    if (role === 'employee' && loggedInEmployee) {
+      setSelectedEmployee(loggedInEmployee.value);
     } else {
-        if (role === 'employee') {
-            const employee = employees.find(e => e.role === 'employee');
-            if (employee) setSelectedEmployee(employee.value);
-        } else {
-            setSelectedEmployee('all');
-        }
+      setSelectedEmployee('all');
     }
-  }, [auth, router, role]);
+  }, [role, loggedInEmployee]);
 
-  useEffect(() => {
-    setOriginalTargets(JSON.parse(JSON.stringify(salesTargetManagementData)));
-  }, []);
-
-  const handleTargetChange = (customerCode: string, productCode: string, newTarget: number) => {
-    const updatedTargets = targets.map(target => {
-      if (target.customerCode === customerCode) {
-        return {
-          ...target,
-          products: target.products.map(product => {
-            if (product.productCode === productCode) {
-              const updatedMonthlyTarget = { ...product.monthlyTarget, [selectedMonth]: newTarget };
-              return { ...product, monthlyTarget: updatedMonthlyTarget };
-            }
-            return product;
-          }),
-        };
-      }
-      return target;
-    });
-    setTargets(updatedTargets);
-    setHasChanges(true);
+  const handleBack = () => {
+    const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
+    router.push(dashboardPath);
   };
   
-  const handleSaveChanges = () => {
-    setOriginalTargets(JSON.parse(JSON.stringify(targets)));
-    setHasChanges(false);
-    toast({
-        title: "Changes Saved",
-        description: "Your sales target changes have been saved.",
-    });
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
   };
 
-  const handleCancelChanges = () => {
-      setTargets(originalTargets);
-      setHasChanges(false);
-  }
+  const availableMonths = Array.from({length: 12}, (_, i) => i + 1);
+
+  const employeeOptions = useMemo(() => {
+      if (role === 'admin') return employees;
+      if (role === 'manager' && loggedInEmployee) {
+          const team = employees.filter(e => e.manager === loggedInEmployee.value || e.value === loggedInEmployee.value);
+          return team;
+      }
+      if (role === 'employee' && loggedInEmployee) {
+          return [loggedInEmployee];
+      }
+      return [];
+  }, [role, loggedInEmployee]);
 
   const filteredTargets = useMemo(() => {
     if (selectedEmployee === 'all') {
-      if (role === 'admin') return targets;
-      const managerId = employees.find(e => e.role === 'manager')?.value;
-      const teamIds = employees.filter(e => e.manager === managerId).map(e => e.value);
-      const visibleIds = [managerId, ...teamIds].filter(Boolean);
-      return targets.filter(t => visibleIds.includes(t.employeeId));
+      return targets;
     }
     return targets.filter(t => t.employeeId === selectedEmployee);
-  }, [targets, selectedEmployee, role]);
+  }, [selectedEmployee, targets]);
+
+  const handleTargetChange = (customerCode: string, productCode: string, month: number, value: number) => {
+      setTargets(prevTargets => {
+          return prevTargets.map(target => {
+              if (target.customerCode === customerCode) {
+                  const updatedProducts = target.products.map(product => {
+                      if (product.productCode === productCode) {
+                          const newMonthlyTarget = { ...product.monthlyTarget, [month]: value };
+                          return { ...product, monthlyTarget: newMonthlyTarget };
+                      }
+                      return product;
+                  });
+                  return { ...target, products: updatedProducts };
+              }
+              return target;
+          });
+      });
+  };
+
+  const handleSave = () => {
+    // In a real app, this would send the updated `targets` state to an API
+    toast({
+        title: '목표 저장됨',
+        description: '설정된 매출 목표가 성공적으로 저장되었습니다.'
+    });
+  }
 
   const employeeSummary = useMemo(() => {
-    const summary: Record<string, { name: string; target: number; actual: number }> = {};
-    employees.forEach(emp => {
-      summary[emp.value] = { name: emp.label, target: 0, actual: 0 };
+    const summary: { [key: string]: { name: string; target: number; actual: number } } = {};
+    
+    employeeOptions.forEach(emp => {
+      summary[emp.value] = { name: emp.name, target: 0, actual: 0 };
     });
 
     salesTargetManagementData.forEach(item => {
@@ -154,12 +139,11 @@ export default function SalesTargetPage() {
         });
       }
     });
-    
-    return Object.values(summary).filter(s => s.target > 0 || s.actual > 0);
-  }, [selectedMonth]);
 
+    return Object.values(summary);
+  }, [selectedMonth, employeeOptions]);
 
-  const canEdit = role === 'admin';
+  const adminOptions = employees.filter(e => e.role === 'admin');
 
   if (!role) {
     return null;
@@ -171,154 +155,137 @@ export default function SalesTargetPage() {
       <SidebarInset>
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">월별 매출 목표 설정</h1>
-                {hasChanges && (
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={handleCancelChanges}>Cancel</Button>
-                        <Button onClick={handleSaveChanges}>Save Changes</Button>
-                    </div>
-                )}
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-semibold">월별/고객별/제품별 매출 목표</h1>
+            <div className='flex gap-2'>
+              <Button type="button" variant="outline" onClick={handleBack}>
+                Back to Dashboard
+              </Button>
+              { (role === 'admin' || role === 'manager') && <Button onClick={handleSave}>목표 저장</Button>}
             </div>
+          </div>
           <Card>
             <CardHeader>
-              <CardTitle>매출 목표 관리</CardTitle>
+              <CardTitle>매출 목표 설정</CardTitle>
               <CardDescription>
-                월별, 직원별, 고객별, 제품별 매출 목표를 설정하고 관리합니다. 관리자만 목표를 수정할 수 있습니다.
+                월, 담당 직원, 고객 및 제품별로 매출 목표를 설정합니다. 관리자와 매니저만 목표를 수정할 수 있습니다.
               </CardDescription>
-              <div className="flex items-end justify-between pt-2">
+              <div className="flex items-end justify-between pt-4">
                 <div className="flex items-end gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="year-select">Year</Label>
-                        <Select value={selectedYear} onValueChange={setSelectedYear}>
-                            <SelectTrigger id="year-select" className="w-[120px]">
-                            <SelectValue placeholder="Select Year" />
-                            </SelectTrigger>
-                            <SelectContent>
-                            {availableYears.map(year => (
-                                <SelectItem key={year} value={String(year)}>{year}</SelectItem>
+                  <div className="grid gap-2">
+                    <Label htmlFor="month-select">월</Label>
+                    <Select value={String(selectedMonth)} onValueChange={(val) => setSelectedMonth(Number(val))}>
+                        <SelectTrigger id="month-select" className="w-[120px]">
+                        <SelectValue placeholder="Select Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        {availableMonths.map(month => (
+                            <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="employee-select">담당 직원</Label>
+                     <Select 
+                        value={selectedEmployee} 
+                        onValueChange={setSelectedEmployee}
+                        disabled={role === 'employee'}
+                     >
+                        <SelectTrigger id="employee-select" className="w-[180px]">
+                            <SelectValue placeholder="Select Employee" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {role !== 'employee' && <SelectItem value="all">전체</SelectItem>}
+                            
+                            {role === 'admin' && adminOptions.map(emp => (
+                                <SelectItem key={emp.value} value={emp.value}>{emp.label}</SelectItem>
                             ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="month-select">Month</Label>
-                        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                            <SelectTrigger id="month-select" className="w-[120px]">
-                            <SelectValue placeholder="Select Month" />
-                            </SelectTrigger>
-                            <SelectContent>
-                            {availableMonths.map(month => (
-                                <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
+                            
+                            {employeeOptions.filter(e => e.role !== 'admin').map(emp => (
+                                <SelectItem key={emp.value} value={emp.value}>{emp.label}</SelectItem>
                             ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                     <div className="grid gap-2">
-                        <Label htmlFor="employee-select">담당 직원</Label>
-                        <Select value={selectedEmployee} onValueChange={setSelectedEmployee} disabled={role === 'employee'}>
-                            <SelectTrigger id="employee-select" className="w-[150px]">
-                                <SelectValue placeholder="Select Employee" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">전체</SelectItem>
-                                {employeeOptions.map(emp => (
-                                    <SelectItem key={emp.value} value={emp.value}>{emp.label}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                        </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              {selectedEmployee === 'all' && (role === 'admin' || role === 'manager') && (
-                <Card className="mb-8">
-                  <CardHeader>
-                    <CardTitle>팀원별 {selectedMonth}월 목표 달성 현황</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Employee</TableHead>
-                                <TableHead className="text-right">Total Target</TableHead>
-                                <TableHead className="text-right">Total Actual</TableHead>
-                                <TableHead className="w-[200px]">Achievement Rate</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                         <TableBody>
-                            {employeeSummary.map(emp => {
-                                const achievement = emp.target > 0 ? (emp.actual / emp.target) * 100 : 0;
-                                return (
-                                    <TableRow key={emp.name}>
-                                        <TableCell className="font-medium">{emp.name}</TableCell>
-                                        <TableCell className="text-right">{formatCurrency(emp.target)}</TableCell>
-                                        <TableCell className="text-right">{formatCurrency(emp.actual)}</TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <Progress value={achievement} className="h-2" />
-                                                <span className="text-xs font-semibold w-12 text-right">
-                                                    {achievement.toFixed(1)}%
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+              {selectedEmployee === 'all' && (
+                  <div className="mb-8">
+                      <h3 className="text-lg font-semibold mb-4">팀원별 {selectedMonth}월 목표 요약</h3>
+                      <Table>
+                          <TableHeader>
+                              <TableRow>
+                                  <TableHead>Employee</TableHead>
+                                  <TableHead className="text-right">Total Target</TableHead>
+                                  <TableHead className="text-right">Total Actual</TableHead>
+                                  <TableHead className="w-[200px]">Achievement Rate</TableHead>
+                              </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                              {employeeSummary.map(emp => {
+                                  const achievementRate = emp.target > 0 ? (emp.actual / emp.target) * 100 : 0;
+                                  return (
+                                      <TableRow key={emp.name}>
+                                          <TableCell className="font-medium">{emp.name}</TableCell>
+                                          <TableCell className="text-right">{formatCurrency(emp.target)}</TableCell>
+                                          <TableCell className="text-right">{formatCurrency(emp.actual)}</TableCell>
+                                          <TableCell>
+                                              <div className="flex items-center gap-2">
+                                                  <Progress value={achievementRate} className="h-2" />
+                                                  <span className="text-xs font-semibold w-12 text-right">
+                                                      {achievementRate.toFixed(1)}%
+                                                  </span>
+                                              </div>
+                                          </TableCell>
+                                      </TableRow>
+                                  )
+                              })}
+                          </TableBody>
+                      </Table>
+                  </div>
               )}
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    {selectedEmployee === 'all' && <TableHead>담당</TableHead>}
-                    <TableHead>고객명</TableHead>
-                    <TableHead>제품명</TableHead>
-                    <TableHead className="text-right">매출 목표 ({selectedMonth}월)</TableHead>
-                    <TableHead className="text-right">실제 매출 ({selectedMonth}월)</TableHead>
+                    <TableHead className="w-[150px]">고객명</TableHead>
+                    <TableHead>제품</TableHead>
+                    <TableHead className="text-right w-[150px]">6월</TableHead>
+                    <TableHead className="text-right w-[150px]">7월</TableHead>
+                    <TableHead className="text-right w-[150px]">8월</TableHead>
+                    <TableHead className="text-right w-[180px]">목표 ({selectedMonth}월)</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredTargets.map((target) => (
-                    <Fragment key={target.customerCode}>
+                    <Fragment key={`${target.customerCode}-${target.products[0]?.categoryCode}`}>
                       {target.products.map((product, pIndex) => (
                         <TableRow key={`${target.customerCode}-${product.productCode}`}>
                           {pIndex === 0 && (
-                            <>
-                              {selectedEmployee === 'all' && 
-                                <TableCell rowSpan={target.products.length} className="align-top">
-                                  {target.employeeName}
-                                </TableCell>
-                              }
-                              <TableCell rowSpan={target.products.length} className="font-medium align-top">
-                                {target.customerName}
-                                <div className="text-sm text-muted-foreground">{target.customerCode}</div>
-                              </TableCell>
-                            </>
+                            <TableCell rowSpan={target.products.length} className="font-medium align-top border-r">
+                              {target.customerName}
+                              <div className="text-sm text-muted-foreground">{target.customerCode}</div>
+                            </TableCell>
                           )}
                           <TableCell>
                             {product.productName}
                             <div className="text-sm text-muted-foreground">{product.productCode}</div>
                           </TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.pastSales[6] || 0)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.pastSales[7] || 0)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.pastSales[8] || 0)}</TableCell>
                           <TableCell className="text-right">
-                             {canEdit ? (
-                                <Input
-                                    type="number"
-                                    value={product.monthlyTarget?.[selectedMonth] || 0}
-                                    onChange={(e) => handleTargetChange(target.customerCode, product.productCode, parseInt(e.target.value, 10))}
-                                    className="h-8 w-32 text-right ml-auto"
-                                    placeholder="0"
-                                />
-                             ) : (
-                                formatCurrency(product.monthlyTarget?.[selectedMonth] || 0)
-                             )}
-                          </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {formatCurrency(product.monthlyActual?.[selectedMonth] || 0)}
+                            <Input
+                              type="number"
+                              className="h-8 text-right"
+                              placeholder="목표 입력"
+                              value={product.monthlyTarget[selectedMonth] || ''}
+                              onChange={(e) => handleTargetChange(target.customerCode, product.productCode, selectedMonth, Number(e.target.value))}
+                              disabled={role === 'employee'}
+                            />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -333,5 +300,3 @@ export default function SalesTargetPage() {
     </SidebarProvider>
   );
 }
-
-    
