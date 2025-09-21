@@ -29,15 +29,14 @@ type OverdueDetailsDialogProps = {
   payments: DuePayment[];
 };
 
-const getOverdueBucket = (dueDate: string): '1-30' | '31-60' | '61-100' | '>100' => {
+const getOverdueBucket = (dueDate: string): '1-30' | '31-90' | '>90' => {
     const due = parseISO(dueDate);
     const today = new Date();
     const daysOverdue = differenceInDays(today, due);
 
     if (daysOverdue <= 30) return '1-30';
-    if (daysOverdue <= 60) return '31-60';
-    if (daysOverdue <= 100) return '61-100';
-    return '>100';
+    if (daysOverdue <= 90) return '31-90';
+    return '>90';
 };
 
 const formatCurrency = (amount: number) => {
@@ -49,9 +48,8 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
   const bucketedPayments = useMemo(() => {
     const buckets: { [key: string]: { total: number; items: DuePayment[] } } = {
       '1-30': { total: 0, items: [] },
-      '31-60': { total: 0, items: [] },
-      '61-100': { total: 0, items: [] },
-      '>100': { total: 0, items: [] },
+      '31-90': { total: 0, items: [] },
+      '>90': { total: 0, items: [] },
     };
 
     payments.forEach(payment => {
@@ -73,7 +71,7 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
         <DialogHeader>
           <DialogTitle>연체 상세 내역: {customerName}</DialogTitle>
           <DialogDescription>
-            선택한 고객의 연체된 금액을 커스텀 기간별로 분류하여 표시합니다.
+            선택한 고객의 연체된 금액을 기간별로 분류하여 표시합니다.
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto pr-4">
@@ -92,7 +90,7 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
                     <React.Fragment key={bucket}>
                         <TableRow className="bg-muted/50 font-semibold">
                             <TableCell colSpan={3}>
-                                {bucket === '>100' ? '100일 초과' : `${bucket}일`}
+                                {bucket === '>90' ? '90일 초과' : `${bucket}일`}
                             </TableCell>
                             <TableCell className="text-right">{formatCurrency(data.total)}</TableCell>
                         </TableRow>
