@@ -198,7 +198,7 @@ export default function NewSalePage() {
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="saleOrReturn">매출/리턴</Label>
-                    <RadioGroup defaultValue="sale" id="saleOrReturn" className="flex items-center space-x-4 pt-2">
+                    <RadioGroup defaultValue="sale" id="saleOrReturn" className="flex items-center flex-wrap gap-x-4 gap-y-2 pt-2">
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="sale" id="sale" />
                             <Label htmlFor="sale">매출</Label>
@@ -207,6 +207,26 @@ export default function NewSalePage() {
                             <RadioGroupItem value="return" id="return" />
                             <Label htmlFor="return">리턴</Label>
                         </div>
+                        {role === 'admin' && (
+                            <>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="lost" id="lost" />
+                                    <Label htmlFor="lost">분실</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="company-use" id="company-use" />
+                                    <Label htmlFor="company-use">회사사용</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="broken" id="broken" />
+                                    <Label htmlFor="broken">브로큰</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="damaged" id="damaged" />
+                                    <Label htmlFor="damaged">데미지</Label>
+                                </div>
+                            </>
+                        )}
                     </RadioGroup>
                   </div>
                   <div className="space-y-2">
