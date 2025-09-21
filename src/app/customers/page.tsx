@@ -271,7 +271,7 @@ export default function CustomersPage() {
                     </Select>
                     </div>
                 </div>
-                {(role === 'manager' || role === 'employee') && (
+                {(role === 'manager' || role === 'employee' || role === 'admin') && (
                   <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4" />
                       <Label htmlFor="my-customers-filter">내 고객만 보기</Label>
