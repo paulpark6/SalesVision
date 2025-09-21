@@ -52,6 +52,9 @@ export default function EmployeeDashboardPage() {
                             </Button>
                         </>
                     )}
+                    <Button asChild variant="outline">
+                        <Link href="/account/delegate">Delegate Authority</Link>
+                    </Button>
                     <Button asChild>
                         <Link href="/sales/new">Add Sale</Link>
                     </Button>
