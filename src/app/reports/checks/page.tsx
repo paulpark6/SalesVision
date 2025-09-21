@@ -30,6 +30,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Check, X } from 'lucide-react';
+import { DatePicker } from '@/components/ui/date-picker';
 
 export default function CheckReportPage() {
   const router = useRouter();
@@ -80,9 +81,13 @@ export default function CheckReportPage() {
     }
   };
 
-  const handleFieldChange = (id: string, field: keyof CheckPayment, value: string) => {
+  const handleFieldChange = (id: string, field: keyof CheckPayment, value: string | Date | undefined) => {
+    let finalValue = value;
+    if (value instanceof Date) {
+        finalValue = value.toISOString().split('T')[0];
+    }
     setCheckData(prevData =>
-      prevData.map(c => (c.id === id ? { ...c, [field]: value } : c))
+      prevData.map(c => (c.id === id ? { ...c, [field]: finalValue } : c))
     );
   };
 
@@ -126,7 +131,8 @@ export default function CheckReportPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
+              <div className="overflow-x-auto">
+              <Table className="min-w-max">
                 <TableHeader>
                   <TableRow>
                     <TableHead>수취일</TableHead>
@@ -153,20 +159,25 @@ export default function CheckReportPage() {
                         <TableCell>{check.checkNumber}</TableCell>
                         <TableCell className="text-right font-medium">{formatCurrency(check.amount)}</TableCell>
                         <TableCell>
-                           <Input 
-                             defaultValue={check.depositBank} 
-                             className="h-8" 
-                             disabled={role !== 'admin'} 
-                             onChange={(e) => handleFieldChange(check.id, 'depositBank', e.target.value)}
-                           />
+                           {role === 'admin' ? (
+                             <Input 
+                               defaultValue={check.depositBank} 
+                               className="h-8 w-32" 
+                               onChange={(e) => handleFieldChange(check.id, 'depositBank', e.target.value)}
+                             />
+                           ) : (
+                             check.depositBank
+                           )}
                         </TableCell>
                         <TableCell>
-                           <Input 
-                            defaultValue={check.depositDate} 
-                            className="h-8" 
-                            disabled={role !== 'admin'} 
-                            onChange={(e) => handleFieldChange(check.id, 'depositDate', e.target.value)}
-                            />
+                           {role === 'admin' ? (
+                                <DatePicker 
+                                    value={check.depositDate ? new Date(check.depositDate) : undefined}
+                                    onSelect={(date) => handleFieldChange(check.id, 'depositDate', date)}
+                                />
+                            ) : (
+                                check.depositDate
+                            )}
                         </TableCell>
                          <TableCell>
                           {role === 'admin' && check.status === 'Pending' ? (
@@ -183,12 +194,17 @@ export default function CheckReportPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                            <Input defaultValue={check.notes} className="h-8" disabled={role === 'employee'} />
+                           {role !== 'employee' ? (
+                            <Input defaultValue={check.notes} className="h-8 w-32" disabled={role === 'manager'} />
+                           ) : (
+                             check.notes
+                           )}
                         </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </CardContent>
           </Card>
         </main>
