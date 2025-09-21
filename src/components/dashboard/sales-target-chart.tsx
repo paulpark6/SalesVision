@@ -1,6 +1,6 @@
 
 'use client';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip, ReferenceLine } from 'recharts';
 import {
   Card,
   CardContent,
@@ -104,6 +104,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
                   }
                 />
                 <Legend />
+                <ReferenceLine y={45000} label={{ value: "Company Target", position: 'insideTopLeft', fill: 'hsl(var(--foreground))', fontSize: 12 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
                 <Bar dataKey="jane" stackId="a" fill="hsl(var(--chart-3))" name="Jane" radius={[0, 0, 0, 0]}/>
                 <Bar dataKey="alex" stackId="a" fill="hsl(var(--chart-4))" name="Alex" />
                 <Bar dataKey="john" stackId="a" fill="hsl(var(--chart-5))" name="John" radius={[4, 4, 0, 0]}/>
@@ -161,6 +162,7 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
               />
               <Tooltip content={<ChartTooltipContent />} />
               <Legend />
+              <ReferenceLine y={45000} label={{ value: "Company Target", position: 'insideTopLeft', fill: 'hsl(var(--foreground))', fontSize: 12 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
               <Bar dataKey="target" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="목표" />
               <Bar dataKey="sales" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="매출" />
             </BarChart>

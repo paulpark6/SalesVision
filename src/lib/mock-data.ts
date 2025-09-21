@@ -1,281 +1,310 @@
-import type { NavItem, NavItemWithLink } from '@/types/nav';
 
-export const mainNav: NavItem[] = [
-  {
-    title: 'Lobby',
-    items: [
-      {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: 'dashboard',
-        description: 'Get an overview of your sales performance.',
-      },
-      {
-        title: 'Sales',
-        href: '/dashboard/sales',
-        icon: 'sales',
-        description: 'View and manage your sales records.',
-      },
-      {
-        title: 'Customers',
-        href: '/dashboard/customers',
-        icon: 'customers',
-        description: 'Manage your customer base.',
-      },
-    ],
-  },
-];
+// @/lib/mock-data.ts
+
+import type { NavItem, NavItemWithChildren } from '@/components/app-sidebar';
+import type { UserRole } from '@/hooks/use-auth';
 
 export const overviewData = {
-    totalRevenue: 52389.50,
-    subscriptions: 582,
-    sales: 1250,
-    activeNow: 168
-}
+    totalRevenue: 45231.89,
+    subscriptions: 2350,
+    sales: 12234,
+    activeNow: 573,
+};
 
 export const salesTargetData = {
     current: 42100.50,
-    target: 45000,
+    target: 50000.00,
 }
 
 export const salesTargetChartData = [
-  { name: 'Jan', sales: 18, target: 20 },
-  { name: 'Feb', sales: 22, target: 25 },
-  { name: 'Mar', sales: 28, target: 30 },
-  { name: 'Apr', sales: 25, target: 28 },
-  { name: 'May', sales: 32, target: 35 },
-  { name: 'Jun', sales: 38, target: 40 },
-  { name: 'Jul', sales: 42, target: 45 },
-  { name: 'Aug', sales: 45, target: 48 },
-  { name: 'Sep', sales: 42.1, target: 45 },
-  { name: 'Oct', sales: 0, target: 52 },
-  { name: 'Nov', sales: 0, target: 55 },
-  { name: 'Dec', sales: 0, target: 60 },
+  { name: '실적', sales: 42100.50, target: 50000 },
+];
+
+export const salesComparisonData = [
+  { name: '9월 누적 목표', jane: 45000, alex: 50000, john: 40000 },
+  { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 },
+  { name: '전년 동기 실적', jane: 35000, alex: 55000, john: 38000 },
 ];
 
 
 export const recentSalesData = [
-    {
-        customer: { name: 'Olivia Martin', email: 'olivia.martin@email.com' },
-        amount: 1999.00
-    },
-    {
-        customer: { name: 'Jackson Lee', email: 'jackson.lee@email.com' },
-        amount: 39.00
-    },
-    {
-        customer: { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com' },
-        amount: 299.00
-    },
-    {
-        customer: { name: 'William Kim', email: 'will@email.com' },
-        amount: 99.00
-    },
-    {
-        customer: { name: 'Sofia Davis', email: 'sofia.davis@email.com' },
-        amount: 39.00
-    }
-]
-
-export const duePaymentsData: DuePayment[] = [
-    {
-        id: 'INV-001',
-        employee: 'Jane Smith',
-        customer: { name: 'Global Tech Inc.', email: 'contact@globaltech.com' },
-        dueDate: '2023-08-15', // Overdue
-        amount: 2500.00,
-        collectionPlan: 'Followed up via email on 2023-09-01. Waiting for response.'
-    },
-    {
-        id: 'INV-002',
-        employee: 'John Doe',
-        customer: { name: 'Innovate Solutions', email: 'accounts@innovatesolutions.com' },
-        dueDate: '2024-09-20', // Due
-        amount: 1500.75,
-        collectionPlan: ''
-    },
-    {
-        id: 'INV-003',
-        employee: 'Alex Ray',
-        customer: { name: 'Quantum Leap LLC', email: 'finance@quantumleap.com' },
-        dueDate: '2024-10-05', // Nearing
-        amount: 800.00,
-        collectionPlan: ''
-    },
-    {
-        id: 'INV-004',
-        employee: 'Jane Smith',
-        customer: { name: 'Synergy Corp', email: 'billing@synergycorp.net' },
-        dueDate: '2024-09-18', // Due
-        amount: 3200.50,
-        collectionPlan: ''
-    },
-    {
-        id: 'INV-005',
-        employee: 'Alex Ray',
-        customer: { name: 'Apex Industries', email: 'payables@apex.com' },
-        dueDate: '2023-01-10', // Overdue > 1 year
-        amount: 5000.00,
-        collectionPlan: 'Legal notice sent on 2023-03-15.'
-    },
-    {
-        id: 'INV-006',
-        employee: 'John Doe',
-        customer: { name: 'Pinnacle Systems', email: 'ap@pinnaclesys.com' },
-        dueDate: '2024-08-25', // Overdue
-        amount: 1250.25,
-        collectionPlan: 'Payment promised by end of September.'
-    }
-];
-export type DuePayment = {
-    id: string;
-    employee: string;
+  {
     customer: {
-        name: string;
-        email: string;
-    };
-    dueDate: string;
-    amount: number;
-    collectionPlan?: string;
+      name: 'Olivia Martin',
+      email: 'olivia.martin@email.com',
+    },
+    amount: 1999.0,
+  },
+  {
+    customer: {
+      name: 'Jackson Lee',
+      email: 'jackson.lee@email.com',
+    },
+    amount: 39.0,
+  },
+  {
+    customer: {
+      name: 'Isabella Nguyen',
+      email: 'isabella.nguyen@email.com',
+    },
+    amount: 299.0,
+  },
+  {
+    customer: {
+      name: 'William Kim',
+      email: 'will@email.com',
+    },
+    amount: 99.0,
+  },
+  {
+    customer: {
+      name: 'Sofia Davis',
+      email: 'sofia.davis@email.com',
+    },
+    amount: 39.0,
+  },
+];
+
+
+export type DuePayment = {
+  id: string;
+  customer: { name: string; email: string };
+  dueDate: string;
+  amount: number;
+  employee: string;
+  collectionPlan?: string;
 };
 
-
-export const salesTrendCsvData = `Date,Category,Product,Quantity,UnitPrice,Total
-2023-01-15,Electronics,Laptop,5,1200,6000
-2023-01-17,Clothing,T-Shirt,50,25,1250
-2023-02-20,Electronics,Smartphone,10,800,8000
-2023-02-22,Home Goods,Coffee Maker,20,50,1000
-2023-03-10,Clothing,Jeans,40,70,2800
-2023-04-05,Electronics,Laptop,8,1250,10000
-2023-07-15,Electronics,Headphones,100,100,10000
-2023-07-20,Clothing,Summer Dress,60,45,2700
-2023-11-25,Electronics,Gaming Console,15,500,7500
-2023-12-20,Clothing,Winter Jacket,30,150,4500
-`;
-
-export const employees = [
-  { value: 'jane-smith', label: 'Jane Smith', role: 'employee', name: 'Jane Smith' },
-  { value: 'alex-ray', label: 'Alex Ray', role: 'manager', name: 'Alex Ray' },
-  { value: 'john-doe', label: 'John Doe', role: 'employee', name: 'John Doe'},
-  { value: 'admin-user', label: 'Admin User', role: 'admin', name: 'Admin User'}
-];
-
-export const products = [
-  { value: 'p-001', label: 'Premium Wireless Mouse', basePrice: 25.50 },
-  { value: 'p-002', label: 'Mechanical Keyboard', basePrice: 75.00 },
-  { value: 'p-003', label: '4K IPS Monitor', basePrice: 350.00 },
-  { value: 'p-004', label: 'Noise-Cancelling Headphones', basePrice: 120.00 },
-];
-
-export const customers = [
-  { value: 'c-101', label: 'Global Tech Inc.', grade: 'A' },
-  { value: 'c-102', label: 'Innovate Solutions', grade: 'B' },
-  { value: 'c-103', label: 'Quantum Leap LLC', grade: 'A' },
-  { value: 'c-104', label: 'Synergy Corp', grade: 'C' },
-  { value: 'c-105', label: 'Apex Industries', grade: 'B' },
-  { value: 'c-106', label: 'Pinnacle Systems', grade: 'A' },
+export const duePaymentsData: DuePayment[] = [
+  {
+    id: 'INV-001',
+    customer: { name: 'Acme Inc.', email: 'contact@acme.com' },
+    dueDate: '2024-08-15',
+    amount: 250.0,
+    employee: 'Jane Smith',
+    collectionPlan: '8월 15일 입금 요청 예정'
+  },
+  {
+    id: 'INV-002',
+    customer: { name: 'Stark Industries', email: 'tony@stark.com' },
+    dueDate: '2024-09-01',
+    amount: 890.5,
+    employee: 'Alex Ray',
+  },
+  {
+    id: 'INV-003',
+    customer: { name: 'Wayne Enterprises', email: 'bruce@wayne.com' },
+    dueDate: '2024-09-10',
+    amount: 1200.0,
+    employee: 'Jane Smith',
+  },
+  {
+    id: 'INV-004',
+    customer: { name: 'Globex Corporation', email: 'hank@globex.com' },
+    dueDate: '2023-07-20',
+    amount: 450.0,
+    employee: 'John Doe',
+    collectionPlan: '지속적인 연락 시도 중'
+  },
+  {
+    id: 'INV-005',
+    customer: { name: 'Cyberdyne Systems', email: 'miles@cyberdyne.com' },
+    dueDate: '2024-09-25',
+    amount: 600.75,
+    employee: 'Alex Ray',
+  },
+  {
+    id: 'INV-006',
+    customer: { name: 'Ollivanders', email: 'contact@ollivanders.co.uk' },
+    dueDate: '2022-01-10',
+    amount: 1500.00,
+    employee: 'John Doe',
+    collectionPlan: '내용 증명 발송 완료'
+  },
 ];
 
 export const salesReportData = [
   {
     employeeName: 'Jane Smith',
-    customerName: 'Global Tech Inc.',
+    customerName: 'Acme Inc.',
     customerCode: 'C-101',
-    target: 15000,
-    actual: 16500,
-  },
-  {
-    employeeName: 'Jane Smith',
-    customerName: 'Synergy Corp',
-    customerCode: 'C-104',
     target: 5000,
     actual: 4500,
   },
-   {
-    employeeName: 'Jane Smith',
-    customerName: 'Pinnacle Systems',
-    customerCode: 'C-106',
-    target: 18000,
-    actual: 17000,
-  },
   {
     employeeName: 'Alex Ray',
-    customerName: 'Innovate Solutions',
+    customerName: 'Stark Industries',
     customerCode: 'C-102',
-    target: 20000,
-    actual: 22000,
-  },
-   {
-    employeeName: 'Alex Ray',
-    customerName: 'Quantum Leap LLC',
-    customerCode: 'C-103',
-    target: 25000,
-    actual: 26000,
+    target: 10000,
+    actual: 12500,
   },
   {
     employeeName: 'John Doe',
-    customerName: 'Apex Industries',
+    customerName: 'Wayne Enterprises',
+    customerCode: 'C-103',
+    target: 8000,
+    actual: 8000,
+  },
+  {
+    employeeName: 'Jane Smith',
+    customerName: 'Globex Corporation',
+    customerCode: 'C-104',
+    target: 3000,
+    actual: 3500,
+  },
+  {
+    employeeName: 'Alex Ray',
+    customerName: 'Cyberdyne Systems',
     customerCode: 'C-105',
-    target: 12000,
-    actual: 13000,
+    target: 7500,
+    actual: 6000,
   },
 ];
+
+export const products = [
+  { value: 'e-001', label: 'Laptop Pro', basePrice: 1200 },
+  { value: 'e-002', label: 'Smartphone X', basePrice: 900 },
+  { value: 'e-003', label: 'Wireless Earbuds', basePrice: 150 },
+  { value: 'c-001', label: 'Designer T-Shirt', basePrice: 50 },
+  { value: 'b-001', label: 'The Last Server', basePrice: 25 },
+];
+
+export const customers = [
+    { value: 'c-101', label: 'Acme Inc.', grade: 'A' },
+    { value: 'c-102', label: 'Stark Industries', grade: 'A' },
+    { value: 'c-103', label: 'Wayne Enterprises', grade: 'B' },
+    { value: 'c-104', label: 'Globex Corporation', grade: 'C' },
+    { value: 'c-105', label: 'Cyberdyne Systems', grade: 'B' },
+];
+
+export const employees = [
+  { value: 'emp-001', label: 'Jane Smith (EMP-001)', role: 'employee', name: 'Jane Smith' },
+  { value: 'emp-002', label: 'Alex Ray (EMP-002)', role: 'manager', name: 'Alex Ray' },
+  { value: 'emp-003', label: 'John Doe (EMP-003)', role: 'employee', name: 'John Doe' },
+  { value: 'admin-001', label: 'Admin User (ADMIN-001)', role: 'admin', name: 'Admin User' },
+];
+
+export const salesTrendCsvData = `Date,Category,Product,Customer,Amount
+2023-01-15,Electronics,Laptop Pro,Acme Inc.,2400
+2023-01-20,Electronics,Smartphone X,Stark Industries,1800
+2023-02-10,Clothing,Designer T-Shirt,Acme Inc.,500
+2023-03-05,Books,"The Last Server",Wayne Enterprises,125
+2023-04-18,Electronics,Laptop Pro,Cyberdyne Systems,3600
+2023-05-25,Electronics,Wireless Earbuds,Stark Industries,750
+2023-06-12,Clothing,Designer T-Shirt,Globex Corporation,300
+2023-07-30,Electronics,Smartphone X,Acme Inc.,2700
+2023-08-11,Books,"The Last Server",Stark Industries,50
+2023-09-22,Electronics,Laptop Pro,Wayne Enterprises,1200
+2023-10-14,Electronics,Wireless Earbuds,Acme Inc.,450
+2023-11-09,Clothing,Designer T-Shirt,Cyberdyne Systems,250
+2023-12-01,Electronics,Smartphone X,Globex Corporation,900`;
+
+
+export const customerData = [
+  {
+    employee: 'Jane Smith',
+    customerName: 'Acme Inc.',
+    customerCode: 'A0001',
+    customerGrade: 'A',
+    customerType: 'own' as 'own' | 'transfer' | 'pending',
+    monthlySales: [
+        { month: 9, actual: 4500, average: 4800 },
+        { month: 8, actual: 5200, average: 4700 },
+    ],
+    yearlySales: [
+        { year: 2024, amount: 45000 },
+        { year: 2023, amount: 55000 },
+    ],
+    creditBalance: 12500.50,
+    contact: {
+      name: 'John Smith',
+      position: 'Purchasing Manager',
+      phone: '123-456-7890',
+      address: '123 Main St, Anytown',
+      email: 'john.s@acme.com',
+    },
+    companyOverview: 'Acme Inc. is a leading manufacturer of widgets and gadgets for the modern consumer.'
+  },
+  {
+    employee: 'Alex Ray',
+    customerName: 'Stark Industries',
+    customerCode: 'A0002',
+    customerGrade: 'A',
+    customerType: 'transfer' as 'own' | 'transfer' | 'pending',
+     monthlySales: [
+        { month: 9, actual: 12500, average: 11000 },
+    ],
+    yearlySales: [
+        { year: 2024, amount: 115000 },
+    ],
+    creditBalance: 3500.00,
+     contact: {
+      name: 'Pepper Potts',
+      position: 'CEO',
+      phone: '987-654-3210',
+      address: '1 Stark Tower, New York',
+      email: 'p.potts@starkind.com',
+    },
+    companyOverview: 'Stark Industries is a global leader in technology and defense.'
+  },
+   {
+    employee: 'Alex Ray',
+    customerName: 'NewTech Solutions',
+    customerCode: 'B0012',
+    customerGrade: 'B',
+    customerType: 'pending' as 'own' | 'transfer' | 'pending',
+    monthlySales: [],
+    yearlySales: [],
+    creditBalance: 0,
+    contact: {
+      name: 'Jane Doe',
+      position: 'Tech Lead',
+      phone: '555-123-4567',
+      address: '456 Innovation Dr, Techville',
+      email: 'jane.d@newtech.com',
+    },
+    companyOverview: 'A newly onboarded client specializing in cloud solutions.'
+  },
+];
+
+
+export const employeeCustomerSales = [
+    { id: 1, customerName: 'Acme Inc.', salesTarget: 10000, salesAmount: 8500 },
+    { id: 2, customerName: 'Globex Corp.', salesTarget: 8000, salesAmount: 9200 },
+    { id: 3, customerName: 'Soylent Corp.', salesTarget: 5000, salesAmount: 3500 },
+];
+
+export const customerProductSalesDetails: Record<number, { productName: string; salesTarget: number; salesAmount: number }[]> = {
+    1: [
+        { productName: 'Widget A', salesTarget: 5000, salesAmount: 4000 },
+        { productName: 'Widget B', salesTarget: 3000, salesAmount: 3000 },
+        { productName: 'Service Pack', salesTarget: 2000, salesAmount: 1500 },
+    ],
+    2: [
+        { productName: 'Gadget Pro', salesTarget: 6000, salesAmount: 7000 },
+        { productName: 'Support Plan', salesTarget: 2000, salesAmount: 2200 },
+    ],
+    3: [
+        { productName: 'Nutrient Paste', salesTarget: 5000, salesAmount: 3500 },
+    ],
+};
+
 
 export const cumulativeReportData = [
-    { month: '1월', target: 20000, actual: 18500, lastYear: 17000 },
-    { month: '2월', target: 22000, actual: 21000, lastYear: 19500 },
-    { month: '3월', target: 25000, actual: 26000, lastYear: 24000 },
-    { month: '4월', target: 24000, actual: 23500, lastYear: 22000 },
-    { month: '5월', target: 28000, actual: 29000, lastYear: 27000 },
-    { month: '6월', target: 30000, actual: 31000, lastYear: 28500 },
-    { month: '7월', target: 32000, actual: 33000, lastYear: 30000 },
-    { month: '8월', target: 35000, actual: 36000, lastYear: 34000 },
-    { month: '9월', target: 45000, actual: 42100, lastYear: 39000 },
-    // Data for Oct, Nov, Dec is aspirational
-    { month: '10월', target: 40000, actual: 0, lastYear: 38000 },
-    { month: '11월', target: 38000, actual: 0, lastYear: 36000 },
-    { month: '12월', target: 50000, actual: 0, lastYear: 48000 },
+  { month: '1월', target: 30000, actual: 28000, lastYear: 27000 },
+  { month: '2월', target: 30000, actual: 32000, lastYear: 29000 },
+  { month: '3월', target: 30000, actual: 35000, lastYear: 33000 },
+  { month: '4월', target: 35000, actual: 36000, lastYear: 34000 },
+  { month: '5월', target: 35000, actual: 38000, lastYear: 36000 },
+  { month: '6월', target: 35000, actual: 40000, lastYear: 38000 },
+  { month: '7월', target: 40000, actual: 42000, lastYear: 41000 },
+  { month: '8월', target: 40000, actual: 43000, lastYear: 42000 },
+  { month: '9월', target: 45000, actual: 42100, lastYear: 44000 },
+  { month: '10월', target: 45000, actual: 0, lastYear: 46000 },
+  { month: '11월', target: 50000, actual: 0, lastYear: 52000 },
+  { month: '12월', target: 55000, actual: 0, lastYear: 58000 },
 ];
 
-export const monthlyDetailReportData: MonthlyDetail[] = [
-  {
-    month: '9월',
-    details: [
-      {
-        customerName: 'Global Tech Inc.',
-        products: [
-          { productName: 'Premium Wireless Mouse', target: 5000, actual: 5500 },
-          { productName: 'Mechanical Keyboard', target: 10000, actual: 11000 },
-        ],
-      },
-      {
-        customerName: 'Innovate Solutions',
-        products: [
-          { productName: '4K IPS Monitor', target: 15000, actual: 16000 },
-          { productName: 'Noise-Cancelling Headphones', target: 5000, actual: 6000 },
-        ],
-      },
-    ],
-  },
-  {
-    month: '8월',
-    details: [
-       {
-        customerName: 'Global Tech Inc.',
-        products: [
-          { productName: 'Premium Wireless Mouse', target: 4000, actual: 4500 },
-          { productName: 'Mechanical Keyboard', target: 8000, actual: 9000 },
-        ],
-      },
-      {
-        customerName: 'Synergy Corp',
-        products: [
-          { productName: '4K IPS Monitor', target: 10000, actual: 9000 },
-        ],
-      },
-    ]
-  }
-];
 
 export type MonthlyDetail = {
   month: string;
@@ -289,177 +318,119 @@ export type MonthlyDetail = {
   }[];
 };
 
+export const monthlyDetailReportData: MonthlyDetail[] = [
+  {
+    month: '9월',
+    details: [
+      {
+        customerName: 'Acme Inc.',
+        products: [
+          { productName: 'Widget A', target: 2000, actual: 1800 },
+          { productName: 'Widget B', target: 1500, actual: 1500 },
+        ],
+      },
+      {
+        customerName: 'Stark Industries',
+        products: [
+          { productName: 'Gadget Pro', target: 5000, actual: 6000 },
+          { productName: 'Service Plan', target: 1000, actual: 800 },
+        ],
+      },
+       {
+        customerName: 'Wayne Enterprises',
+        products: [
+          { productName: 'Security System', target: 3000, actual: 3200 },
+        ],
+      },
+    ],
+  },
+  // Data for other months can be added here
+];
 
-export const productUploadCsvData = `Category,Product Code,Description,Import Price,Local Purchase Price
-Electronics,E-001,Premium Wireless Mouse,18.50,19.00
-Electronics,E-002,Mechanical Keyboard,55.00,58.00
-Electronics,E-003,"4K, 27-inch IPS Monitor",280.00,295.00
-Accessories,A-001,USB-C Hub,35.00,38.00
+export const customerUploadCsvData = `CustomerName,CustomerCode,Grade,Employee
+"Innovate LLC","A0003","B","emp-001"
+"Future Systems","A0004","C","emp-003"
+"Quantum Leap","B0015","A","emp-002"
 `;
 
-export const customerUploadCsvData = `CustomerName,CustomerCode,Grade,Employee,ContactName,ContactPosition,ContactPhone,ContactAddress
-"Stellar Solutions","A0124","A","jane-smith","Sarah Connor","Lead Buyer","555-0101","123 Future Way"
-"Nexus Innovations","A0125","B","john-doe","John Anderton","CTO","555-0102","456 Precrime Ave"
+export const importUploadCsvData = `Date,Supplier,ProductCategory,ProductCode,ProductDescription,Quantity,UnitPrice
+2024-09-15,"Global Imports","Electronics","E-004","4K Monitor",50,350
+2024-09-16,"TechSuppliers","Electronics","E-005","Mechanical Keyboard",100,75
 `;
 
-export const importUploadCsvData = `Date,Supplier,Product Category,Product Code,Product Description,Quantity,Unit Price
-2024-09-20,Global Imports,Electronics,e-001,Premium Wireless Mouse,500,18.50
-2024-09-21,Tech Suppliers,Electronics,e-002,Mechanical Keyboard,200,55.00
+export const productUploadCsvData = `Category,Code,Description,ImportPrice,LocalPrice
+Electronics,E-006,"USB-C Hub",15,25
+Home Goods,H-002,"Smart Mug",30,45
 `;
+
+export type CashSale = {
+  id: string;
+  date: string; // YYYY-MM-DD
+  employeeName: string;
+  customerName: string;
+  source: '현금 판매' | '신용 수금'; // Cash Sale or Credit Collection
+  amount: number;
+};
+
+export const cashSalesData: CashSale[] = [
+  { id: 'CS-001', date: '2024-09-02', employeeName: 'Jane Smith', customerName: 'Acme Inc.', source: '신용 수금', amount: 500 },
+  { id: 'CS-002', date: '2024-09-02', employeeName: 'Alex Ray', customerName: 'Cyberdyne Systems', source: '현금 판매', amount: 250 },
+  { id: 'CS-003', date: '2024-09-03', employeeName: 'John Doe', customerName: 'Globex Corp', source: '현금 판매', amount: 120 },
+  { id: 'CS-004', date: '2024-09-05', employeeName: 'Jane Smith', customerName: 'Stark Industries', source: '신용 수금', amount: 1000 },
+  { id: 'CS-005', date: '2024-09-09', employeeName: 'Alex Ray', customerName: 'Acme Inc.', source: '현금 판매', amount: 300 },
+  { id: 'CS-006', date: '2024-09-10', employeeName: 'Jane Smith', customerName: 'Wayne Enterprises', source: '신용 수금', amount: 750 },
+];
+
+
+export type CheckStatus = 'Pending' | 'Confirmed' | 'Rejected';
+
+export type CheckPayment = {
+  id: string;
+  receiptDate: string; // 수취일
+  dueDate: string; // 만기일
+  salesperson: string;
+  customerName: string;
+  issuingBank: string; // 발급은행
+  checkNumber: string; // 수표번호
+  amount: number;
+  depositBank?: string; // 입금은행
+  depositDate?: string; // 입금일자
+  status: CheckStatus;
+  notes?: string; // 비고
+};
+
+export const checkPaymentsData: CheckPayment[] = [
+    { id: 'CHK-001', receiptDate: '2024-09-01', dueDate: '2024-10-01', salesperson: 'Jane Smith', customerName: 'Acme Inc.', issuingBank: 'Bank of America', checkNumber: '12345', amount: 1500, depositBank: 'Chase', depositDate: '2024-09-02', status: 'Confirmed', notes: '' },
+    { id: 'CHK-002', receiptDate: '2024-09-05', dueDate: '2024-11-05', salesperson: 'Alex Ray', customerName: 'Stark Industries', issuingBank: 'Citi', checkNumber: '67890', amount: 3200, status: 'Pending', notes: '' },
+    { id: 'CHK-003', receiptDate: '2024-09-10', dueDate: '2024-10-10', salesperson: 'John Doe', customerName: 'Wayne Enterprises', issuingBank: 'Wells Fargo', checkNumber: '54321', amount: 800, status: 'Pending', notes: '고객 요청으로 만기일 짧음' },
+    { id: 'CHK-004', receiptDate: '2024-08-20', dueDate: '2024-09-20', salesperson: 'Jane Smith', customerName: 'Globex Corporation', issuingBank: 'Bank of America', checkNumber: '98765', amount: 2100, depositBank: 'Chase', depositDate: '2024-08-21', status: 'Rejected', notes: '잔액 부족' },
+];
 
 export const commissionData = [
   {
     employeeId: 'EMP-001',
     employeeName: 'Jane Smith',
     sales: [
-      { type: '수입', salePrice: 150000, costPrice: 0, customerType: 'own' },
-      { type: '수입', salePrice: 80000, costPrice: 0, customerType: 'own' },
-      { type: '수입', salePrice: 50000, costPrice: 0, customerType: 'transfer' },
-      { type: '현지', salePrice: 10000, costPrice: 8500, customerType: 'own' }, // margin 15% -> 10%
-      { type: '현지', salePrice: 5000, costPrice: 4800, customerType: 'transfer' }, // margin 4% -> 3% * 0.5
+      { type: '수입' as '수입', salePrice: 250000, costPrice: 200000, customerType: 'own' as 'own' },
+      { type: '수입' as '수입', salePrice: 100000, costPrice: 80000, customerType: 'transfer' as 'transfer' }, // 1% rate
+      { type: '현지' as '현지', salePrice: 20000, costPrice: 12000, customerType: 'own' as 'own' }, // margin 40%, rate 18%
     ],
   },
   {
     employeeId: 'EMP-002',
-    employeeName: 'John Doe',
+    employeeName: 'Alex Ray',
     sales: [
-      { type: '수입', salePrice: 180000, costPrice: 0, customerType: 'own' },
-      { type: '현지', salePrice: 25000, costPrice: 15000, customerType: 'own' }, // margin 40% -> 18%
-      { type: '현지', salePrice: 12000, costPrice: 10000, customerType: 'transfer' }, // margin 16.6% -> 10% * 0.5
+      { type: '수입' as '수입', salePrice: 150000, costPrice: 120000, customerType: 'own' as 'own' },
+      { type: '현지' as '현지', salePrice: 50000, costPrice: 46000, customerType: 'own' as 'own' }, // margin 8%, rate 3%
+      { type: '현지' as '현지', salePrice: 30000, costPrice: 25000, customerType: 'transfer' as 'transfer' }, // margin 16.7%, rate 10% -> 5%
     ],
   },
   {
     employeeId: 'EMP-003',
-    employeeName: 'Alex Ray',
+    employeeName: 'John Doe',
     sales: [
-       { type: '수입', salePrice: 300000, costPrice: 0, customerType: 'own' },
-       { type: '현지', salePrice: 40000, costPrice: 32000, customerType: 'own' }, // margin 20% -> 12%
-    ]
-  }
-];
-
-export const salesComparisonData = [
-  { name: '9월 누적 목표', jane: 45000, alex: 50000, john: 40000 },
-  { name: '9월 누적 실적', jane: 38000, alex: 52000, john: 41000 },
-  { name: '전년 동기 실적', jane: 35000, alex: 48000, john: 39000 },
-];
-
-export const employeeCustomerSales: EmployeeCustomerSale[] = [
-  { id: '1', customerName: 'Global Tech', salesTarget: 15000, salesAmount: 16500 },
-  { id: '2', customerName: 'Synergy Corp', salesTarget: 5000, salesAmount: 4500 },
-  { id: '3', customerName: 'Pinnacle Systems', salesTarget: 18000, salesAmount: 17000 },
-  { id: '4', customerName: 'New Horizons', salesTarget: 7000, salesAmount: 8000 },
-];
-
-export type EmployeeCustomerSale = {
-  id: string;
-  customerName: string;
-  salesTarget: number;
-  salesAmount: number;
-}
-
-export type CustomerProductSale = {
-  productName: string;
-  salesTarget: number;
-  salesAmount: number;
-}
-
-export const customerProductSalesDetails: Record<string, CustomerProductSale[]> = {
-  '1': [
-    { productName: 'Wireless Mouse', salesTarget: 8000, salesAmount: 9000 },
-    { productName: 'Mechanical Keyboard', salesTarget: 7000, salesAmount: 7500 },
-  ],
-  '2': [
-    { productName: '4K Monitor', salesTarget: 5000, salesAmount: 4500 },
-  ],
-  '3': [
-    { productName: 'Noise-Cancelling Headphones', salesTarget: 10000, salesAmount: 11000 },
-    { productName: 'USB-C Hub', salesTarget: 8000, salesAmount: 6000 },
-  ],
-  '4': [
-    { productName: 'Wireless Mouse', salesTarget: 4000, salesAmount: 4500 },
-    { productName: 'Webcam', salesTarget: 3000, salesAmount: 3500 },
-  ]
-};
-
-export type CheckStatus = 'Pending' | 'Confirmed' | 'Rejected';
-
-export type CheckPayment = {
-  id: string;
-  receiptDate: string;
-  dueDate: string;
-  salesperson: string;
-  customerName: string;
-  issuingBank: string;
-  checkNumber: string;
-  amount: number;
-  depositBank: string;
-  depositDate: string;
-  status: CheckStatus;
-  notes: string;
-};
-
-export const checkPaymentsData: CheckPayment[] = [
-  {
-    id: 'CHK-001',
-    receiptDate: '2024-09-01',
-    dueDate: '2024-10-01',
-    salesperson: 'Jane Smith',
-    customerName: 'Global Tech Inc.',
-    issuingBank: 'Bank of America',
-    checkNumber: '12345',
-    amount: 5000.00,
-    depositBank: 'Chase',
-    depositDate: '2024-10-02',
-    status: 'Confirmed',
-    notes: 'Partial payment for INV-001',
-  },
-  {
-    id: 'CHK-002',
-    receiptDate: '2024-09-05',
-    dueDate: '2024-09-20',
-    salesperson: 'Alex Ray',
-    customerName: 'Innovate Solutions',
-    issuingBank: 'Wells Fargo',
-    checkNumber: '67890',
-    amount: 1500.75,
-    depositBank: 'Citibank',
-    depositDate: '',
-    status: 'Pending',
-    notes: 'Full payment for INV-002',
-  },
-  {
-    id: 'CHK-003',
-    receiptDate: '2024-09-10',
-    dueDate: '2024-09-15',
-    salesperson: 'John Doe',
-    customerName: 'Pinnacle Systems',
-    issuingBank: 'Bank of America',
-    checkNumber: '54321',
-    amount: 1250.25,
-    depositBank: '',
-    depositDate: '',
-    status: 'Rejected',
-    notes: 'Bounced check. Penalty applied.',
+      { type: '수입' as '수입', salePrice: 80000, costPrice: 70000, customerType: 'transfer' as 'transfer' },
+      { type: '현지' as '현지', salePrice: 100000, costPrice: 65000, customerType: 'own' as 'own' }, // margin 35%, rate 15%
+    ],
   },
 ];
-
-export type CashSale = {
-  id: string;
-  date: string;
-  employeeName: string;
-  customerName: string;
-  source: '현금 판매' | '신용 수금';
-  amount: number;
-}
-
-export const cashSalesData: CashSale[] = [
-  { id: 'CS-001', date: '2024-09-02', employeeName: 'Jane Smith', customerName: 'Walk-in Customer', source: '현금 판매', amount: 350.00 },
-  { id: 'CS-002', date: '2024-09-02', employeeName: 'John Doe', customerName: 'Global Tech Inc.', source: '신용 수금', amount: 1200.00 },
-  { id: 'CS-003', date: '2024-09-03', employeeName: 'Alex Ray', customerName: 'Retail Partner', source: '현금 판매', amount: 850.50 },
-  { id: 'CS-004', date: '2024-09-09', employeeName: 'Jane Smith', customerName: 'Innovate Solutions', source: '신용 수금', amount: 750.00 },
-  { id: 'CS-005', date: '2024-09-10', employeeName: 'Jane Smith', customerName: 'Local Biz', source: '현금 판매', amount: 250.00 },
-  { id: 'CS-006', date: '2024-08-28', employeeName: 'Alex Ray', customerName: 'Quantum Leap LLC', source: '신용 수금', amount: 2500.00 },
-];
-
-    
