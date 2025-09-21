@@ -7,7 +7,32 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { DuePaymentsTable } from '@/components/dashboard/due-payments-table';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableFooter,
+} from '@/components/ui/table';
+import { customerData } from '@/lib/mock-data';
+
+const formatCurrency = (amount: number) => {
+    return amount.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
+};
+
+const totalCredit = customerData.reduce((sum, customer) => sum + customer.creditBalance, 0);
 
 export default function CreditManagementPage() {
   const router = useRouter();
@@ -42,7 +67,43 @@ export default function CreditManagementPage() {
               </Button>
             </div>
              <div className="grid gap-4 md:gap-8">
-                <DuePaymentsTable />
+                <Card>
+                    <CardHeader>
+                        <CardTitle>고객별 총 신용 잔액</CardTitle>
+                        <CardDescription>
+                            각 고객의 총 미수금 잔액을 표시합니다.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>고객명</TableHead>
+                                    <TableHead>담당 직원</TableHead>
+                                    <TableHead className="text-right">총 신용 잔액</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {customerData.sort((a,b) => b.creditBalance - a.creditBalance).map(customer => (
+                                    <TableRow key={customer.customerCode}>
+                                        <TableCell>
+                                            <div className="font-medium">{customer.customerName}</div>
+                                            <div className="text-sm text-muted-foreground">{customer.customerCode}</div>
+                                        </TableCell>
+                                        <TableCell>{customer.employee}</TableCell>
+                                        <TableCell className="text-right font-semibold">{formatCurrency(customer.creditBalance)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell colSpan={2} className="font-bold">총계</TableCell>
+                                    <TableCell className="text-right font-bold">{formatCurrency(totalCredit)}</TableCell>
+                                </TableRow>
+                            </TableFooter>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
         </main>
       </SidebarInset>
