@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { DuePaymentsTable } from '@/components/dashboard/due-payments-table';
-import { EmployeeCreditSummary } from '@/components/dashboard/employee-credit-summary';
+import { CustomerCreditSummary } from '@/components/dashboard/customer-credit-summary';
 
 export default function CreditManagementPage() {
   const router = useRouter();
@@ -42,8 +42,8 @@ export default function CreditManagementPage() {
                   Back to Dashboard
               </Button>
             </div>
-            <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
-                <EmployeeCreditSummary />
+            <div className="grid gap-4 md:gap-8">
+                <CustomerCreditSummary />
             </div>
              <div className="grid gap-4 md:gap-8">
                 <DuePaymentsTable />
