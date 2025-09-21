@@ -193,3 +193,5 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
     </Sidebar>
   );
 }
+
+    
