@@ -52,8 +52,8 @@ export default function CustomersPage() {
   const [customerData, setCustomerData] = useState<Customer[]>(initialCustomerData);
 
   const loggedInEmployee = useMemo(() => {
-    if (!auth?.role) return null;
-    return employees.find(e => e.role === auth.role) || employees.find(e => e.name === auth.name);
+    if (!auth?.userId) return null;
+    return employees.find(e => e.value === auth.userId);
   },[auth]);
 
   useEffect(() => {
@@ -67,6 +67,8 @@ export default function CustomersPage() {
   useEffect(() => {
     if (role === 'employee') {
       setShowMyCustomers(true);
+    } else {
+      setShowMyCustomers(false);
     }
   }, [role]);
 
@@ -128,6 +130,7 @@ export default function CustomersPage() {
             const employee = employees.find(e => e.value === row.Employee);
             return {
               employee: employee ? employee.name : 'Unassigned',
+              employeeId: employee ? employee.value : 'unassigned',
               customerName: row.CustomerName,
               customerCode: row.CustomerCode,
               customerGrade: row.Grade,
@@ -185,10 +188,15 @@ export default function CustomersPage() {
 
   const filteredCustomerData = useMemo(() => {
     if (showMyCustomers && loggedInEmployee) {
-      return customerData.filter(customer => customer.employee === loggedInEmployee.name);
+      if (role === 'manager') {
+          const teamMemberIds = employees.filter(e => e.manager === loggedInEmployee.value).map(e => e.value);
+          const managedIds = [loggedInEmployee.value, ...teamMemberIds];
+          return customerData.filter(customer => managedIds.includes(customer.employeeId));
+      }
+      return customerData.filter(customer => customer.employeeId === loggedInEmployee.value);
     }
     return customerData;
-  }, [customerData, showMyCustomers, loggedInEmployee]);
+  }, [customerData, showMyCustomers, loggedInEmployee, role]);
   
   if (!role) {
     return null;
@@ -274,7 +282,7 @@ export default function CustomersPage() {
                 {(role === 'manager' || role === 'employee' || role === 'admin') && (
                   <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4" />
-                      <Label htmlFor="my-customers-filter">내 고객만 보기</Label>
+                      <Label htmlFor="my-customers-filter">{role === 'manager' ? '내 팀 고객만 보기' : '내 고객만 보기'}</Label>
                       <Switch
                           id="my-customers-filter"
                           checked={showMyCustomers}
