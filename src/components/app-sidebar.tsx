@@ -23,6 +23,7 @@ import {
   DollarSign,
   Landmark,
   FileClock,
+  ShoppingBasket,
 } from 'lucide-react';
 import {
   Card,
@@ -140,6 +141,19 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         Check Report
                     </NavLink>
                 </NavCollapsible>
+                 
+                 <NavCollapsible title="Purchases" icon={<ShoppingBasket className="h-4 w-4" />}>
+                    {role === 'manager' && (
+                        <NavLink href="/purchases/new" icon={<PlusCircle className="h-4 w-4" />}>
+                            Register Local Purchase
+                        </NavLink>
+                    )}
+                    {role === 'admin' && (
+                         <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
+                            Register Product Import
+                        </NavLink>
+                    )}
+                </NavCollapsible>
 
                 {(role === 'admin' || role === 'manager') && (
                     <>
@@ -153,9 +167,6 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 )}
                 {role === 'admin' && (
                     <>
-                        <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
-                            Products Import
-                        </NavLink>
                         <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
                             Products
                         </NavLink>
