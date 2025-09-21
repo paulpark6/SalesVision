@@ -142,18 +142,20 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </NavLink>
                 </NavCollapsible>
                  
-                 <NavCollapsible title="Purchases" icon={<ShoppingBasket className="h-4 w-4" />}>
-                    {role === 'manager' && (
-                        <NavLink href="/purchases/new" icon={<PlusCircle className="h-4 w-4" />}>
-                            Register Local Purchase
-                        </NavLink>
-                    )}
-                    {role === 'admin' && (
-                         <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
-                            Register Product Import
-                        </NavLink>
-                    )}
-                </NavCollapsible>
+                 {(role === 'admin' || role === 'manager') && (
+                    <NavCollapsible title="Purchases" icon={<ShoppingBasket className="h-4 w-4" />}>
+                        {role === 'manager' && (
+                            <NavLink href="/purchases/new" icon={<PlusCircle className="h-4 w-4" />}>
+                                Register Local Purchase
+                            </NavLink>
+                        )}
+                        {role === 'admin' && (
+                            <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
+                                Register Product Import
+                            </NavLink>
+                        )}
+                    </NavCollapsible>
+                 )}
 
                 {(role === 'admin' || role === 'manager') && (
                     <>
