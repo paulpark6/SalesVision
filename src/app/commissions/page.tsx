@@ -150,8 +150,7 @@ export default function CommissionsPage() {
             <CardHeader>
               <CardTitle>Commission Overview</CardTitle>
               <CardDescription>
-                직원별 커미션 수익을 검토합니다. 수입 제품은 관리자가, 현지 구매는 매니저가 등록한 판매를 기준으로 합니다.
-                커미션은 고객 유형(Own/Transfer)에 따라 다르게 계산됩니다.
+                오너(Admin)가 확정한 직원별 커미션 내역입니다. 관리자는 전체 직원의 커미션을 검토할 수 있습니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
