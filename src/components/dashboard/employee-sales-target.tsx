@@ -44,40 +44,25 @@ export function EmployeeSalesTarget() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Employee</TableHead>
-              <TableHead className="text-right">Sales Target</TableHead>
-              <TableHead className="text-right">Actual Sales</TableHead>
-              <TableHead className="w-[150px]">Achievement Rate</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <div className="grid gap-6">
             {employeeTargets.map((employee) => {
                 const achievementRate = (employee.current / employee.target) * 100;
                 return (
-                    <TableRow key={employee.name}>
-                        <TableCell className="font-medium">
-                           <Link href={`/employees/${encodeURIComponent(employee.name)}`} className="hover:underline">
+                    <div key={employee.name} className="space-y-2">
+                        <div className="flex justify-between">
+                            <Link href={`/employees/${encodeURIComponent(employee.name)}`} className="font-medium hover:underline">
                                 {employee.name}
-                           </Link>
-                        </TableCell>
-                        <TableCell className="text-right">{formatCurrency(employee.target)}</TableCell>
-                        <TableCell className="text-right font-semibold">{formatCurrency(employee.current)}</TableCell>
-                        <TableCell>
-                            <div className="flex items-center gap-2">
-                                <Progress value={achievementRate} className="h-2" />
-                                <span className="text-xs font-semibold w-12 text-right">
-                                    {achievementRate.toFixed(1)}%
-                                </span>
-                            </div>
-                        </TableCell>
-                    </TableRow>
+                            </Link>
+                            <span className="text-sm text-muted-foreground">{formatCurrency(employee.current)} / {formatCurrency(employee.target)}</span>
+                        </div>
+                        <Progress value={achievementRate} />
+                         <div className="text-right text-sm font-semibold text-primary">
+                            {achievementRate.toFixed(1)}%
+                        </div>
+                    </div>
                 )
             })}
-          </TableBody>
-        </Table>
+        </div>
       </CardContent>
     </Card>
   );
