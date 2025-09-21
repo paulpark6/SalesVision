@@ -45,6 +45,7 @@ export default function NewSalePage() {
   
   const isMixedPayment = paymentMethod.startsWith('mixed-');
   const showDueDate = paymentMethod.includes('credit') || paymentMethod.includes('check');
+  const showCheckDetails = paymentMethod.includes('check');
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -339,6 +340,7 @@ export default function NewSalePage() {
                       )}
                   </div>
                 )}
+
                 {!isMixedPayment && showDueDate && (
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
@@ -347,6 +349,20 @@ export default function NewSalePage() {
                         </div>
                      </div>
                 )}
+
+                {showCheckDetails && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t">
+                        <div className="space-y-2 md:col-span-1">
+                            <Label htmlFor="issuingBank">발급은행</Label>
+                            <Input id="issuingBank" placeholder="e.g., Bank of America" required={showCheckDetails} />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                            <Label htmlFor="checkNumber">수표번호</Label>
+                            <Input id="checkNumber" placeholder="e.g., 123456" required={showCheckDetails} />
+                        </div>
+                    </div>
+                )}
+                
                 <div className="flex justify-end gap-2 pt-4">
                     <Button type="button" variant="outline" onClick={handleCancel}>
                       Cancel
@@ -361,3 +377,4 @@ export default function NewSalePage() {
     </SidebarProvider>
   );
 }
+
