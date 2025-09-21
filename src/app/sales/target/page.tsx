@@ -6,7 +6,7 @@ import { Header } from '@/components/header';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -23,13 +23,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Progress } from '@/components/ui/progress';
-import { salesReportData } from '@/lib/mock-data';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { customers, products, employees } from '@/lib/mock-data';
+import { useToast } from '@/hooks/use-toast';
+import { MonthlyPerformanceChart } from '@/components/dashboard/monthly-performance-chart';
+import { X } from 'lucide-react';
+
+type TargetItem = {
+  id: number;
+  customerName: string;
+  productName: string;
+  quantity: number;
+  targetAmount: number;
+};
 
 export default function SalesTargetPage() {
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
+  const { toast } = useToast();
+
+  const [targetMonth, setTargetMonth] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [targetItems, setTargetItems] = useState<TargetItem[]>([]);
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -42,31 +62,73 @@ export default function SalesTargetPage() {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(dashboardPath);
   };
-
-  const filteredData = useMemo(() => {
-    if (role === 'employee') {
-      // For a real app, you'd filter by the logged-in employee's ID.
-      // Here, we'll hardcode it to 'Jane Smith' for demonstration.
-      return salesReportData.filter(d => d.employeeName === 'Jane Smith');
-    }
-    // Managers and Admins see all data
-    return salesReportData;
-  }, [role]);
   
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  const productPrice = useMemo(() => {
+    const product = products.find(p => p.value === selectedProduct);
+    return product ? product.basePrice : 0;
+  }, [selectedProduct]);
 
-  const totalTarget = useMemo(() => filteredData.reduce((sum, item) => sum + item.target, 0), [filteredData]);
-  const totalActual = useMemo(() => filteredData.reduce((sum, item) => sum + item.actual, 0), [filteredData]);
-  const totalAchievement = totalTarget > 0 ? (totalActual / totalTarget) * 100 : 0;
+  const handleAddTarget = () => {
+    if (!targetMonth || !selectedCustomer || !selectedProduct || quantity <= 0) {
+      toast({
+        title: 'Missing Information',
+        description: 'Please select a month, customer, product, and quantity.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    const customer = customers.find(c => c.value === selectedCustomer);
+    const product = products.find(p => p.value === selectedProduct);
+
+    if (customer && product) {
+        const newItem: TargetItem = {
+            id: Date.now(),
+            customerName: customer.label,
+            productName: product.label,
+            quantity,
+            targetAmount: quantity * product.basePrice
+        };
+        setTargetItems(prev => [...prev, newItem]);
+        // Reset form
+        setSelectedProduct('');
+        setQuantity(1);
+    }
+  };
+  
+  const handleRemoveTarget = (id: number) => {
+    setTargetItems(prev => prev.filter(item => item.id !== id));
+  };
+  
+  const handleSaveTargets = () => {
+    if (targetItems.length === 0) {
+        toast({
+            title: 'No Targets to Save',
+            description: 'Please add at least one target.',
+            variant: 'destructive'
+        });
+        return;
+    }
+    toast({
+        title: 'Targets Saved',
+        description: `Successfully saved ${targetItems.length} targets for ${targetMonth}.`
+    });
+    setTargetItems([]);
+  };
 
   if (!role) {
     return null;
   }
+
+  const currentYear = new Date().getFullYear();
+  const nextThreeMonths = Array.from({ length: 3 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + i + 1);
+    return {
+      value: `${currentYear}-${String(date.getMonth() + 1).padStart(2, '0')}`,
+      label: date.toLocaleString('default', { month: 'long', year: 'numeric' }),
+    };
+  });
+
 
   return (
     <SidebarProvider>
@@ -75,69 +137,102 @@ export default function SalesTargetPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold">매출 목표</h1>
+            <h1 className="text-2xl font-semibold">매출 목표 설정 및 실적</h1>
             <Button type="button" variant="outline" onClick={handleBack}>
               Back to Dashboard
             </Button>
           </div>
+          
+          <MonthlyPerformanceChart />
+
           <Card>
             <CardHeader>
-              <CardTitle>고객별 매출 목표 및 실적 비교</CardTitle>
+              <CardTitle>월별 목표 설정</CardTitle>
               <CardDescription>
-                설정된 고객별 매출 목표와 실제 달성 실적을 비교합니다.
+                고객별, 제품별 수량을 입력하여 월간 매출 목표를 설정합니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    { (role === 'admin' || role === 'manager') && <TableHead>담당 직원</TableHead> }
-                    <TableHead>고객명</TableHead>
-                    <TableHead className="text-right">매출 목표</TableHead>
-                    <TableHead className="text-right">매출 실적</TableHead>
-                    <TableHead className="w-[200px]">달성률</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredData.map((data) => {
-                    const achievementRate = data.target > 0 ? (data.actual / data.target) * 100 : 0;
-                    return (
-                      <TableRow key={data.customerCode}>
-                        { (role === 'admin' || role === 'manager') && <TableCell>{data.employeeName}</TableCell> }
-                        <TableCell>
-                            <div className="font-medium">{data.customerName}</div>
-                            <div className="text-sm text-muted-foreground">{data.customerCode}</div>
-                        </TableCell>
-                        <TableCell className="text-right">{formatCurrency(data.target)}</TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrency(data.actual)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Progress value={achievementRate} className="h-2" />
-                            <span className="text-xs font-semibold w-12 text-right">
-                                {achievementRate.toFixed(1)}%
-                            </span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-              <div className="flex justify-end gap-6 font-bold text-lg mt-6 pr-4">
-                  <div>
-                      <span>총 목표: {formatCurrency(totalTarget)}</span>
-                  </div>
-                  <div>
-                      <span>총 실적: {formatCurrency(totalActual)}</span>
-                  </div>
-                   <div>
-                      <span>총 달성률: {totalAchievement.toFixed(1)}%</span>
-                  </div>
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end border p-4 rounded-lg">
+                     <div className="space-y-2">
+                        <Label htmlFor="target-month">목표 월</Label>
+                        <Select value={targetMonth} onValueChange={setTargetMonth}>
+                            <SelectTrigger id="target-month"><SelectValue placeholder="Select Month" /></SelectTrigger>
+                            <SelectContent>
+                                {nextThreeMonths.map(m => <SelectItem key={m.value} value={m.label}>{m.label}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="customer">고객</Label>
+                        <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
+                            <SelectTrigger id="customer"><SelectValue placeholder="Select Customer" /></SelectTrigger>
+                            <SelectContent>
+                                {customers.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="product">제품</Label>
+                        <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                            <SelectTrigger id="product"><SelectValue placeholder="Select Product" /></SelectTrigger>
+                            <SelectContent>
+                                {products.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="quantity">수량</Label>
+                        <Input id="quantity" type="number" value={quantity} onChange={e => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} />
+                     </div>
+                      <Button onClick={handleAddTarget} disabled={!targetMonth}>Add to Target</Button>
+                </div>
             </CardContent>
           </Card>
+          
+          {targetItems.length > 0 && (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Targets for {targetMonth}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Customer</TableHead>
+                                <TableHead>Product</TableHead>
+                                <TableHead className="text-right">Quantity</TableHead>
+                                <TableHead className="text-right">Target Amount</TableHead>
+                                <TableHead className="w-[50px]"></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {targetItems.map(item => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.customerName}</TableCell>
+                                    <TableCell>{item.productName}</TableCell>
+                                    <TableCell className="text-right">{item.quantity}</TableCell>
+                                    <TableCell className="text-right">${item.targetAmount.toLocaleString()}</TableCell>
+                                    <TableCell>
+                                        <Button variant="ghost" size="icon" onClick={() => handleRemoveTarget(item.id)}>
+                                            <X className="h-4 w-4 text-muted-foreground" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <div className="flex justify-end mt-6">
+                        <Button onClick={handleSaveTargets}>Save All Targets</Button>
+                    </div>
+                </CardContent>
+            </Card>
+          )}
+
         </main>
       </SidebarInset>
     </SidebarProvider>
   );
 }
+
+    
