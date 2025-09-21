@@ -119,6 +119,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         Add Customer
                     </NavLink>
                 </NavCollapsible>
+                <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
+                    Credit Report
+                </NavLink>
                 <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
                     매출 목표
                 </NavLink>
@@ -135,9 +138,6 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </NavLink>
                     <NavLink href="/reports/checks" icon={<Landmark className="h-4 w-4" />}>
                         Check Report
-                    </NavLink>
-                    <NavLink href="/reports/credit" icon={<CreditCard className="h-4 w-4" />}>
-                        Credit Report
                     </NavLink>
                 </NavCollapsible>
 
