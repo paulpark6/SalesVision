@@ -1,4 +1,6 @@
+
 'use client';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -15,6 +17,7 @@ import {
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useAuth } from '@/hooks/use-auth';
 import { Badge } from './ui/badge';
+import { PersonStanding } from 'lucide-react';
 
 export function UserNav() {
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar');
@@ -56,15 +59,19 @@ export function UserNav() {
             Profile
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
+           {(auth?.role === 'employee' || auth?.role === 'manager') && (
+            <DropdownMenuItem asChild>
+              <Link href="/account/delegate">
+                <PersonStanding className="mr-2 h-4 w-4" />
+                <span>Delegate Authority</span>
+                <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem>
             Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
