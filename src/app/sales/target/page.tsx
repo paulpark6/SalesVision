@@ -4,10 +4,6 @@
 import { AppSidebar } from '@/components/app-sidebar';
 import { Header } from '@/components/header';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -15,6 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 import {
   Table,
   TableBody,
@@ -23,33 +27,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { customers, products, employees } from '@/lib/mock-data';
-import { useToast } from '@/hooks/use-toast';
+import { customers, products, employees, monthlyPerformanceData } from '@/lib/mock-data';
+import { Combobox } from '@/components/ui/combobox';
 import { MonthlyPerformanceChart } from '@/components/dashboard/monthly-performance-chart';
-import { X } from 'lucide-react';
 
 type TargetItem = {
-  id: number;
-  customerName: string;
-  productName: string;
+  customer: string;
+  product: string;
   quantity: number;
   targetAmount: number;
 };
 
+const getMonthName = (monthNumber: number) => {
+    const date = new Date();
+    date.setMonth(monthNumber - 1);
+    return date.toLocaleString('en-US', { month: 'long' });
+}
+
 export default function SalesTargetPage() {
+  const { toast } = useToast();
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
-  const { toast } = useToast();
-
-  const [targetMonth, setTargetMonth] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState('');
-  const [quantity, setQuantity] = useState(1);
-  const [targetItems, setTargetItems] = useState<TargetItem[]>([]);
+  
+  const currentMonth = new Date().getMonth() + 1; // January is 0, so +1
+  const [selectedMonth, setSelectedMonth] = useState<string>(String(currentMonth));
+  const [targets, setTargets] = useState<TargetItem[]>([]);
+  const [currentTarget, setCurrentTarget] = useState({ customer: '', product: '', quantity: 0, targetAmount: 0 });
 
   useEffect(() => {
     if (auth === undefined) return;
@@ -57,78 +61,66 @@ export default function SalesTargetPage() {
       router.push('/login');
     }
   }, [auth, router]);
-
+  
   const handleBack = () => {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(dashboardPath);
   };
   
-  const productPrice = useMemo(() => {
-    const product = products.find(p => p.value === selectedProduct);
-    return product ? product.basePrice : 0;
-  }, [selectedProduct]);
-
   const handleAddTarget = () => {
-    if (!targetMonth || !selectedCustomer || !selectedProduct || quantity <= 0) {
+    if (!currentTarget.customer || !currentTarget.product || currentTarget.quantity <= 0) {
       toast({
-        title: 'Missing Information',
-        description: 'Please select a month, customer, product, and quantity.',
+        title: '입력 오류',
+        description: '고객, 제품, 수량을 모두 입력해주세요.',
         variant: 'destructive',
       });
       return;
     }
-    const customer = customers.find(c => c.value === selectedCustomer);
-    const product = products.find(p => p.value === selectedProduct);
+    setTargets([...targets, currentTarget]);
+    setCurrentTarget({ customer: '', product: '', quantity: 0, targetAmount: 0 });
+  };
 
-    if (customer && product) {
-        const newItem: TargetItem = {
-            id: Date.now(),
-            customerName: customer.label,
-            productName: product.label,
-            quantity,
-            targetAmount: quantity * product.basePrice
-        };
-        setTargetItems(prev => [...prev, newItem]);
-        // Reset form
-        setSelectedProduct('');
-        setQuantity(1);
+  const handleProductSelect = (productValue: string) => {
+    const selectedProduct = products.find(p => p.value === productValue.split(' (')[1].replace(')',''));
+    if (selectedProduct) {
+      const newTargetAmount = currentTarget.quantity * selectedProduct.basePrice;
+      setCurrentTarget(prev => ({
+        ...prev,
+        product: selectedProduct.label,
+        targetAmount: newTargetAmount
+      }));
     }
   };
-  
-  const handleRemoveTarget = (id: number) => {
-    setTargetItems(prev => prev.filter(item => item.id !== id));
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const quantity = parseInt(e.target.value, 10) || 0;
+    const selectedProduct = products.find(p => p.label === currentTarget.product);
+    const newTargetAmount = selectedProduct ? quantity * selectedProduct.basePrice : 0;
+    setCurrentTarget(prev => ({ ...prev, quantity, targetAmount: newTargetAmount }));
   };
-  
+
   const handleSaveTargets = () => {
-    if (targetItems.length === 0) {
-        toast({
-            title: 'No Targets to Save',
-            description: 'Please add at least one target.',
-            variant: 'destructive'
-        });
-        return;
-    }
     toast({
-        title: 'Targets Saved',
-        description: `Successfully saved ${targetItems.length} targets for ${targetMonth}.`
+      title: '목표 저장 완료',
+      description: `${getMonthName(parseInt(selectedMonth))}월 매출 목표가 성공적으로 저장되었습니다.`,
     });
-    setTargetItems([]);
+    setTargets([]);
   };
+
+  const performanceDataForChart = useMemo(() => {
+    const monthIndex = parseInt(selectedMonth, 10) -1;
+    // Get data for selected month and two previous months
+    return monthlyPerformanceData.filter(d => {
+        const dMonth = new Date(Date.parse(d.month +" 1, 2024")).getMonth(); // Simple month parsing
+        return dMonth <= monthIndex && dMonth > monthIndex - 3;
+    });
+  }, [selectedMonth]);
+  
+  const availableMonths = Array.from({length: 12}, (_, i) => ({ value: String(i + 1), label: getMonthName(i + 1) }));
 
   if (!role) {
     return null;
   }
-
-  const currentYear = new Date().getFullYear();
-  const nextThreeMonths = Array.from({ length: 3 }, (_, i) => {
-    const date = new Date();
-    date.setMonth(date.getMonth() + i + 1);
-    return {
-      value: `${currentYear}-${String(date.getMonth() + 1).padStart(2, '0')}`,
-      label: date.toLocaleString('default', { month: 'long', year: 'numeric' }),
-    };
-  });
-
 
   return (
     <SidebarProvider>
@@ -136,103 +128,107 @@ export default function SalesTargetPage() {
       <SidebarInset>
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold">매출 목표 설정 및 실적</h1>
-            <Button type="button" variant="outline" onClick={handleBack}>
-              Back to Dashboard
-            </Button>
-          </div>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-semibold">월별 매출 목표</h1>
+                 <Button type="button" variant="outline" onClick={handleBack}>
+                  Back to Dashboard
+              </Button>
+            </div>
           
-          <MonthlyPerformanceChart />
+            <div className="grid gap-2 w-[200px]">
+                <Label htmlFor="month-select">조회 월</Label>
+                <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <SelectTrigger id="month-select">
+                    <SelectValue placeholder="Select Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    {availableMonths.map(month => (
+                        <SelectItem key={month.value} value={month.value}>{month.label}</SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>월별 목표 설정</CardTitle>
-              <CardDescription>
-                고객별, 제품별 수량을 입력하여 월간 매출 목표를 설정합니다.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end border p-4 rounded-lg">
-                     <div className="space-y-2">
-                        <Label htmlFor="target-month">목표 월</Label>
-                        <Select value={targetMonth} onValueChange={setTargetMonth}>
-                            <SelectTrigger id="target-month"><SelectValue placeholder="Select Month" /></SelectTrigger>
-                            <SelectContent>
-                                {nextThreeMonths.map(m => <SelectItem key={m.value} value={m.label}>{m.label}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="customer">고객</Label>
-                        <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                            <SelectTrigger id="customer"><SelectValue placeholder="Select Customer" /></SelectTrigger>
-                            <SelectContent>
-                                {customers.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="product">제품</Label>
-                        <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                            <SelectTrigger id="product"><SelectValue placeholder="Select Product" /></SelectTrigger>
-                            <SelectContent>
-                                {products.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="quantity">수량</Label>
-                        <Input id="quantity" type="number" value={quantity} onChange={e => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} />
-                     </div>
-                      <Button onClick={handleAddTarget} disabled={!targetMonth}>Add to Target</Button>
-                </div>
-            </CardContent>
-          </Card>
-          
-          {targetItems.length > 0 && (
+            <MonthlyPerformanceChart data={performanceDataForChart} />
+
             <Card>
                 <CardHeader>
-                    <CardTitle>Targets for {targetMonth}</CardTitle>
+                <CardTitle>월별 목표 설정: {getMonthName(parseInt(selectedMonth))}</CardTitle>
+                <CardDescription>
+                    고객별, 제품별 수량을 입력하여 매출 목표를 설정합니다.
+                </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-4 p-4 border rounded-lg">
+                        <div className="grid gap-2">
+                            <Label>고객</Label>
+                            <Combobox
+                                items={customers}
+                                placeholder="고객 선택..."
+                                searchPlaceholder="고객 검색..."
+                                noResultsMessage="고객을 찾을 수 없습니다."
+                                value={currentTarget.customer}
+                                onValueChange={(value) => setCurrentTarget(prev => ({...prev, customer: value}))}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>제품</Label>
+                            <Combobox
+                                items={products.map(p => ({ value: `${p.label} (${p.value})`, label: p.label }))}
+                                placeholder="제품 선택..."
+                                searchPlaceholder="제품 검색..."
+                                noResultsMessage="제품을 찾을 수 없습니다."
+                                value={currentTarget.product}
+                                onValueChange={handleProductSelect}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="quantity">수량</Label>
+                            <Input id="quantity" type="number" value={currentTarget.quantity} onChange={handleQuantityChange} min="1" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label>목표 금액</Label>
+                            <Input value={`$${currentTarget.targetAmount.toLocaleString()}`} readOnly className="bg-muted" />
+                        </div>
+                        <Button onClick={handleAddTarget}>추가</Button>
+                    </div>
+
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Customer</TableHead>
-                                <TableHead>Product</TableHead>
-                                <TableHead className="text-right">Quantity</TableHead>
-                                <TableHead className="text-right">Target Amount</TableHead>
-                                <TableHead className="w-[50px]"></TableHead>
-                            </TableRow>
+                        <TableRow>
+                            <TableHead>고객</TableHead>
+                            <TableHead>제품</TableHead>
+                            <TableHead className="text-right">수량</TableHead>
+                            <TableHead className="text-right">목표 금액</TableHead>
+                        </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {targetItems.map(item => (
-                                <TableRow key={item.id}>
-                                    <TableCell>{item.customerName}</TableCell>
-                                    <TableCell>{item.productName}</TableCell>
-                                    <TableCell className="text-right">{item.quantity}</TableCell>
-                                    <TableCell className="text-right">${item.targetAmount.toLocaleString()}</TableCell>
-                                    <TableCell>
-                                        <Button variant="ghost" size="icon" onClick={() => handleRemoveTarget(item.id)}>
-                                            <X className="h-4 w-4 text-muted-foreground" />
-                                        </Button>
-                                    </TableCell>
+                        {targets.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={4} className="text-center h-24">설정된 목표가 없습니다.</TableCell>
+                            </TableRow>
+                        ) : (
+                            targets.map((target, index) => (
+                                <TableRow key={index}>
+                                <TableCell>{target.customer}</TableCell>
+                                <TableCell>{target.product}</TableCell>
+                                <TableCell className="text-right">{target.quantity}</TableCell>
+                                <TableCell className="text-right font-medium">${target.targetAmount.toLocaleString()}</TableCell>
                                 </TableRow>
-                            ))}
+                            ))
+                        )}
                         </TableBody>
                     </Table>
-                    <div className="flex justify-end mt-6">
-                        <Button onClick={handleSaveTargets}>Save All Targets</Button>
-                    </div>
                 </CardContent>
             </Card>
-          )}
 
+            <div className="flex justify-end mt-4">
+                <Button onClick={handleSaveTargets} disabled={targets.length === 0}>
+                    {getMonthName(parseInt(selectedMonth))}월 목표 저장
+                </Button>
+            </div>
         </main>
       </SidebarInset>
     </SidebarProvider>
   );
 }
-
-    
