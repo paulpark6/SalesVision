@@ -47,17 +47,19 @@ const formatCurrency = (amount: number) => {
 export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payments }: OverdueDetailsDialogProps) {
 
   const bucketedPayments = useMemo(() => {
-    const buckets = {
-      '1-30': { total: 0, items: [] as DuePayment[] },
-      '31-60': { total: 0, items: [] as DuePayment[] },
-      '61-90': { total: 0, items: [] as DuePayment[] },
-      '>90': { total: 0, items: [] as DuePayment[] },
+    const buckets: { [key: string]: { total: number; items: DuePayment[] } } = {
+      '1-30': { total: 0, items: [] },
+      '31-60': { total: 0, items: [] },
+      '61-90': { total: 0, items: [] },
+      '>90': { total: 0, items: [] },
     };
 
     payments.forEach(payment => {
       const bucket = getOverdueBucket(payment.dueDate);
-      buckets[bucket].total += payment.amount;
-      buckets[bucket].items.push(payment);
+      if (buckets[bucket]) {
+        buckets[bucket].total += payment.amount;
+        buckets[bucket].items.push(payment);
+      }
     });
     
     return buckets;
