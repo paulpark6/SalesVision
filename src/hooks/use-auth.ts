@@ -33,7 +33,7 @@ export function useAuth() {
     }
   }, []);
 
-  const login = useCallback((role: 'admin-john' | 'admin-user' | 'employee' | 'manager') => {
+  const login = useCallback((role: 'director' | 'staff' | 'manager') => {
     let name = 'Admin User';
     let finalRole: 'admin' | 'employee' | 'manager' = 'admin';
     let userId = 'admin-user';
@@ -42,18 +42,14 @@ export function useAuth() {
       name = 'Alex Ray';
       finalRole = 'manager';
       userId = 'alex-ray';
-    } else if (role === 'employee') {
+    } else if (role === 'staff') {
       name = 'Jane Smith';
       finalRole = 'employee';
       userId = 'jane-smith';
-    } else if (role === 'admin-john') {
+    } else if (role === 'director') {
         name = 'John Doe';
         finalRole = 'admin';
         userId = 'john-doe';
-    } else if (role === 'admin-user') {
-        name = 'Admin User';
-        finalRole = 'admin';
-        userId = 'admin-user';
     }
     
     const newAuth = { role: finalRole, name, userId };

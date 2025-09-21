@@ -22,7 +22,7 @@ import { useAuth } from '@/hooks/use-auth';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = React.useState('admin-john');
+  const [role, setRole] = React.useState('director');
   const { login, auth } = useAuth();
 
   useEffect(() => {
@@ -37,8 +37,8 @@ export default function LoginPage() {
   }, [auth, router]);
 
   const handleLogin = () => {
-    login(role as 'admin-john' | 'admin-user' | 'employee' | 'manager'); // Save role to localStorage
-    if (role.startsWith('admin')) {
+    login(role as 'director' | 'staff' | 'manager'); // Save role to localStorage
+    if (role === 'director') {
       router.push('/dashboard');
     } else {
       router.push('/admin');
@@ -79,10 +79,9 @@ export default function LoginPage() {
                     <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="admin-john">Admin (John Doe)</SelectItem>
-                    <SelectItem value="admin-user">Admin (Admin User)</SelectItem>
+                    <SelectItem value="director">Director</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="employee">Employee</SelectItem>
+                    <SelectItem value="staff">Staff</SelectItem>
                 </SelectContent>
             </Select>
           </div>
