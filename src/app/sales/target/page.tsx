@@ -4,6 +4,16 @@
 import { AppSidebar } from '@/components/app-sidebar';
 import { Header } from '@/components/header';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useMemo, Fragment } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { customers, products, employees, pastSalesDetails, monthNames } from '@/lib/mock-data';
+import type { SalesTarget } from '@/lib/mock-data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table';
 import {
   Card,
   CardContent,
@@ -11,37 +21,23 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState, useMemo, Fragment } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import { products, employees, pastSalesDetails } from '@/lib/mock-data';
-import type { SalesTarget, CustomerPastSales, PastSaleProduct } from '@/lib/mock-data';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { ChevronDown, PlusCircle, Trash2 } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { PlusCircle, Trash2 } from 'lucide-react';
 import { Combobox } from '@/components/ui/combobox';
-import { cn } from '@/lib/utils';
 
-type TargetItem = {
-    productId: string;
-    productName: string;
-    quantity: number;
-    price: number;
+type TargetLineItem = {
+  id: number;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  total: number;
+};
+
+type CustomerTarget = {
+  customerId: string;
+  customerName: string;
+  targetItems: TargetLineItem[];
+  totalTarget: number;
 };
 
 export default function SalesTargetPage() {
@@ -50,116 +46,133 @@ export default function SalesTargetPage() {
   const role = auth?.role;
   const { toast } = useToast();
 
-  const [targetMonth, setTargetMonth] = useState('9');
-  const [salesTargets, setSalesTargets] = useState<Map<string, TargetItem[]>>(new Map());
-
+  const [customerTargets, setCustomerTargets] = useState<CustomerTarget[]>([]);
+  const [targetMonth, setTargetMonth] = useState(monthNames.current);
+  
   const loggedInEmployee = useMemo(() => {
     if (!auth?.role || !auth?.name) return null;
-    return employees.find((e) => e.name === auth.name);
+    return employees.find(e => e.name === auth.name);
   }, [auth]);
+
+  // Initialize targets based on past sales data and logged-in employee
+  useEffect(() => {
+    if (loggedInEmployee) {
+      const assignedCustomers = customers
+        .filter(c => {
+          const customerInSales = pastSalesDetails.find(ps => ps.customerId === c.value);
+          const assignedToEmployee = c.label === 'Tech Solutions Inc.' || c.label === 'Retail Innovations'; // Simplified logic for Jane Smith
+          if (loggedInEmployee.name === 'Alex Ray') {
+              return c.label === 'Creative Designs LLC';
+          }
+          if(loggedInEmployee.name === 'John Doe') {
+              return c.label === 'Global Exports';
+          }
+          return customerInSales && assignedToEmployee;
+        })
+        .map(c => ({
+          customerId: c.value,
+          customerName: c.label,
+          targetItems: [],
+          totalTarget: 0,
+        }));
+      setCustomerTargets(assignedCustomers);
+    }
+  }, [loggedInEmployee]);
+
 
   useEffect(() => {
     if (auth === undefined) return;
     if (!auth) {
       router.push('/login');
     }
-  }, [auth, router]);
+  }, [auth, router, role]);
 
-  const availableMonths = [
-    { value: '1', label: '1월' },
-    { value: '2', label: '2월' },
-    { value: '3', label: '3월' },
-    { value: '4', label: '4월' },
-    { value: '5', label: '5월' },
-    { value: '6', label: '6월' },
-    { value: '7', label: '7월' },
-    { value: '8', label: '8월' },
-    { value: '9', label: '9월' },
-    { value: '10', label: '10월' },
-    { value: '11', label: '11월' },
-    { value: '12', label: '12월' },
-  ];
-  
   const handleBack = () => {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(dashboardPath);
   };
-
+  
   const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-US', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
+    }).format(amount);
   };
 
-  const filteredCustomers = useMemo(() => {
-      // For a real app, you would also filter by loggedInEmployee
-      return pastSalesDetails.filter(customer => 
-          customer.history.some(month => month.total > 0)
-      );
-  }, []);
-
-  const handleAddTargetItem = (customerCode: string) => {
-    const newTargets = new Map(salesTargets);
-    const currentTargets = newTargets.get(customerCode) || [];
-    const newProduct = products[0];
-    currentTargets.push({ productId: newProduct.value, productName: newProduct.label, quantity: 0, price: newProduct.basePrice });
-    newTargets.set(customerCode, currentTargets);
-    setSalesTargets(newTargets);
+  const updateCustomerTarget = (customerId: string, updatedItems: TargetLineItem[]) => {
+    const newTotal = updatedItems.reduce((sum, item) => sum + item.total, 0);
+    setCustomerTargets(prevTargets => 
+      prevTargets.map(ct => 
+        ct.customerId === customerId 
+        ? { ...ct, targetItems: updatedItems, totalTarget: newTotal }
+        : ct
+      )
+    );
   };
 
-  const handleRemoveTargetItem = (customerCode: string, index: number) => {
-    const newTargets = new Map(salesTargets);
-    const currentTargets = newTargets.get(customerCode) || [];
-    currentTargets.splice(index, 1);
-    newTargets.set(customerCode, currentTargets);
-    setSalesTargets(newTargets);
+  const addTargetItem = (customerId: string) => {
+    const customerTarget = customerTargets.find(ct => ct.customerId === customerId);
+    if (!customerTarget) return;
+
+    const newItem: TargetLineItem = {
+      id: Date.now(),
+      productId: '',
+      productName: '',
+      quantity: 0,
+      price: 0,
+      total: 0,
+    };
+    const updatedItems = [...customerTarget.targetItems, newItem];
+    updateCustomerTarget(customerId, updatedItems);
   };
   
-  const handleTargetChange = (customerCode: string, index: number, field: 'productId' | 'quantity', value: string | number) => {
-      const newTargets = new Map(salesTargets);
-      const currentTargets = newTargets.get(customerCode) || [];
-      const targetItem = currentTargets[index];
+  const removeTargetItem = (customerId: string, itemId: number) => {
+    const customerTarget = customerTargets.find(ct => ct.customerId === customerId);
+    if (!customerTarget) return;
+    const updatedItems = customerTarget.targetItems.filter(item => item.id !== itemId);
+    updateCustomerTarget(customerId, updatedItems);
+  };
 
-      if (field === 'productId') {
-          const product = products.find(p => p.value === value);
+  const handleItemChange = (customerId: string, itemId: number, field: keyof TargetLineItem, value: any) => {
+    const customerTarget = customerTargets.find(ct => ct.customerId === customerId);
+    if (!customerTarget) return;
+
+    const updatedItems = customerTarget.targetItems.map(item => {
+      if (item.id === itemId) {
+        const updatedItem = { ...item, [field]: value };
+
+        if (field === 'productName') {
+          const product = products.find(p => p.label.toLowerCase() === (value as string).toLowerCase());
           if (product) {
-              targetItem.productId = product.value;
-              targetItem.productName = product.label;
-              targetItem.price = product.basePrice;
+            updatedItem.productId = product.value;
+            updatedItem.price = product.basePrice;
+          } else {
+            updatedItem.productId = '';
+            updatedItem.price = 0;
           }
-      } else if (field === 'quantity') {
-          targetItem.quantity = Number(value);
+        }
+        
+        updatedItem.total = updatedItem.quantity * updatedItem.price;
+        return updatedItem;
       }
-
-      newTargets.set(customerCode, currentTargets);
-      setSalesTargets(newTargets);
-  }
-
-  const calculateCustomerTotal = (customerCode: string): number => {
-    const targets = salesTargets.get(customerCode) || [];
-    return targets.reduce((total, item) => total + (item.quantity * item.price), 0);
-  }
+      return item;
+    });
+    updateCustomerTarget(customerId, updatedItems);
+  };
 
   const grandTotal = useMemo(() => {
-      let total = 0;
-      salesTargets.forEach((targets, code) => {
-          total += calculateCustomerTotal(code);
-      });
-      return total;
-  }, [salesTargets]);
+    return customerTargets.reduce((sum, ct) => sum + ct.totalTarget, 0);
+  }, [customerTargets]);
 
-
-  const handleSubmitTargets = () => {
+  const handleSubmit = () => {
     toast({
-        title: "Targets Submitted",
-        description: `Total target of ${formatCurrency(grandTotal)} has been set for ${availableMonths.find(m => m.value === targetMonth)?.label}.`
+      title: 'Targets Submitted',
+      description: 'Your sales targets for the month have been saved.',
     });
-  }
+    handleBack();
+  };
 
-  if (!role) {
+  if (!role || !loggedInEmployee) {
     return null;
   }
 
@@ -170,119 +183,106 @@ export default function SalesTargetPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold">월별 매출 목표 설정</h1>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="target-month">대상 월</Label>
-                <Select value={targetMonth} onValueChange={setTargetMonth}>
-                  <SelectTrigger id="target-month" className="w-[120px]">
-                    <SelectValue placeholder="Select Month" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableMonths.map((month) => (
-                      <SelectItem key={month.value} value={month.value}>
-                        {month.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button type="button" variant="outline" onClick={handleBack}>
-                Back to Dashboard
-              </Button>
+            <h1 className="text-2xl font-semibold">Set Sales Targets for {targetMonth}</h1>
+            <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={handleBack}>
+                    Back to Dashboard
+                </Button>
+                <Button type="button" onClick={handleSubmit}>
+                    Save Targets
+                </Button>
             </div>
           </div>
+
           <Card>
             <CardHeader>
-              <CardTitle>고객별 실적 및 목표 설정</CardTitle>
+              <CardTitle>Sales Performance & Target Setting</CardTitle>
               <CardDescription>
-                지난 3개월간의 고객별 제품 판매 실적을 기반으로 {availableMonths.find(m => m.value === targetMonth)?.label} 목표를 설정합니다.
+                Review past 3 months' sales and set targets for {targetMonth}. Add products and quantities for each customer.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[15%]">고객명</TableHead>
-                    <TableHead className="w-[20%]">6월 실적</TableHead>
-                    <TableHead className="w-[20%]">7월 실적</TableHead>
-                    <TableHead className="w-[20%]">8월 실적</TableHead>
-                    <TableHead className="w-[25%]">{availableMonths.find(m => m.value === targetMonth)?.label} 목표</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCustomers.map((customer) => {
-                      const customerTargetItems = salesTargets.get(customer.customerCode) || [];
-                      const customerTotal = calculateCustomerTotal(customer.customerCode);
-                      return (
-                        <TableRow key={customer.customerCode} className="align-top">
-                            <TableCell className="font-medium">
-                                <p>{customer.customerName}</p>
-                                <p className="text-xs text-muted-foreground">{customer.customerCode}</p>
-                            </TableCell>
-                            {['June', 'July', 'August'].map(monthName => {
-                                const monthData = customer.history.find(h => h.month === monthName);
-                                return (
-                                    <TableCell key={monthName}>
-                                        {monthData && monthData.sales.length > 0 ? (
-                                            <div className="space-y-2">
-                                                {monthData.sales.map((sale, idx) => (
-                                                    <div key={idx} className="text-xs">
-                                                        <p className="font-medium truncate">{sale.productName}</p>
-                                                        <p>수량: {sale.quantity} · 금액: {formatCurrency(sale.total)}</p>
-                                                    </div>
-                                                ))}
-                                                <p className="font-bold text-xs border-t pt-1 mt-1">월 합계: {formatCurrency(monthData.total)}</p>
-                                            </div>
-                                        ) : <span className="text-xs text-muted-foreground">매출 없음</span>}
-                                    </TableCell>
-                                )
-                            })}
-                            <TableCell>
-                                <div className="space-y-2">
-                                    {customerTargetItems.map((item, index) => (
-                                        <div key={index} className="flex items-end gap-2">
-                                             <div className="grid gap-1.5 w-full">
-                                                <Label htmlFor={`product-${customer.customerCode}-${index}`} className="text-xs">제품</Label>
-                                                <Select value={item.productId} onValueChange={(val) => handleTargetChange(customer.customerCode, index, 'productId', val)}>
-                                                    <SelectTrigger id={`product-${customer.customerCode}-${index}`} className="h-8 text-xs">
-                                                        <SelectValue placeholder="제품 선택" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {products.map(p => <SelectItem key={p.value} value={p.value} className="text-xs">{p.label}</SelectItem>)}
-                                                    </SelectContent>
-                                                </Select>
-                                             </div>
-                                             <div className="grid gap-1.5 w-24">
-                                                <Label htmlFor={`quantity-${customer.customerCode}-${index}`} className="text-xs">수량</Label>
-                                                <Input id={`quantity-${customer.customerCode}-${index}`} type="number" value={item.quantity} onChange={(e) => handleTargetChange(customer.customerCode, index, 'quantity', e.target.value)} className="h-8 text-xs" />
-                                             </div>
-                                             <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRemoveTargetItem(customer.customerCode, index)}>
-                                                 <Trash2 className="h-4 w-4 text-destructive" />
-                                             </Button>
-                                        </div>
-                                    ))}
-                                    <Button variant="outline" size="sm" className="h-8 w-full mt-2" onClick={() => handleAddTargetItem(customer.customerCode)}>
-                                        <PlusCircle className="h-4 w-4 mr-2" />
-                                        제품 추가
-                                    </Button>
-                                    <p className="font-bold text-sm border-t pt-2 mt-2">고객 목표 합계: {formatCurrency(customerTotal)}</p>
-                                </div>
-                            </TableCell>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[15%]">Customer</TableHead>
+                            <TableHead className="w-[20%]">{monthNames.prev3} Sales</TableHead>
+                            <TableHead className="w-[20%]">{monthNames.prev2} Sales</TableHead>
+                            <TableHead className="w-[20%]">{monthNames.prev1} Sales</TableHead>
+                            <TableHead className="w-[25%]">{targetMonth} Target</TableHead>
                         </TableRow>
-                      )
-                  })}
-                </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TableCell colSpan={4} className="text-right font-bold text-base">총 목표 합계</TableCell>
-                        <TableCell className="font-bold text-base">{formatCurrency(grandTotal)}</TableCell>
-                    </TableRow>
-                </TableFooter>
-              </Table>
-              <div className="flex justify-end mt-6">
-                  <Button onClick={handleSubmitTargets}>목표 제출</Button>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                        {customerTargets.map(({ customerId, customerName, targetItems, totalTarget }) => {
+                            const pastSales = pastSalesDetails.find(ps => ps.customerId === customerId);
+                            return (
+                                <TableRow key={customerId} className="align-top">
+                                    <TableCell className="font-medium">{customerName}</TableCell>
+                                    {[monthNames.prev3, monthNames.prev2, monthNames.prev1].map(month => {
+                                        const monthSales = pastSales?.sales.find(s => s.month === month);
+                                        const monthTotal = monthSales?.sales.reduce((sum, s) => sum + s.total, 0) || 0;
+                                        return (
+                                            <TableCell key={month}>
+                                                {monthSales && monthSales.sales.length > 0 ? (
+                                                    <>
+                                                        <ul className="text-xs space-y-1">
+                                                            {monthSales.sales.map(sale => (
+                                                                <li key={sale.productId}>
+                                                                    {sale.productName}: {sale.quantity} units ({formatCurrency(sale.total)})
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                        <p className="font-bold text-xs mt-2 pt-2 border-t">Total: {formatCurrency(monthTotal)}</p>
+                                                    </>
+                                                ) : <span className="text-xs text-muted-foreground">No sales</span>}
+                                            </TableCell>
+                                        )
+                                    })}
+                                    <TableCell>
+                                        <div className="space-y-2">
+                                            {targetItems.map(item => (
+                                                <div key={item.id} className="flex items-center gap-2">
+                                                     <div className="flex-1">
+                                                        <Combobox
+                                                            items={products}
+                                                            placeholder="Select product..."
+                                                            searchPlaceholder="Search..."
+                                                            noResultsMessage="No product found."
+                                                            value={item.productName}
+                                                            onValueChange={(value) => handleItemChange(customerId, item.id, 'productName', value)}
+                                                        />
+                                                     </div>
+                                                    <Input 
+                                                        type="number" 
+                                                        placeholder="Qty" 
+                                                        value={item.quantity || ''}
+                                                        onChange={(e) => handleItemChange(customerId, item.id, 'quantity', parseInt(e.target.value) || 0)}
+                                                        className="w-16 h-9"
+                                                    />
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeTargetItem(customerId, item.id)}>
+                                                        <Trash2 className="h-4 w-4 text-destructive"/>
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            <Button variant="outline" size="sm" onClick={() => addTargetItem(customerId)}>
+                                                <PlusCircle className="mr-2 h-4 w-4"/> Add Product
+                                            </Button>
+                                            <p className="font-bold text-sm mt-2 pt-2 border-t">
+                                                Target Total: {formatCurrency(totalTarget)}
+                                            </p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell colSpan={4} className="text-right font-bold text-lg">Grand Total</TableCell>
+                            <TableCell className="font-bold text-lg">{formatCurrency(grandTotal)}</TableCell>
+                        </TableRow>
+                    </TableFooter>
+                </Table>
             </CardContent>
           </Card>
         </main>
