@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 
 type CustomerCredit = {
   customerName: string;
+  employee: string;
   nearing: number;
   due: number;
   overdue: number;
@@ -50,7 +51,7 @@ export function CustomerCreditSummary() {
 
     duePaymentsData.forEach(payment => {
       if (!summary[payment.customer.name]) {
-        summary[payment.customer.name] = { nearing: 0, due: 0, overdue: 0, total: 0 };
+        summary[payment.customer.name] = { employee: payment.employee, nearing: 0, due: 0, overdue: 0, total: 0 };
       }
 
       const status = getStatus(payment.dueDate);
@@ -89,6 +90,7 @@ export function CustomerCreditSummary() {
           <TableHeader>
             <TableRow>
               <TableHead>고객명</TableHead>
+              <TableHead>담당자</TableHead>
               <TableHead className="text-right">만기 전</TableHead>
               <TableHead className="text-right">만기 임박</TableHead>
               <TableHead className="text-right">연체</TableHead>
@@ -99,6 +101,7 @@ export function CustomerCreditSummary() {
             {customerSummary.map(customer => (
               <TableRow key={customer.customerName}>
                 <TableCell className="font-medium">{customer.customerName}</TableCell>
+                <TableCell>{customer.employee}</TableCell>
                 <TableCell className="text-right">{formatCurrency(customer.nearing)}</TableCell>
                 <TableCell className="text-right">
                     {customer.due > 0 ? (
@@ -118,7 +121,7 @@ export function CustomerCreditSummary() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell className="font-bold">총계</TableCell>
+              <TableCell colSpan={2} className="font-bold">총계</TableCell>
               <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
               <TableCell className="text-right font-bold">{formatCurrency(grandTotals.due)}</TableCell>
               <TableCell className="text-right font-bold">{formatCurrency(grandTotals.overdue)}</TableCell>
