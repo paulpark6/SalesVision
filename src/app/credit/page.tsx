@@ -213,7 +213,7 @@ export default function CreditReportPage() {
         case 'pending': return <Badge variant="secondary">Pending</Badge>;
         case 'confirmed': return <Badge variant="default" className='bg-green-600 hover:bg-green-700'>Confirmed</Badge>;
         case 'rejected': return <Badge variant="destructive">Rejected</Badge>;
-        default: return <span className="text-xs text-muted-foreground">-</span>;
+        default: return null;
     }
   }
 
@@ -264,7 +264,7 @@ export default function CreditReportPage() {
                             <TableHead className="text-right">연체</TableHead>
                             <TableHead className="w-[150px]">수금액</TableHead>
                             <TableHead className="w-[200px]">수금일</TableHead>
-                            <TableHead className="text-center w-[120px]">상태</TableHead>
+                            <TableHead className="text-center w-[180px]">상태</TableHead>
                             <TableHead className="text-right">총 신용 잔액</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -309,23 +309,21 @@ export default function CreditReportPage() {
                                     />
                                 </TableCell>
                                  <TableCell className="text-center">
-                                    {role === 'admin' && customer.collectionStatus === 'pending' ? (
-                                        <div className="flex gap-1 justify-center">
-                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-600 hover:bg-green-100" onClick={() => handleApprovalAction(customer.customerName, 'confirmed')}>
-                                                <Check className="h-4 w-4" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-red-100" onClick={() => handleApprovalAction(customer.customerName, 'rejected')}>
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center justify-center gap-2">
-                                            {getStatusBadge(customer.collectionStatus)}
-                                            {role !== 'admin' && customer.collectionStatus === 'none' && customer.collectedAmount > 0 && (
-                                                <Button size="sm" className="h-7" onClick={() => handleSubmitForApproval(customer.customerName)}>제출</Button>
-                                            )}
-                                        </div>
-                                    )}
+                                    <div className="flex items-center justify-center gap-2">
+                                        {getStatusBadge(customer.collectionStatus)}
+                                        {role === 'admin' && customer.collectionStatus === 'pending' ? (
+                                            <div className="flex gap-1 justify-center">
+                                                <Button variant="ghost" size="icon" className="h-7 w-7 text-green-600 hover:bg-green-100" onClick={() => handleApprovalAction(customer.customerName, 'confirmed')}>
+                                                    <Check className="h-4 w-4" />
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-red-100" onClick={() => handleApprovalAction(customer.customerName, 'rejected')}>
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ) : role !== 'admin' && customer.collectionStatus === 'none' && customer.collectedAmount > 0 ? (
+                                            <Button size="sm" className="h-7" onClick={() => handleSubmitForApproval(customer.customerName)}>확인</Button>
+                                        ) : null}
+                                    </div>
                                 </TableCell>
                                 <TableCell className="text-right font-semibold">{formatCurrency(customer.total)}</TableCell>
                             </TableRow>
