@@ -11,11 +11,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
 import {
   Table,
   TableBody,
@@ -32,38 +30,39 @@ import {
 import type { SalesTargetCustomer } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { X, Trash2, PlusCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { v4 as uuidv4 } from 'uuid';
 import { Combobox } from '@/components/ui/combobox';
 
-// Helper to generate a unique ID
-const generateId = () => `id_${new Date().getTime()}_${Math.random().toString(36).substr(2, 9)}`;
-
+// A simplified initial data structure for demonstration
 const initialCustomerData: SalesTargetCustomer[] = [
     {
-        id: generateId(),
-        name: 'Customer A',
+        id: 'cust-1',
         salesperson: 'Jane Smith',
+        customerName: 'Customer A', 
         products: [
-            { id: generateId(), name: 'Laptop Model X', june: 12000, july: 12500, august: 11800, target: 13000 },
-            { id: generateId(), name: 'Keyboard Pro', june: 600, july: 620, august: 650, target: 700 },
+            { id: 'prod-1-1', productName: 'Laptop Model X', june: 5000, july: 5200, august: 4800, target: 5500 },
+            { id: 'prod-1-2', productName: 'Wireless Mouse', june: 3000, july: 2800, august: 3200, target: 3300 },
         ]
     },
-    {
-        id: generateId(),
-        name: 'Customer B',
+     {
+        id: 'cust-2',
         salesperson: 'Alex Ray',
+        customerName: 'Customer B',
         products: [
-            { id: generateId(), name: 'Wireless Mouse', june: 800, july: 850, august: 820, target: 900 },
+            { id: 'prod-2-1', productName: '4K Monitor', june: 12000, july: 12500, august: 11800, target: 13000 },
         ]
     },
 ];
 
-
 export default function SalesTargetPage() {
   const router = useRouter();
   const { auth } = useAuth();
-  const { toast } = useToast();
   const role = auth?.role;
-
+  const { toast } = useToast();
+  
   const [customerData, setCustomerData] = useState<SalesTargetCustomer[]>(initialCustomerData);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -71,148 +70,156 @@ export default function SalesTargetPage() {
     setIsMounted(true);
   }, []);
 
-  const handleAddCustomer = useCallback(() => {
-    setCustomerData(prev => [
-      ...prev,
-      {
-        id: generateId(),
-        name: '',
-        salesperson: '',
-        products: [{ id: generateId(), name: '', june: 0, july: 0, august: 0, target: 0 }],
-      },
-    ]);
-  }, []);
-  
-  const handleRemoveCustomer = useCallback((customerId: string) => {
-    setCustomerData(prev => prev.filter(customer => customer.id !== customerId));
-  }, []);
-
-  const handleCustomerChange = useCallback((customerId: string, field: 'name' | 'salesperson', value: string) => {
-    setCustomerData(prev =>
-      prev.map(customer =>
+  const handleCustomerChange = useCallback((customerId: string, field: 'salesperson' | 'customerName', value: string) => {
+    setCustomerData(prevData =>
+      prevData.map(customer =>
         customer.id === customerId ? { ...customer, [field]: value } : customer
       )
     );
   }, []);
 
+  const handleProductChange = useCallback((customerId: string, productId: string, field: 'productName' | 'target', value: string | number) => {
+    setCustomerData(prevData =>
+      prevData.map(customer => {
+        if (customer.id === customerId) {
+          const updatedProducts = customer.products.map(product =>
+            product.id === productId ? { ...product, [field]: value } : product
+          );
+          return { ...customer, products: updatedProducts };
+        }
+        return customer;
+      })
+    );
+  }, []);
+
+  const handleAddCustomer = useCallback(() => {
+    const newCustomer: SalesTargetCustomer = {
+      id: uuidv4(),
+      salesperson: '',
+      customerName: '',
+      products: [],
+    };
+    setCustomerData(prev => [...prev, newCustomer]);
+  }, []);
+
   const handleAddProduct = useCallback((customerId: string) => {
-    setCustomerData(prev =>
-      prev.map(customer =>
+    const newProduct = {
+      id: uuidv4(),
+      productName: '',
+      june: 0,
+      july: 0,
+      august: 0,
+      target: 0,
+    };
+    setCustomerData(prevData =>
+      prevData.map(customer =>
         customer.id === customerId
-          ? {
-              ...customer,
-              products: [...customer.products, { id: generateId(), name: '', june: 0, july: 0, august: 0, target: 0 }],
-            }
+          ? { ...customer, products: [...customer.products, newProduct] }
           : customer
       )
     );
   }, []);
 
+  const handleRemoveCustomer = useCallback((customerId: string) => {
+    setCustomerData(prevData => prevData.filter(customer => customer.id !== customerId));
+  }, []);
+
+_
   const handleRemoveProduct = useCallback((customerId: string, productId: string) => {
-    setCustomerData(prev =>
-      prev.map(customer => {
+    setCustomerData(prevData =>
+      prevData.map(customer => {
         if (customer.id === customerId) {
-          const newProducts = customer.products.filter(p => p.id !== productId);
-          // If all products are removed, keep one blank product line
-          if (newProducts.length === 0) {
-            return { ...customer, products: [{ id: generateId(), name: '', june: 0, july: 0, august: 0, target: 0 }] };
-          }
-          return { ...customer, products: newProducts };
+          const updatedProducts = customer.products.filter(p => p.id !== productId);
+          return { ...customer, products: updatedProducts };
         }
         return customer;
       })
     );
   }, []);
 
-  const handleProductChange = useCallback((customerId: string, productId: string, field: string, value: string | number) => {
-    setCustomerData(prev =>
-      prev.map(customer => {
-        if (customer.id === customerId) {
-          const newProducts = customer.products.map(p =>
-            p.id === productId ? { ...p, [field]: value } : p
-          );
-          return { ...customer, products: newProducts };
-        }
-        return customer;
-      })
-    );
-  }, []);
-  
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
+    console.log('Submitting data:', customerData);
     toast({
-      title: 'Approval Request Sent',
-      description: 'The monthly sales targets have been submitted for approval.',
+        title: '목표 제출 완료',
+        description: '9월 매출 목표가 관리자에게 제출되었습니다.'
     });
-    const redirectPath = role === 'admin' ? '/dashboard' : '/admin';
-    router.push(redirectPath);
-  };
+  }, [customerData, toast]);
   
+  useEffect(() => {
+    if (auth === undefined) return;
+    if (!auth || (role !== 'admin' && role !== 'manager')) {
+      router.push('/login');
+    }
+  }, [auth, router, role]);
+
   const employeeTotals = useMemo(() => {
     const totals: { [key: string]: { june: number, july: number, august: number, target: number } } = {};
     customerData.forEach(customer => {
-        if (customer.salesperson && !totals[customer.salesperson]) {
+        if (!totals[customer.salesperson]) {
             totals[customer.salesperson] = { june: 0, july: 0, august: 0, target: 0 };
         }
-        if (customer.salesperson) {
-            customer.products.forEach(product => {
-                totals[customer.salesperson].june += product.june;
-                totals[customer.salesperson].july += product.july;
-                totals[customer.salesperson].august += product.august;
-                totals[customer.salesperson].target += product.target;
-            });
-        }
+        customer.products.forEach(product => {
+            totals[customer.salesperson].june += product.june;
+            totals[customer.salesperson].july += product.july;
+            totals[customer.salesperson].august += product.august;
+            totals[customer.salesperson].target += product.target;
+        });
     });
     return totals;
   }, [customerData]);
 
   const grandTotal = useMemo(() => {
-      const total = { june: 0, july: 0, august: 0, target: 0 };
-      Object.values(employeeTotals).forEach(empTotal => {
-          total.june += empTotal.june;
-          total.july += empTotal.july;
-          total.august += empTotal.august;
-          total.target += empTotal.target;
-      });
-      return total;
+    return Object.values(employeeTotals).reduce((acc, totals) => {
+        acc.june += totals.june;
+        acc.july += totals.july;
+        acc.august += totals.august;
+        acc.target += totals.target;
+        return acc;
+    }, { june: 0, july: 0, august: 0, target: 0 });
   }, [employeeTotals]);
 
-
+  const formatCurrency = (amount: number) => {
+    return amount.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  };
+  
+  if (!isMounted) {
+    return null;
+  }
+  
   const customerOptions = useMemo(() => allCustomers.map(c => ({ value: c.label, label: c.label })), []);
   const productOptions = useMemo(() => allProducts.map(p => ({ value: p.label, label: p.label })), []);
 
-  if (!role || !isMounted) {
-    return null;
-  }
-
   return (
     <SidebarProvider>
-      <AppSidebar role={role} />
+      <AppSidebar role={role || 'employee'} />
       <SidebarInset>
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold">월별 매출 목표 설정</h1>
-          </div>
           <Card>
             <CardHeader>
-              <CardTitle>9월 매출 목표</CardTitle>
+              <CardTitle>9월 매출 목표 설정</CardTitle>
               <CardDescription>
-                지난 3개월간의 고객별 제품 매출을 기반으로 9월(당월) 매출 목표를 설정합니다. 목표 설정 후 관리자에게 보고됩니다.
+                6월-8월 실적을 참고하여 9월 매출 목표를 설정합니다. 신규 고객 및 제품을 추가하여 목표를 등록할 수 있습니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
-                <Table className="min-w-max">
+                <Table>
                   <TableHeader>
                     <TableRow>
-                      { (role === 'admin' || role === 'manager') && <TableHead className="w-[180px]">담당자</TableHead> }
-                      <TableHead className="w-[200px]">고객명</TableHead>
-                      <TableHead className="w-[200px]">제품명</TableHead>
+                      <TableHead className="w-[180px]">담당자</TableHead>
+                      <TableHead className="w-[220px]">고객명</TableHead>
+                      <TableHead className="w-[220px]">제품명</TableHead>
                       <TableHead className="text-right">6월 실적</TableHead>
                       <TableHead className="text-right">7월 실적</TableHead>
                       <TableHead className="text-right">8월 실적</TableHead>
                       <TableHead className="text-right w-[150px]">9월 목표</TableHead>
-                      <TableHead className="w-[40px] text-center">삭제</TableHead>
+                      <TableHead className="w-[100px] text-center">액션</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -221,161 +228,145 @@ export default function SalesTargetPage() {
                         {customer.products.map((product, prodIndex) => (
                           <TableRow key={product.id}>
                             {prodIndex === 0 && (
-                              <>
-                                { (role === 'admin' || role === 'manager') && (
-                                <TableCell rowSpan={customer.products.length}>
-                                    <Combobox
-                                      items={employees.map(e => ({ value: e.name, label: e.name }))}
-                                      placeholder="Select employee..."
-                                      searchPlaceholder="Search employees..."
-                                      noResultsMessage="No employee found."
-                                      value={customer.salesperson}
-                                      onValueChange={(value) => handleCustomerChange(customer.id, 'salesperson', value)}
-                                    />
-                                </TableCell>
-                                )}
-                                <TableCell rowSpan={customer.products.length}>
+                              <TableCell rowSpan={customer.products.length || 1} className="align-top">
+                                <select
+                                  value={customer.salesperson}
+                                  onChange={(e) => handleCustomerChange(customer.id, 'salesperson', e.target.value)}
+                                  className="w-full p-2 border rounded-md bg-transparent"
+                                >
+                                  <option value="">담당자 선택</option>
+                                  {employees.map(e => <option key={e.value} value={e.name}>{e.name}</option>)}
+                                </select>
+                              </TableCell>
+                            )}
+                            {prodIndex === 0 && (
+                               <TableCell rowSpan={customer.products.length || 1} className="align-top">
                                     <Combobox
                                         items={customerOptions}
-                                        placeholder="Select or add customer..."
-                                        searchPlaceholder="Search customers..."
-                                        noResultsMessage="No customer found."
-                                        value={customer.name}
-                                        onValueChange={(value) => handleCustomerChange(customer.id, 'name', value)}
-                                        onAddNew={(newValue) => handleCustomerChange(customer.id, 'name', newValue)}
+                                        value={customer.customerName}
+                                        onValueChange={(value) => handleCustomerChange(customer.id, 'customerName', value)}
+                                        placeholder="고객 선택 또는 입력"
+                                        searchPlaceholder="고객 검색..."
+                                        noResultsMessage="고객을 찾을 수 없습니다."
                                     />
                                 </TableCell>
-                              </>
                             )}
                             <TableCell>
-                               <Combobox
+                                <Combobox
                                     items={productOptions}
-                                    placeholder="Select or add product..."
-                                    searchPlaceholder="Search products..."
-                                    noResultsMessage="No product found."
-                                    value={product.name}
-                                    onValueChange={(value) => handleProductChange(customer.id, product.id, 'name', value)}
-                                    onAddNew={(newValue) => handleProductChange(customer.id, product.id, 'name', newValue)}
-                               />
+                                    value={product.productName}
+                                    onValueChange={(value) => handleProductChange(customer.id, product.id, 'productName', value)}
+                                    placeholder="제품 선택 또는 입력"
+                                    searchPlaceholder="제품 검색..."
+                                    noResultsMessage="제품을 찾을 수 없습니다."
+                                />
                             </TableCell>
-                            <TableCell className="text-right">${product.june.toLocaleString()}</TableCell>
-                            <TableCell className="text-right">${product.july.toLocaleString()}</TableCell>
-                            <TableCell className="text-right">${product.august.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(product.june)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(product.july)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(product.august)}</TableCell>
                             <TableCell className="text-right">
                               <Input
                                 type="number"
                                 value={product.target}
-                                onChange={(e) => handleProductChange(customer.id, product.id, 'target', Number(e.target.value))}
-                                className="h-8 text-right"
-                                placeholder="0"
+                                onChange={(e) => handleProductChange(customer.id, product.id, 'target', parseInt(e.target.value))}
+                                className="w-full text-right"
                               />
                             </TableCell>
                             <TableCell className="text-center">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => handleRemoveProduct(customer.id, product.id)}
-                              >
+                              <Button variant="ghost" size="icon" onClick={() => handleRemoveProduct(customer.id, product.id)}>
                                 <X className="h-4 w-4" />
                               </Button>
                             </TableCell>
-                             {prodIndex === 0 && (
-                                <TableCell rowSpan={customer.products.length} className="text-center align-middle">
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={() => handleRemoveCustomer(customer.id)}
-                                    >
-                                      <Trash2 className="h-4 w-4 text-destructive" />
-                                    </Button>
-                                </TableCell>
-                             )}
                           </TableRow>
                         ))}
-                        <TableRow>
-                           <TableCell colSpan={role === 'employee' ? 2 : 3} className="py-1">
-                                <Button variant="link" size="sm" onClick={() => handleAddProduct(customer.id)}>
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    제품 추가
+                         <TableRow>
+                            {customer.products.length === 0 && (
+                                <>
+                                    <TableCell>
+                                        <select
+                                            value={customer.salesperson}
+                                            onChange={(e) => handleCustomerChange(customer.id, 'salesperson', e.target.value)}
+                                            className="w-full p-2 border rounded-md bg-transparent"
+                                        >
+                                            <option value="">담당자 선택</option>
+                                            {employees.map(e => <option key={e.value} value={e.name}>{e.name}</option>)}
+                                        </select>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Combobox
+                                            items={customerOptions}
+                                            value={customer.customerName}
+                                            onValueChange={(value) => handleCustomerChange(customer.id, 'customerName', value)}
+                                            placeholder="고객 선택 또는 입력"
+                                            searchPlaceholder="고객 검색..."
+                                            noResultsMessage="고객을 찾을 수 없습니다."
+                                        />
+                                    </TableCell>
+                                </>
+                            )}
+                            <TableCell colSpan={customer.products.length > 0 ? 3 : 1}>
+                               <Button variant="link" size="sm" onClick={() => handleAddProduct(customer.id)}>
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                제품 추가
+                              </Button>
+                            </TableCell>
+                             {customer.products.length === 0 && <TableCell colSpan={4}></TableCell>}
+                             <TableCell className="text-center" colSpan={customer.products.length > 0 ? 3 : 1}>
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveCustomer(customer.id)}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
                                 </Button>
-                           </TableCell>
-                           <TableCell colSpan={5} className="py-1"></TableCell>
+                            </TableCell>
                         </TableRow>
                       </Fragment>
                     ))}
                   </TableBody>
                 </Table>
               </div>
-              <div className="mt-4">
+              <div className="flex justify-start mt-4">
                  <Button variant="outline" onClick={handleAddCustomer}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     고객 추가
                 </Button>
               </div>
-
-              { (role === 'admin' || role === 'manager') && (
-                <Card className="mt-6">
-                    <CardHeader>
-                        <CardTitle>담당자별 합계</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>담당자</TableHead>
-                                    <TableHead className="text-right">6월 합계</TableHead>
-                                    <TableHead className="text-right">7월 합계</TableHead>
-                                    <TableHead className="text-right">8월 합계</TableHead>
-                                    <TableHead className="text-right">9월 목표 합계</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {Object.entries(employeeTotals).map(([salesperson, totals]) => (
-                                    <TableRow key={salesperson}>
-                                        <TableCell>{salesperson}</TableCell>
-                                        <TableCell className="text-right">${totals.june.toLocaleString()}</TableCell>
-                                        <TableCell className="text-right">${totals.july.toLocaleString()}</TableCell>
-                                        <TableCell className="text-right">${totals.august.toLocaleString()}</TableCell>
-                                        <TableCell className="text-right font-semibold">${totals.target.toLocaleString()}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-              )}
-                <Card className="mt-6">
-                    <CardHeader>
-                        <CardTitle>총 합계</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                       <div className="flex justify-around font-semibold text-lg">
-                           <div className="text-center">
-                               <p className="text-sm text-muted-foreground">6월 총계</p>
-                               <p>${grandTotal.june.toLocaleString()}</p>
-                           </div>
-                           <div className="text-center">
-                               <p className="text-sm text-muted-foreground">7월 총계</p>
-                               <p>${grandTotal.july.toLocaleString()}</p>
-                           </div>
-                           <div className="text-center">
-                               <p className="text-sm text-muted-foreground">8월 총계</p>
-                               <p>${grandTotal.august.toLocaleString()}</p>
-                           </div>
-                           <div className="text-center">
-                               <p className="text-sm text-muted-foreground">9월 목표 총계</p>
-                               <p>${grandTotal.target.toLocaleString()}</p>
-                           </div>
-                       </div>
-                    </CardContent>
-                </Card>
-
-              <div className="flex justify-end mt-6">
-                <Button onClick={handleSubmit}>관리자에게 보고</Button>
-              </div>
             </CardContent>
+            <CardFooter className="flex flex-col items-end gap-4">
+              <div className="w-full max-w-2xl self-end">
+                <h3 className="text-lg font-semibold mb-2">Total Summary</h3>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>구분</TableHead>
+                            <TableHead className="text-right">6월</TableHead>
+                            <TableHead className="text-right">7월</TableHead>
+                            <TableHead className="text-right">8월</TableHead>
+                            <TableHead className="text-right">9월 목표 총액</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {Object.entries(employeeTotals).map(([employee, totals]) => (
+                            <TableRow key={employee}>
+                                <TableCell>{employee}</TableCell>
+                                <TableCell className="text-right">{formatCurrency(totals.june)}</TableCell>
+                                <TableCell className="text-right">{formatCurrency(totals.july)}</TableCell>
+                                <TableCell className="text-right">{formatCurrency(totals.august)}</TableCell>
+                                <TableCell className="text-right font-semibold">{formatCurrency(totals.target)}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                    <TableRow className="font-bold border-t-2">
+                        <TableCell>총계</TableCell>
+                        <TableCell className="text-right">{formatCurrency(grandTotal.june)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(grandTotal.july)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(grandTotal.august)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(grandTotal.target)}</TableCell>
+                    </TableRow>
+                </Table>
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline">Cancel</Button>
+                <Button onClick={handleSubmit}>Submit for Approval</Button>
+              </div>
+            </CardFooter>
           </Card>
         </main>
       </SidebarInset>
