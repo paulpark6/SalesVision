@@ -23,7 +23,7 @@ import {
   TableRow,
   TableFooter,
 } from '@/components/ui/table';
-import { duePaymentsData, employees } from '@/lib/mock-data';
+import { duePaymentsData } from '@/lib/mock-data';
 import { differenceInDays, parseISO } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { OverdueDetailsDialog } from '@/components/reports/overdue-details-dialog';
@@ -31,9 +31,12 @@ import type { DuePayment } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Users } from 'lucide-react';
+import { Users, Check, X } from 'lucide-react';
 import { DatePicker } from '@/components/ui/date-picker';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
+type CollectionStatus = 'pending' | 'confirmed' | 'rejected' | 'none';
 
 type CustomerCredit = {
   customerName: string;
@@ -44,6 +47,7 @@ type CustomerCredit = {
   total: number;
   collectedAmount: number;
   collectionDate?: Date;
+  collectionStatus: CollectionStatus;
 };
 
 const getStatus = (dueDate: string): 'overdue' | 'due' | 'nearing' => {
@@ -66,6 +70,7 @@ export default function CreditReportPage() {
   const { auth } = useAuth();
   const role = auth?.role;
   const loggedInEmployeeId = auth?.userId;
+  const { toast } = useToast();
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [showMyCollections, setShowMyCollections] = useState(false);
   const [customerCreditData, setCustomerCreditData] = useState<CustomerCredit[]>([]);
@@ -90,6 +95,7 @@ export default function CreditReportPage() {
             total: 0,
             collectedAmount: 0,
             collectionDate: undefined,
+            collectionStatus: 'none',
         };
       }
 
@@ -131,7 +137,9 @@ export default function CreditReportPage() {
         acc.due += customer.due;
         acc.overdue += customer.overdue;
         acc.total += customer.total;
-        acc.collectedAmount += customer.collectedAmount;
+        if(customer.collectionStatus === 'confirmed') {
+            acc.collectedAmount += customer.collectedAmount;
+        }
         return acc;
       },
       { nearing: 0, due: 0, overdue: 0, total: 0, collectedAmount: 0 }
@@ -141,12 +149,14 @@ export default function CreditReportPage() {
   const totalMyCollections = useMemo(() => {
       if (!loggedInEmployeeId) return 0;
       return customerCreditData
-        .filter(c => c.employeeId === loggedInEmployeeId)
+        .filter(c => c.employeeId === loggedInEmployeeId && c.collectionStatus === 'confirmed')
         .reduce((sum, cust) => sum + cust.collectedAmount, 0)
   }, [customerCreditData, loggedInEmployeeId]);
   
   const totalAllCollections = useMemo(() => {
-      return customerCreditData.reduce((sum, cust) => sum + cust.collectedAmount, 0)
+      return customerCreditData
+        .filter(c => c.collectionStatus === 'confirmed')
+        .reduce((sum, cust) => sum + cust.collectedAmount, 0)
   }, [customerCreditData]);
 
 
@@ -154,17 +164,59 @@ export default function CreditReportPage() {
       setCustomerCreditData(prev => 
         prev.map(c => {
             if (c.customerName === customerName) {
+                const updatedCustomer = { ...c };
                 if (field === 'collectedAmount') {
-                    return { ...c, collectedAmount: value as number || 0 };
+                    updatedCustomer.collectedAmount = value as number || 0;
                 }
                 if (field === 'collectionDate') {
-                    return { ...c, collectionDate: value as Date | undefined };
+                    updatedCustomer.collectionDate = value as Date | undefined;
                 }
+                // If we change the value, it should go back to 'none' status until submitted
+                if (updatedCustomer.collectionStatus === 'confirmed' || updatedCustomer.collectionStatus === 'rejected') {
+                    updatedCustomer.collectionStatus = 'none';
+                }
+                return updatedCustomer;
             }
             return c;
         })
       );
   };
+  
+  const handleSubmitForApproval = (customerName: string) => {
+    const customer = customerCreditData.find(c => c.customerName === customerName);
+    if (!customer || !customer.collectedAmount || !customer.collectionDate) {
+        toast({
+            title: '입력 오류',
+            description: '수금액과 수금일을 모두 입력해야 합니다.',
+            variant: 'destructive',
+        });
+        return;
+    }
+
+    setCustomerCreditData(prev => prev.map(c => c.customerName === customerName ? { ...c, collectionStatus: 'pending'} : c));
+    toast({
+        title: '제출 완료',
+        description: '수금 내역이 관리자에게 보고되었습니다.',
+    });
+  }
+  
+  const handleApprovalAction = (customerName: string, action: 'confirmed' | 'rejected') => {
+    setCustomerCreditData(prev => prev.map(c => c.customerName === customerName ? { ...c, collectionStatus: action } : c));
+    toast({
+        title: `수금 내역 ${action === 'confirmed' ? '확정' : '반려'}`,
+        description: `해당 고객의 수금 내역이 ${action === 'confirmed' ? '확정' : '반려'}되었습니다.`,
+    });
+  };
+
+  const getStatusBadge = (status: CollectionStatus) => {
+    switch (status) {
+        case 'pending': return <Badge variant="secondary">Pending</Badge>;
+        case 'confirmed': return <Badge variant="default" className='bg-green-600 hover:bg-green-700'>Confirmed</Badge>;
+        case 'rejected': return <Badge variant="destructive">Rejected</Badge>;
+        default: return <span className="text-xs text-muted-foreground">-</span>;
+    }
+  }
+
 
   if (!role) {
     return null;
@@ -212,6 +264,7 @@ export default function CreditReportPage() {
                             <TableHead className="text-right">연체</TableHead>
                             <TableHead className="w-[150px]">수금액</TableHead>
                             <TableHead className="w-[200px]">수금일</TableHead>
+                            <TableHead className="text-center w-[120px]">상태</TableHead>
                             <TableHead className="text-right">총 신용 잔액</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -245,13 +298,34 @@ export default function CreditReportPage() {
                                         className="h-8 text-right"
                                         value={customer.collectedAmount || ''}
                                         onChange={(e) => handleCollectionChange(customer.customerName, 'collectedAmount', parseFloat(e.target.value))}
+                                        disabled={role === 'admin' && customer.collectionStatus === 'pending'}
                                     />
                                 </TableCell>
                                  <TableCell>
                                     <DatePicker
                                         value={customer.collectionDate}
                                         onSelect={(date) => handleCollectionChange(customer.customerName, 'collectionDate', date)}
+                                        disabled={role === 'admin' && customer.collectionStatus === 'pending'}
                                     />
+                                </TableCell>
+                                 <TableCell className="text-center">
+                                    {role === 'admin' && customer.collectionStatus === 'pending' ? (
+                                        <div className="flex gap-1 justify-center">
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-600 hover:bg-green-100" onClick={() => handleApprovalAction(customer.customerName, 'confirmed')}>
+                                                <Check className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-red-600 hover:bg-red-100" onClick={() => handleApprovalAction(customer.customerName, 'rejected')}>
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-center gap-2">
+                                            {getStatusBadge(customer.collectionStatus)}
+                                            {role !== 'admin' && customer.collectionStatus === 'none' && customer.collectedAmount > 0 && (
+                                                <Button size="sm" className="h-7" onClick={() => handleSubmitForApproval(customer.customerName)}>제출</Button>
+                                            )}
+                                        </div>
+                                    )}
                                 </TableCell>
                                 <TableCell className="text-right font-semibold">{formatCurrency(customer.total)}</TableCell>
                             </TableRow>
@@ -270,6 +344,7 @@ export default function CreditReportPage() {
                                 <Badge variant="destructive">{formatCurrency(grandTotals.overdue)}</Badge>
                             </TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.collectedAmount)}</TableCell>
+                            <TableCell></TableCell>
                             <TableCell></TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.total)}</TableCell>
                             </TableRow>
