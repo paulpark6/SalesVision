@@ -120,11 +120,10 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                         Add Customer
                     </NavLink>
                 </NavCollapsible>
-                {(role === 'admin' || role === 'manager') && (
-                  <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                      매출 목표
-                  </NavLink>
-                )}
+                
+                <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
+                    매출 목표
+                </NavLink>
 
                  <NavCollapsible title="Reports" icon={<FileText className="h-4 w-4" />}>
                      <NavLink href="/sales/report" icon={<BarChart className="h-4 w-4" />}>
