@@ -29,9 +29,10 @@ type ComboboxProps = {
     value: string;
     onValueChange: (value: string) => void;
     onAddNew?: (newItem: string) => void;
+    disabled?: boolean;
 }
 
-export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessage, value, onValueChange, onAddNew }: ComboboxProps) {
+export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessage, value, onValueChange, onAddNew, disabled }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
 
@@ -49,6 +50,7 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
   }
   
   const displayValue = value || placeholder;
+  const currentValue = value || '';
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -58,6 +60,7 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
             role="combobox"
             aria-expanded={open}
             className="w-full justify-between font-normal"
+            disabled={disabled}
         >
             <span className="truncate">
                 {value ? items.find(item => item.label.toLowerCase() === value.toLowerCase())?.label : placeholder}
@@ -90,7 +93,7 @@ export function Combobox({ items, placeholder, searchPlaceholder, noResultsMessa
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.toLowerCase() === item.label.toLowerCase() ? "opacity-100" : "opacity-0"
+                      currentValue.toLowerCase() === item.label.toLowerCase() ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {item.label}
