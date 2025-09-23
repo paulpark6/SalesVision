@@ -1,19 +1,16 @@
 
 'use client';
+
 import { AppSidebar } from '@/components/app-sidebar';
 import { Header } from '@/components/header';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState, useCallback, Fragment } from 'react';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import {
   Table,
@@ -23,139 +20,219 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { salesReportData, products as allProducts, customers as allCustomers } from '@/lib/mock-data';
-import { PlusCircle, Trash2 } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { salesTargetPageData, products as allProducts, customers as allCustomers } from '@/lib/mock-data';
+import { PlusCircle, Trash2 } from 'lucide-react';
+import { Combobox } from '@/components/ui/combobox';
+import { v4 as uuidv4 } from 'uuid';
 
-type ProductEntry = {
+type ProductSale = {
   id: string;
-  name: string;
-  isNew: boolean;
-  sales: {
-    june: number;
-    july: number;
-    august: number;
-  };
-  september_target: number;
+  productCode: string;
+  productName: string;
+  june: number;
+  july: number;
+  august: number;
   quantity: number;
-};
-
-type CustomerEntry = {
-  id: string;
-  name: string;
-  grade: string;
+  target: number;
   isNew: boolean;
-  products: ProductEntry[];
 };
 
-const getDiscount = (grade: string) => {
-    switch (grade) {
-      case 'A': return 0.1; // 10%
-      case 'B': return 0.05; // 5%
-      default: return 0;
+type ProcessedDataItem = {
+  customerName: string;
+  customerCode: string;
+  products: ProductSale[];
+};
+
+// This function simulates fetching and processing initial data
+const getInitialData = () => {
+    const groupedByCustomer: Record<string, ProcessedDataItem> = {};
+
+    salesTargetPageData.forEach(item => {
+        // Only include customers with actual sales
+        if (item.sales.june > 0 || item.sales.july > 0 || item.sales.august > 0) {
+            if (!groupedByCustomer[item.customerName]) {
+                groupedByCustomer[item.customerName] = {
+                    customerName: item.customerName,
+                    customerCode: item.customerCode,
+                    products: [],
+                };
+            }
+            groupedByCustomer[item.customerName].products.push({
+                id: `${item.customerCode}-${item.product.productCode}`,
+                productCode: item.product.productCode,
+                productName: item.product.productName,
+                june: item.sales.june,
+                july: item.sales.july,
+                august: item.sales.august,
+                quantity: 0,
+                target: 0,
+                isNew: false,
+            });
+        }
+    });
+
+    return Object.values(groupedByCustomer);
+};
+
+
+const getProductPrice = (productCode: string, customerCode: string) => {
+    const product = allProducts.find(p => p.value === productCode);
+    const customer = allCustomers.find(c => c.value === customerCode);
+    if (!product || !customer) return 0;
+
+    const basePrice = product.basePrice;
+    let discount = 0;
+    switch (customer.grade) {
+        case 'A': discount = 0.1; break; // 10%
+        case 'B': discount = 0.05; break; // 5%
     }
+    return basePrice * (1 - discount);
 }
 
-const historicalSalesData: { [customerCode: string]: { [productCode: string]: { june: number; july: number; august: number } } } = {
-    'C-101': { // Cybernetics Inc.
-      'P-001': { june: 28000, july: 32000, august: 30000 },
-      'P-002': { june: 14000, july: 15000, august: 16000 },
-    },
-    'C-102': { // Stellar Solutions
-      'P-003': { june: 40000, july: 42000, august: 45000 },
-    },
-    'C-103': { // Galaxy Goods
-      'P-004': { june: 18000, july: 20000, august: 22000 },
-    },
-    'C-104': { // Nebula Supplies
-        'P-001': { june: 0, july: 0, august: 30000 },
-    }
-};
-
-const getInitialData = (): CustomerEntry[] => {
-  const customerMap: { [key: string]: CustomerEntry } = {};
-
-  salesReportData.forEach(reportItem => {
-    if (!customerMap[reportItem.customerCode]) {
-      customerMap[reportItem.customerCode] = {
-        id: reportItem.customerCode,
-        name: reportItem.customerName,
-        grade: reportItem.customerGrade,
-        isNew: false,
-        products: [],
-      };
-    }
-
-    const historicalProductSales = historicalSalesData[reportItem.customerCode]?.[reportItem.productCode] || { june: 0, july: 0, august: 0 };
-    
-    customerMap[reportItem.customerCode].products.push({
-      id: reportItem.productCode,
-      name: reportItem.productName,
-      september_target: reportItem.actual, // Default to actual for existing
-      quantity: Math.floor(Math.random() * 5) + 1, // Mock quantity
-      isNew: false,
-      sales: historicalProductSales,
-    });
-  });
-
-  return Object.values(customerMap);
-};
-
 export default function SalesTargetPage() {
-  const [customerData, setCustomerData] = useState<CustomerEntry[]>([]);
   const { toast } = useToast();
-  
   const router = useRouter();
   const { auth } = useAuth();
   const role = auth?.role;
   
-  const [customers, setCustomers] = useState(allCustomers.map(c => ({value: c.value, label: c.label})));
-
+  const [data, setData] = useState<ProcessedDataItem[]>([]);
+  
   useEffect(() => {
-    setCustomerData(getInitialData());
+    setData(getInitialData());
   }, []);
 
-  const handleAddCustomer = () => {
-    const newCustomer: CustomerEntry = {
-      id: uuidv4(),
-      name: '',
-      grade: 'C',
-      isNew: true,
-      products: [
-        {
-          id: uuidv4(),
-          name: '',
-          isNew: true,
-          sales: { june: 0, july: 0, august: 0 },
-          september_target: 0,
-          quantity: 1,
-        },
-      ],
-    };
-    setCustomerData(prev => [...prev, newCustomer]);
-  };
 
-  const handleAddProduct = (customerId: string) => {
-    const newProduct: ProductEntry = {
-      id: uuidv4(),
-      name: '',
-      isNew: true,
-      sales: { june: 0, july: 0, august: 0 },
-      september_target: 0,
-      quantity: 1,
-    };
-    setCustomerData(prev =>
-      prev.map(customer =>
-        customer.id === customerId
-          ? { ...customer, products: [...customer.products, newProduct] }
-          : customer
-      )
+  const handleAddProduct = (customerCode: string) => {
+    setData(prevData =>
+      prevData.map(customer => {
+        if (customer.customerCode === customerCode) {
+          const newProduct: ProductSale = {
+            id: uuidv4(),
+            productCode: '',
+            productName: '',
+            june: 0,
+            july: 0,
+            august: 0,
+            quantity: 0,
+            target: 0,
+            isNew: true,
+          };
+          return { ...customer, products: [...customer.products, newProduct] };
+        }
+        return customer;
+      })
     );
   };
   
+  const handleAddCustomer = () => {
+    const newCustomer: ProcessedDataItem = {
+      customerCode: '',
+      customerName: '',
+      products: [
+        {
+          id: uuidv4(),
+          productCode: '',
+          productName: '',
+          june: 0,
+          july: 0,
+          august: 0,
+          quantity: 0,
+          target: 0,
+          isNew: true,
+        },
+      ],
+    };
+    setData(prevData => [...prevData, newCustomer]);
+  };
+
+  const handleRemoveProduct = (customerCode: string, productId: string) => {
+    setData(prevData =>
+      prevData.map(customer => {
+        if (customer.customerCode === customerCode) {
+          const updatedProducts = customer.products.filter(p => p.id !== productId);
+          return { ...customer, products: updatedProducts };
+        }
+        return customer;
+      })
+    );
+  };
+  
+  const handleProductChange = useCallback((customerCode: string, productId: string, newProductCode: string) => {
+    const selectedProduct = allProducts.find(p => p.value === newProductCode);
+    if (!selectedProduct) return;
+
+    setData(prevData =>
+      prevData.map(customer => {
+        if (customer.customerCode === customerCode) {
+          const newProducts = customer.products.map(p => {
+            if (p.id === productId) {
+              const unitPrice = getProductPrice(newProductCode, customerCode);
+              const newTarget = p.quantity * unitPrice;
+              return { ...p, productCode: newProductCode, productName: selectedProduct.label, target: newTarget };
+            }
+            return p;
+          });
+          return { ...customer, products: newProducts };
+        }
+        return customer;
+      })
+    );
+  }, []);
+
+  const handleQuantityChange = useCallback((customerCode: string, productId: string, newQuantity: number) => {
+    setData(prevData =>
+      prevData.map(customer => {
+        if (customer.customerCode === customerCode) {
+          const newProducts = customer.products.map(p => {
+            if (p.id === productId) {
+              const unitPrice = getProductPrice(p.productCode, customer.customerCode);
+              const newTarget = newQuantity * unitPrice;
+              return { ...p, quantity: newQuantity, target: newTarget };
+            }
+            return p;
+          });
+          return { ...customer, products: newProducts };
+        }
+        return customer;
+      })
+    );
+  }, []);
+  
+  const handleCustomerChange = (currentCustomerCode: string, newCustomerValue: string) => {
+      const selectedCustomer = allCustomers.find(c => c.label.toLowerCase() === newCustomerValue.toLowerCase());
+      if(selectedCustomer) {
+        setData(prevData => prevData.map(customer => {
+            if(customer.customerCode === currentCustomerCode) { //this works for new customers where code is ''
+                return { ...customer, customerCode: selectedCustomer.value, customerName: selectedCustomer.label };
+            }
+            return customer;
+        }));
+      }
+  };
+
+  const handleAddNewCustomer = (newCustomerName: string) => {
+    const newCustomer = {
+      value: newCustomerName.toLowerCase().replace(/\s+/g, '-'),
+      label: newCustomerName,
+      grade: 'C', // Default grade
+    };
+    allCustomers.push(newCustomer);
+    
+    // Find the newly added (empty) customer row and update it
+    setData(prevData => prevData.map(customer => {
+        if(customer.customerCode === '') {
+            return { ...customer, customerCode: newCustomer.value, customerName: newCustomer.label };
+        }
+        return customer;
+    }));
+  };
+
   useEffect(() => {
     if (auth === undefined) return;
     if (!auth) {
@@ -163,120 +240,38 @@ export default function SalesTargetPage() {
     }
   }, [auth, router]);
   
-  const handleCustomerChange = (customerId: string, newCustomerValue: string) => {
-    const selectedCustomer = allCustomers.find(c => c.label.toLowerCase() === newCustomerValue.toLowerCase());
-    
-    setCustomerData(prev =>
-      prev.map(c => {
-        if (c.id === customerId) {
-          if(selectedCustomer) {
-            return {
-              ...c,
-              name: selectedCustomer.label,
-              grade: selectedCustomer.grade,
-            };
-          } else {
-             // Handle new customer typed in
-             const newCustomer = {
-                value: newCustomerValue.toLowerCase().replace(/\s+/g, '-'),
-                label: newCustomerValue
-             };
-             if (!customers.some(c => c.label.toLowerCase() === newCustomer.label.toLowerCase())) {
-                 setCustomers(prevCust => [...prevCust, newCustomer]);
-                 allCustomers.push({
-                     value: newCustomer.value,
-                     label: newCustomer.label,
-                     grade: 'C', // Default grade
-                 })
-             }
-             return {
-                 ...c,
-                 name: newCustomerValue,
-                 grade: 'C'
-             }
-          }
-        }
-        return c;
-      })
-    );
-  };
-
-  const handleProductChange = (customerId: string, productId: string, newProductValue: string) => {
-    const selectedProduct = allProducts.find(p => p.label.toLowerCase() === newProductValue.toLowerCase());
-
-    setCustomerData(prev =>
-      prev.map(customer => {
-        if (customer.id === customerId) {
-          const updatedProducts = customer.products.map(p => {
-            if (p.id === productId) {
-              const newTarget = calculateTarget(selectedProduct?.basePrice || 0, customer.grade, p.quantity);
-              return { ...p, name: selectedProduct?.label || '', id: selectedProduct?.value || p.id, september_target: newTarget };
-            }
-            return p;
-          });
-          return { ...customer, products: updatedProducts };
-        }
-        return customer;
-      })
-    );
-  };
-  
-  const calculateTarget = (basePrice: number, grade: string, quantity: number) => {
-      const discount = getDiscount(grade);
-      const finalPrice = basePrice * (1 - discount);
-      return finalPrice * quantity;
-  }
-
-  const handleQuantityChange = (customerId: string, productId: string, quantity: number) => {
-     setCustomerData(prev =>
-      prev.map(customer => {
-        if (customer.id === customerId) {
-          const updatedProducts = customer.products.map(p => {
-            if (p.id === productId) {
-              const productInfo = allProducts.find(ap => ap.value === p.id || ap.label === p.name);
-              const newTarget = calculateTarget(productInfo?.basePrice || 0, customer.grade, quantity);
-              return { ...p, quantity, september_target: newTarget };
-            }
-            return p;
-          });
-          return { ...customer, products: updatedProducts };
-        }
-        return customer;
-      })
-    );
-  };
-
-  const handleRemoveProduct = (customerId: string, productId: string) => {
-    setCustomerData(prev =>
-      prev.map(customer => {
-        if (customer.id === customerId) {
-          // If it's the last product, remove the customer as well
-          if (customer.products.length === 1) {
-            return null;
-          }
-          return { ...customer, products: customer.products.filter(p => p.id !== productId) };
-        }
-        return customer;
-      }).filter(Boolean) as CustomerEntry[]
-    );
-  };
-  
-  const handleRemoveCustomer = (customerId: string) => {
-      setCustomerData(prev => prev.filter(c => c.id !== customerId));
-  };
-
-  const handleSaveChanges = () => {
-    toast({
-        title: "Changes Saved",
-        description: "Your sales targets have been successfully updated.",
-    });
-  };
-
   const productOptions = useMemo(() => allProducts.map(p => ({ value: p.value, label: p.label })), []);
+  const customerOptions = useMemo(() => allCustomers.map(c => ({ value: c.value, label: c.label })), []);
 
   if (!role) {
     return null;
   }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const handleCancel = () => {
+    setData(getInitialData());
+    toast({
+      title: 'Changes Canceled',
+      description: 'Your changes have been discarded.',
+    });
+  };
+
+  const handleSave = () => {
+    // Here you would typically send the data to your backend
+    console.log('Saving data:', data);
+    toast({
+      title: 'Changes Saved',
+      description: 'Your sales targets have been updated.',
+    });
+  };
 
   return (
     <SidebarProvider>
@@ -284,11 +279,17 @@ export default function SalesTargetPage() {
       <SidebarInset>
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-semibold">월별/고객별 매출 목표</h1>
+            <Button type="button" variant="outline" onClick={() => router.push(role === 'admin' ? '/dashboard' : '/admin')}>
+              Back to Dashboard
+            </Button>
+          </div>
           <Card>
             <CardHeader>
-              <CardTitle>월별/제품별 매출 목표 설정</CardTitle>
+              <CardTitle>Sales Target Setting</CardTitle>
               <CardDescription>
-                고객 및 제품별로 월 매출 목표를 설정합니다. 수량 입력 시 목표 금액이 자동 계산됩니다.
+                고객별 제품 매출 현황을 확인하고 9월 매출 목표를 설정합니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -296,97 +297,107 @@ export default function SalesTargetPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[180px]">고객</TableHead>
-                    <TableHead className="w-[180px]">제품</TableHead>
-                    <TableHead className="text-right">6월 매출</TableHead>
-                    <TableHead className="text-right">7월 매출</TableHead>
-                    <TableHead className="text-right">8월 매출</TableHead>
-                    <TableHead className="w-[100px] text-right">수량</TableHead>
-                    <TableHead className="text-right">9월 목표</TableHead>
+                    <TableHead className="w-[200px]">제품</TableHead>
+                    <TableHead className="text-right">6월</TableHead>
+                    <TableHead className="text-right">7월</TableHead>
+                    <TableHead className="text-right">8월</TableHead>
+                    <TableHead className="w-[100px]">수량</TableHead>
+                    <TableHead className="text-right w-[150px]">9월 목표</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {customerData.map((customer, customerIndex) => (
-                    <Fragment key={customer.id}>
+                  {data.map((customer, customerIndex) => (
+                    <>
                       {customer.products.map((product, productIndex) => (
                         <TableRow key={product.id}>
                           {productIndex === 0 && (
-                            <TableCell rowSpan={customer.products.length + 1}>
-                              {customer.isNew ? (
-                                <Combobox
-                                    items={customers}
-                                    placeholder="Select customer..."
-                                    searchPlaceholder="Search or add customer..."
-                                    noResultsMessage="No customer found."
-                                    value={customer.name}
-                                    onValueChange={(value) => handleCustomerChange(customer.id, value)}
-                                    onAddNew={(newCustomer) => handleCustomerChange(customer.id, newCustomer)}
-                                />
-                              ) : (
-                                <div className="font-medium">{customer.name}</div>
-                              )}
+                            <TableCell rowSpan={customer.products.length} className="font-medium align-top">
+                               {customer.customerCode === '' ? (
+                                    <Combobox
+                                        items={customerOptions}
+                                        value={customer.customerName}
+                                        onValueChange={(value) => handleCustomerChange(customer.customerCode, value)}
+                                        onAddNew={handleAddNewCustomer}
+                                        placeholder="Select customer"
+                                        searchPlaceholder="Search or add..."
+                                        noResultsMessage="No customer found."
+                                    />
+                               ) : (
+                                 customer.customerName
+                               )}
                             </TableCell>
                           )}
                           <TableCell>
                             {product.isNew ? (
-                                <Combobox
+                               <Combobox
                                     items={productOptions}
-                                    placeholder="Select product..."
-                                    searchPlaceholder="Search product..."
+                                    value={product.productName}
+                                    onValueChange={(value) => {
+                                        const selected = productOptions.find(p => p.label.toLowerCase() === value.toLowerCase());
+                                        if (selected) {
+                                            handleProductChange(customer.customerCode, product.id, selected.value);
+                                        }
+                                    }}
+                                    placeholder="Select product"
+                                    searchPlaceholder="Search products..."
                                     noResultsMessage="No product found."
-                                    value={product.name}
-                                    onValueChange={(value) => handleProductChange(customer.id, product.id, value)}
                                 />
                             ) : (
-                              product.name
+                              product.productName
                             )}
                           </TableCell>
-                          <TableCell className="text-right">${product.sales.june.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">${product.sales.july.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">${product.sales.august.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">
-                              <Input
-                                  type="number"
-                                  value={product.quantity}
-                                  onChange={(e) => handleQuantityChange(customer.id, product.id, parseInt(e.target.value, 10) || 0)}
-                                  className="h-8 text-right"
-                                  min="0"
-                              />
+                          <TableCell className="text-right">{formatCurrency(product.june)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.july)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.august)}</TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              className="h-8 text-right"
+                              placeholder='0'
+                              value={product.quantity || ''}
+                              onChange={(e) => handleQuantityChange(customer.customerCode, product.id, parseInt(e.target.value, 10) || 0)}
+                            />
                           </TableCell>
-                          <TableCell className="text-right font-medium">${product.september_target.toLocaleString()}</TableCell>
-                          <TableCell className="text-center">
-                            <Button variant="ghost" size="icon" onClick={() => handleRemoveProduct(customer.id, product.id)}>
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                          <TableCell className="text-right font-medium">{formatCurrency(product.target)}</TableCell>
+                          <TableCell>
+                            {product.isNew && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRemoveProduct(customer.customerCode, product.id)}
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}
                       <TableRow>
-                          <TableCell>
-                            <Button variant="ghost" size="sm" onClick={() => handleAddProduct(customer.id)} className="w-full justify-start gap-2">
-                                <PlusCircle className="h-4 w-4" />
+                         <TableCell colSpan={8} className="py-2 pl-[195px]">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleAddProduct(customer.customerCode)}
+                                className="text-sm"
+                            >
+                                <PlusCircle className="mr-2 h-4 w-4" />
                                 Add Product
                             </Button>
-                          </TableCell>
-                          <TableCell colSpan={6}></TableCell>
+                        </TableCell>
                       </TableRow>
-                       {customerIndex < customerData.length - 1 && (
-                          <TableRow>
-                            <TableCell colSpan={8} className='p-0'>
-                                <div className="border-t"></div>
-                            </TableCell>
-                          </TableRow>
-                       )}
-                    </Fragment>
+                    </>
                   ))}
                 </TableBody>
               </Table>
             </CardContent>
-            <CardFooter className="justify-between border-t p-6">
-                <Button variant="outline" onClick={handleAddCustomer}>Add Customer</Button>
+            <CardFooter className="flex justify-between border-t px-6 py-4">
+                 <Button onClick={handleAddCustomer}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Customer
+                </Button>
                 <div className="flex gap-2">
-                    <Button variant="outline">Cancel</Button>
-                    <Button onClick={handleSaveChanges}>Save Changes</Button>
+                    <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+                    <Button onClick={handleSave}>Save Changes</Button>
                 </div>
             </CardFooter>
           </Card>
@@ -395,4 +406,3 @@ export default function SalesTargetPage() {
     </SidebarProvider>
   );
 }
-
