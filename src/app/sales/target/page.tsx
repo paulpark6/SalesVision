@@ -10,11 +10,10 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -26,156 +25,174 @@ import {
 import {
   customers as allCustomers,
   products as allProducts,
+  salesReportData,
 } from '@/lib/mock-data';
 import type { SalesTargetCustomer } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Trash2, PlusCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
 import { Combobox } from '@/components/ui/combobox';
 import { v4 as uuidv4 } from 'uuid';
-import { useAuth } from '@/hooks/use-auth';
-import { useToast } from '@/hooks/use-toast';
 
-// In a real application, this would come from an API call
-const salesHistory = [
-    { customerCode: 'C-101', productCode: 'p-001', sales: { june: 1500, july: 1600, august: 1700 } },
-    { customerCode: 'C-101', productCode: 'p-002', sales: { june: 800, july: 900, august: 850 } },
-    { customerCode: 'C-102', productCode: 'p-003', sales: { june: 2200, july: 2100, august: 2300 } },
-    { customerCode: 'C-103', productCode: 'p-004', sales: { june: 0, july: 1200, august: 1300 } },
+// This is a temporary data structure to simulate historical sales.
+// In a real application, this would come from a database query.
+const historicalSalesData = [
+    { customerCode: "C-101", productCode: "p-001", sales: { june: 12000, july: 13500, august: 14000 } },
+    { customerCode: "C-102", productCode: "p-002", sales: { june: 8000, july: 8500, august: 9000 } },
+    { customerCode: "C-102", productCode: "p-003", sales: { june: 3000, july: 3200, august: 3500 } },
+    { customerCode: "C-103", productCode: "p-004", sales: { june: 21000, july: 22000, august: 20500 } },
 ];
 
 
 const getInitialData = (): SalesTargetCustomer[] => {
     const customerMap: { [key: string]: SalesTargetCustomer } = {};
 
-    salesHistory.forEach(historyItem => {
-        const customerInfo = allCustomers.find(c => c.value === historyItem.customerCode);
-        if (!customerInfo) return;
+    historicalSalesData.forEach(item => {
+        const customerInfo = allCustomers.find(c => c.value === item.customerCode);
+        const productInfo = allProducts.find(p => p.value === item.productCode);
 
-        if (!customerMap[customerInfo.value]) {
-            customerMap[customerInfo.value] = {
+        if (!customerInfo || !productInfo) return;
+
+        if (!customerMap[item.customerCode]) {
+            customerMap[item.customerCode] = {
                 id: customerInfo.value,
-                customerName: customerInfo.label,
-                customerCode: customerInfo.value,
-                customerGrade: customerInfo.grade,
+                name: customerInfo.label,
+                grade: customerInfo.grade,
                 isNew: false,
                 products: [],
             };
         }
-        
-        const productInfo = allProducts.find(p => p.value === historyItem.productCode);
-        if (!productInfo) return;
 
-        const productTarget = {
+        customerMap[item.customerCode].products.push({
             id: productInfo.value,
-            productName: productInfo.label,
-            productCode: productInfo.value,
-            quantity: 0,
-            target: 0,
+            name: productInfo.label,
             isNew: false,
             sales: {
-                june: historyItem.sales.june,
-                july: historyItem.sales.july,
-                august: historyItem.sales.august,
-            }
-        };
-
-        customerMap[customerInfo.value].products.push(productTarget);
+                june: item.sales.june,
+                july: item.sales.july,
+                august: item.sales.august,
+            },
+            septemberTarget: 0,
+            quantity: 0,
+        });
     });
-    
-    // Add customers who are in allCustomers but not in salesHistory
-    allCustomers.forEach(customer => {
-        if (!customerMap[customer.value]) {
-            customerMap[customer.value] = {
-                id: customer.value,
-                customerName: customer.label,
-                customerCode: customer.value,
-                customerGrade: customer.grade,
+
+    // Add customers from salesReportData who might not be in historicalSalesData
+    salesReportData.forEach(reportItem => {
+        if (!customerMap[reportItem.customerCode]) {
+            const customerInfo = allCustomers.find(c => c.value === reportItem.customerCode);
+             if (!customerInfo) return;
+             customerMap[reportItem.customerCode] = {
+                id: customerInfo.value,
+                name: customerInfo.label,
+                grade: customerInfo.grade,
                 isNew: false,
-                products: [], // Start with no products, can be added by user
+                products: [], // Start with empty products, can be added by user
             };
         }
     });
 
 
-    return Object.values(customerMap).sort((a,b) => a.customerName.localeCompare(b.customerName));
+    // Ensure all customers are included, even if they have no sales
+    allCustomers.forEach(customer => {
+        if (!customerMap[customer.value]) {
+            customerMap[customer.value] = {
+                id: customer.value,
+                name: customer.label,
+                grade: customer.grade,
+                isNew: false,
+                products: [{
+                    id: uuidv4(),
+                    name: '',
+                    isNew: true,
+                    sales: { june: 0, july: 0, august: 0 },
+                    septemberTarget: 0,
+                    quantity: 0,
+                }],
+            };
+        }
+    });
+
+
+    return Object.values(customerMap);
 };
 
 
-export default function SalesTargetPage() {
-  const [customerData, setCustomerData] = useState<SalesTargetCustomer[]>([]);
-  const { toast } = useToast();
-
-  const getDiscount = (grade: string) => {
+const getDiscount = (grade: string) => {
     switch (grade) {
       case 'A': return 0.1; // 10%
       case 'B': return 0.05; // 5%
       default: return 0;
     }
-  };
+}
+
+
+export default function SalesTargetPage() {
+  const [customerData, setCustomerData] = useState<SalesTargetCustomer[]>([]);
 
   useEffect(() => {
-    const initialData = getInitialData();
-    setCustomerData(initialData);
+    setCustomerData(getInitialData());
   }, []);
-
-  const handleProductChange = (customerIndex: number, productIndex: number, field: string, value: any) => {
-    const newData = [...customerData];
-    const customer = newData[customerIndex];
+  
+  const handleProductChange = (customerIndex: number, productIndex: number, newProductId: string) => {
+    const newCustomerData = [...customerData];
+    const customer = newCustomerData[customerIndex];
     const product = customer.products[productIndex];
     
-    if (field === 'product') {
-        const selectedProduct = allProducts.find(p => p.label.toLowerCase() === value.toLowerCase());
-        if(selectedProduct) {
-            product.productName = selectedProduct.label;
-            product.productCode = selectedProduct.value;
-        } else {
-            product.productName = value;
-            product.productCode = '';
-        }
-    } else if (field === 'quantity') {
-        product.quantity = Number(value);
+    const selectedProduct = allProducts.find(p => p.value.toLowerCase() === newProductId.toLowerCase());
+
+    if (selectedProduct) {
+        product.id = selectedProduct.value;
+        product.name = selectedProduct.label;
+        
+        const basePrice = selectedProduct.basePrice;
+        const discount = getDiscount(customer.grade);
+        const finalPrice = basePrice * (1 - discount);
+        product.septemberTarget = finalPrice * (product.quantity || 0);
     }
-    
-    // Recalculate target
-    const productInfo = allProducts.find(p => p.value === product.productCode);
-    if (productInfo) {
-      const discount = getDiscount(customer.customerGrade);
-      const unitPrice = productInfo.basePrice * (1 - discount);
-      product.target = product.quantity * unitPrice;
-    } else {
-      product.target = 0;
+    setCustomerData(newCustomerData);
+  };
+
+  const handleQuantityChange = (customerIndex: number, productIndex: number, quantity: number) => {
+    const newCustomerData = [...customerData];
+    const customer = newCustomerData[customerIndex];
+    const product = customer.products[productIndex];
+
+    const selectedProduct = allProducts.find(p => p.value === product.id);
+    if(selectedProduct) {
+        const basePrice = selectedProduct.basePrice;
+        const discount = getDiscount(customer.grade);
+        const finalPrice = basePrice * (1 - discount);
+        
+        product.quantity = quantity;
+        product.septemberTarget = finalPrice * quantity;
     }
 
-    setCustomerData(newData);
+    setCustomerData(newCustomerData);
   };
-  
-  const handleAddNewProduct = (customerIndex: number) => {
-    const newData = [...customerData];
-    newData[customerIndex].products.push({
+
+  const addProduct = (customerIndex: number) => {
+    const newCustomerData = [...customerData];
+    newCustomerData[customerIndex].products.push({
       id: uuidv4(),
-      productName: '',
-      productCode: '',
-      quantity: 0,
-      target: 0,
+      name: '',
       isNew: true,
-      sales: { june: 0, july: 0, august: 0 }
+      sales: { june: 0, july: 0, august: 0 },
+      septemberTarget: 0,
+      quantity: 0,
     });
-    setCustomerData(newData);
-  };
-
-  const handleRemoveProduct = (customerIndex: number, productIndex: number) => {
-    const newData = [...customerData];
-    newData[customerIndex].products.splice(productIndex, 1);
-    setCustomerData(newData);
+    setCustomerData(newCustomerData);
   };
   
-  const handleSaveTargets = () => {
-    // Logic to save the data would go here
-    console.log('Saving data:', JSON.stringify(customerData, null, 2));
-    toast({
-        title: "Targets Saved",
-        description: "The new sales targets have been successfully saved.",
-    });
+  const removeProduct = (customerIndex: number, productIndex: number) => {
+    const newCustomerData = [...customerData];
+    newCustomerData[customerIndex].products.splice(productIndex, 1);
+    // If all products are removed, add a blank one
+    if(newCustomerData[customerIndex].products.length === 0) {
+        addProduct(customerIndex);
+    }
+    setCustomerData(newCustomerData);
   };
 
   const router = useRouter();
@@ -189,6 +206,10 @@ export default function SalesTargetPage() {
     }
   }, [auth, router]);
 
+  if (!role) {
+    return null;
+  }
+  
   const handleBack = () => {
     const dashboardPath = role === 'admin' ? '/dashboard' : '/admin';
     router.push(dashboardPath);
@@ -199,12 +220,12 @@ export default function SalesTargetPage() {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   };
-
-  if (!role) {
-    return null;
-  }
+  
+  const productOptions = useMemo(() => allProducts.map(p => ({ value: p.value, label: p.label })), []);
 
   return (
     <SidebarProvider>
@@ -214,105 +235,106 @@ export default function SalesTargetPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-semibold">9월 매출 목표 설정</h1>
+            <Button type="button" variant="outline" onClick={handleBack}>
+              Back to Dashboard
+            </Button>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>고객별, 제품별 목표 수립</CardTitle>
+              <CardTitle>고객별/제품별 매출 목표</CardTitle>
               <CardDescription>
-                과거 3개월 매출 실적을 참고하여 9월 목표를 설정합니다. 신규 고객 및 제품을 추가하여 목표를 관리할 수 있습니다.
+                지난 3개월간의 실적을 참고하여 9월 매출 목표를 설정합니다. 신규 고객 및 제품을 추가하여 목표를 관리할 수 있습니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table className="min-w-max">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[15%]">고객명</TableHead>
-                      <TableHead className="w-[20%]">제품명</TableHead>
-                      <TableHead className="text-right">6월 매출</TableHead>
-                      <TableHead className="text-right">7월 매출</TableHead>
-                      <TableHead className="text-right">8월 매출</TableHead>
-                      <TableHead className="w-[100px]">수량</TableHead>
-                      <TableHead className="text-right w-[150px]">9월 목표</TableHead>
-                      <TableHead className="w-[50px]">삭제</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {customerData.map((customer, customerIndex) => (
-                      <React.Fragment key={customer.id}>
-                        {customer.products.map((product, productIndex) => (
-                          <TableRow key={product.id}>
-                            {productIndex === 0 && (
-                              <TableCell rowSpan={customer.products.length + 1} className="font-medium align-top pt-6">
-                                {customer.customerName}
-                              </TableCell>
-                            )}
-                            <TableCell>
-                              {product.isNew ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[150px]">고객명</TableHead>
+                    <TableHead className="w-[200px]">제품명</TableHead>
+                    <TableHead className="text-right">6월 매출</TableHead>
+                    <TableHead className="text-right">7월 매출</TableHead>
+                    <TableHead className="text-right">8월 매출</TableHead>
+                    <TableHead className="w-[100px] text-right">수량</TableHead>
+                    <TableHead className="text-right w-[150px]">9월 목표</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {customerData.map((customer, customerIndex) => (
+                    <React.Fragment key={customer.id}>
+                      {customer.products.map((product, productIndex) => (
+                        <TableRow key={product.id}>
+                          {productIndex === 0 && (
+                            <TableCell rowSpan={customer.products.length} className="font-medium align-top pt-6">
+                              {customer.name}
+                            </TableCell>
+                          )}
+                          <TableCell>
+                            {product.isNew ? (
                                 <Combobox
-                                  items={allProducts}
-                                  placeholder="제품 선택"
-                                  searchPlaceholder="제품 검색..."
-                                  noResultsMessage="제품을 찾을 수 없습니다."
-                                  value={product.productName}
-                                  onValueChange={(value) => handleProductChange(customerIndex, productIndex, 'product', value)}
+                                    items={productOptions}
+                                    value={product.name}
+                                    onValueChange={(newValue) => {
+                                        handleProductChange(customerIndex, productIndex, newValue);
+                                    }}
+                                    placeholder="제품 선택..."
+                                    searchPlaceholder="제품 검색..."
+                                    noResultsMessage="제품 없음."
                                 />
-                              ) : (
-                                product.productName
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">{formatCurrency(product.sales.june)}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(product.sales.july)}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(product.sales.august)}</TableCell>
-                            <TableCell>
-                               <Input
-                                  type="number"
-                                  value={product.quantity}
-                                  onChange={(e) => handleProductChange(customerIndex, productIndex, 'quantity', e.target.value)}
-                                  className="h-8 text-right"
-                                  min="0"
+                            ) : (
+                              product.name
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.sales.june)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.sales.july)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(product.sales.august)}</TableCell>
+                           <TableCell className="text-right">
+                                <Input
+                                    type="number"
+                                    value={product.quantity || ''}
+                                    onChange={(e) => handleQuantityChange(customerIndex, productIndex, parseInt(e.target.value) || 0)}
+                                    className="h-8 text-right"
+                                    placeholder='0'
+                                    min="0"
                                 />
-                            </TableCell>
-                            <TableCell className="text-right font-medium">{formatCurrency(product.target)}</TableCell>
-                            <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleRemoveProduct(customerIndex, productIndex)}
-                              >
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
+                           </TableCell>
+                          <TableCell className="text-right font-medium">{formatCurrency(product.septemberTarget)}</TableCell>
+                          <TableCell>
+                            {customer.products.length > 1 && (
+                                 <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => removeProduct(customerIndex, productIndex)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      <TableRow>
+                          <TableCell colSpan={8} className="py-2 px-4">
+                             <Button variant="ghost" size="sm" onClick={() => addProduct(customerIndex)} className='-ml-2'>
+                                <PlusCircle className="h-4 w-4 mr-2" />
+                                Add Product
+                            </Button>
+                          </TableCell>
+                      </TableRow>
+                        {customerIndex < customerData.length -1 && (
+                          <TableRow>
+                            <TableCell colSpan={8} className='p-0'>
+                                <div className="border-t"></div>
                             </TableCell>
                           </TableRow>
-                        ))}
-                        <TableRow>
-                            <TableCell colSpan={7} className="py-2 pl-2">
-                                <Button variant="outline" size="sm" onClick={() => handleAddNewProduct(customerIndex)}>
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    Add Product
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                        {customerIndex < customerData.length -1 && (
-                             <TableRow>
-                                <TableCell colSpan={8} className='p-0'>
-                                    <div className="border-t my-2"></div>
-                                </TableCell>
-                            </TableRow>
                         )}
-                      </React.Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </React.Fragment>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
-            <CardFooter className="flex justify-end gap-2 pt-4">
-               <Button type="button" variant="outline" onClick={handleBack}>
-                취소
-              </Button>
-              <Button onClick={handleSaveTargets}>
-                목표 저장
-              </Button>
+            <CardFooter className="flex justify-end gap-2">
+                 <Button variant="default">Save Targets</Button>
             </CardFooter>
           </Card>
         </main>
@@ -320,3 +342,5 @@ export default function SalesTargetPage() {
     </SidebarProvider>
   );
 }
+
+    
