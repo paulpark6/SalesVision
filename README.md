@@ -35,5 +35,24 @@ This will start the application, and you can view it in your browser at [http://
 -   `npm run start`: Starts a production server.
 -   `npm run lint`: Lints the code to check for errors.
 
+## Building and Running with Docker
 
-# new edit
+You can containerize the application with the provided `Dockerfile` and run it locally before
+deploying to Cloud Run.
+
+### Build the image
+
+```bash
+docker build -t salesvision-web .
+```
+
+### Run the container locally
+
+The container listens on port `8080` (Cloud Run's default). Map it to a port on your machine to test
+the production build locally.
+
+```bash
+docker run --rm -p 8080:8080 salesvision-web
+```
+
+Then open [http://localhost:8080](http://localhost:8080) to verify the site.

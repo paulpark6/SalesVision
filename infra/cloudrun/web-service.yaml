@@ -1,0 +1,22 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: salesvision-web
+  annotations:
+    run.googleapis.com/region: us-central1 # TODO: update to your Cloud Run region
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/min-instances: "0"
+        run.googleapis.com/max-instances: "3"
+    spec:
+      containers:
+        - image: gcr.io/PROJECT_ID/salesvision-web:latest # TODO: set the deployed image
+          env:
+            - name: API_BASE_URL
+              value: TODO_SET_API_BASE_URL
+            - name: IAP_AUDIENCE
+              value: TODO_SET_IAP_AUDIENCE
+            - name: IAP_JWT_HEADER
+              value: X-Goog-IAP-JWT-Assertion
