@@ -31,9 +31,10 @@ This will start the application, and you can view it in your browser at [http://
 
 ### Other Scripts
 
--   `npm run build`: Builds the application for production.
--   `npm run start`: Starts a production server.
--   `npm run lint`: Lints the code to check for errors.
+- `npm run build`: Builds the application for production.
+- `npm run start`: Starts a production server.
+- `npm run lint`: Lints the code to check for errors.
+- See `docs/local-db.md` for the local PostgreSQL development setup.
 
 ## Building and Running with Docker
 

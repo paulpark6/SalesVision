@@ -1,8 +1,5 @@
 // @/lib/mock-data.ts
 
-import type { NavItem } from '@/types/nav-item';
-import { PlaceHolderImages } from './placeholder-images';
-
 export type Role = 'admin' | 'manager' | 'employee';
 
 export const roles: { value: Role; label: string }[] = [
@@ -106,7 +103,14 @@ export type CustomerProductSale = {
   salesTarget: number;
   salesAmount: number;
 };
-export const employeeCustomerSales: { id: string, customerName: string, salesTarget: number, salesAmount: number }[] = [
+export type EmployeeCustomerSale = {
+  id: string;
+  customerName: string;
+  salesTarget: number;
+  salesAmount: number;
+};
+
+export const employeeCustomerSales: EmployeeCustomerSale[] = [
     { id: 'cs1', customerName: 'Cybernetics Inc.', salesTarget: 15000, salesAmount: 16500 },
     { id: 'cs2', customerName: 'Starlight Enterprises', salesTarget: 10000, salesAmount: 9500 },
     { id: 'cs3', customerName: 'Omega Solutions', salesTarget: 5000, salesAmount: 6000 },
@@ -291,7 +295,20 @@ export const monthlyDetailReportData: MonthlyDetail[] = [
   // Data for other months can be added here
 ];
 
-export const commissionData = [
+export type CommissionSale = {
+  type: '수입' | '현지';
+  salePrice: number;
+  costPrice: number;
+  customerType: 'own' | 'transfer';
+};
+
+export type CommissionEntry = {
+  employeeId: string;
+  employeeName: string;
+  sales: CommissionSale[];
+};
+
+export const commissionData: CommissionEntry[] = [
   {
     employeeId: 'jane-smith',
     employeeName: 'Jane Smith',
@@ -323,14 +340,34 @@ export const commissionData = [
 ];
 
 
-export const customerData = [
+export type CustomerRecord = {
+  employee: string;
+  employeeId: string;
+  customerName: string;
+  customerCode: string;
+  customerGrade: string;
+  customerType: 'own' | 'transfer' | 'pending';
+  monthlySales: { month: number; actual: number; average: number }[];
+  yearlySales: { year: number; amount: number }[];
+  creditBalance: number;
+  contact: {
+    name: string;
+    position: string;
+    phone: string;
+    address: string;
+    email: string | null;
+  };
+  companyOverview: string;
+};
+
+export const customerData: CustomerRecord[] = [
     {
         employee: 'Jane Smith',
         employeeId: 'jane-smith',
         customerName: 'Cybernetics Inc.',
         customerCode: 'A0001',
         customerGrade: 'A',
-        customerType: 'own' as const,
+        customerType: 'own',
         monthlySales: [
             { month: 9, actual: 16500, average: 15000 },
         ],
@@ -353,7 +390,7 @@ export const customerData = [
         customerName: 'Hyperion Corp.',
         customerCode: 'B0001',
         customerGrade: 'B',
-        customerType: 'transfer' as const,
+        customerType: 'transfer',
         monthlySales: [
             { month: 9, actual: 21000, average: 20000 },
         ],
@@ -376,7 +413,7 @@ export const customerData = [
         customerName: 'Omega Solutions',
         customerCode: 'C0001',
         customerGrade: 'C',
-        customerType: 'own' as const,
+        customerType: 'own',
         monthlySales: [
             { month: 9, actual: 6000, average: 5000 },
         ],
@@ -399,7 +436,7 @@ export const customerData = [
         customerName: 'Stark Industries',
         customerCode: 'A0002',
         customerGrade: 'A',
-        customerType: 'pending' as const,
+        customerType: 'pending',
         monthlySales: [],
         yearlySales: [],
         creditBalance: 0,
@@ -467,16 +504,3 @@ export const salesTargetManagementData: CustomerTarget[] = [
         ]
     },
 ];
-
-const v4 = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
-declare global {
-  interface Array<T> {
-    find(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): T | undefined;
-  }
-}

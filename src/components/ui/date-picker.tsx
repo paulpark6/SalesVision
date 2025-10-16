@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/popover"
 
 type DatePickerProps = {
-    value?: Date;
-    onSelect?: (date?: Date) => void;
-}
+  value?: Date;
+  onSelect?: (date?: Date) => void;
+  disabled?: boolean;
+};
 
-export function DatePicker({ value, onSelect }: DatePickerProps) {
+export function DatePicker({ value, onSelect, disabled = false }: DatePickerProps) {
   const [date, setDate] = React.useState<Date | undefined>(value);
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -27,7 +28,16 @@ export function DatePicker({ value, onSelect }: DatePickerProps) {
     setDate(value);
   }, [value]);
 
+  React.useEffect(() => {
+    if (disabled && isOpen) {
+      setIsOpen(false);
+    }
+  }, [disabled, isOpen]);
+
   const handleSelect = (selectedDate?: Date) => {
+    if (disabled) {
+      return;
+    }
     setDate(selectedDate);
     if (onSelect) {
       onSelect(selectedDate);
@@ -35,8 +45,14 @@ export function DatePicker({ value, onSelect }: DatePickerProps) {
     setIsOpen(false); // Close popover on select
   }
 
+  const handleOpenChange = (open: boolean) => {
+    if (!disabled) {
+      setIsOpen(open);
+    }
+  };
+
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={disabled ? false : isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -44,6 +60,7 @@ export function DatePicker({ value, onSelect }: DatePickerProps) {
             "w-full justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
+          disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : <span>Pick a date</span>}
