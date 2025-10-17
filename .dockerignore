@@ -1,5 +1,8 @@
 node_modules
 .next
+apps/web/node_modules
+apps/web/.next
+apps/api/.venv
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

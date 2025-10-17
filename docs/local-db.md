@@ -10,20 +10,17 @@ Your FastAPI backend connects to it automatically; the frontend never talks to t
 ```
 repo-root/
 ├─ apps/
-│  ├─ frontend/           # Next.js (no DB access)
-│  └─ backend/            # FastAPI + SQLAlchemy
+│  ├─ web/                # Next.js front-end (no DB access)
+│  └─ api/                # FastAPI + SQLAlchemy
 │     ├─ app/
-│     │  ├─ db/
-│     │  │  ├─ models.py
-│     │  │  ├─ session.py        # engine + async session
-│     │  │  └─ __init__.py
+│     │  ├─ db/           # (add when you create SQLAlchemy models)
 │     │  ├─ main.py
 │     │  └─ ...
-│     ├─ alembic/                # migrations
-│     ├─ alembic.ini
 │     └─ requirements.txt
+├─ db/                    # Alembic migrations & seeds
+├─ docker/
+│  └─ docker-compose.dev.yml
 ├─ infra/
-│  ├─ docker-compose.yml         # local Postgres + backend + frontend
 │  └─ cloudrun/
 │     ├─ api-service.yaml
 │     └─ web-service.yaml
@@ -46,7 +43,7 @@ Create and update tables with **Alembic** migrations.
 
 ---
 
-## ⚙️ `infra/docker-compose.yml`
+## ⚙️ `docker/docker-compose.dev.yml`
 
 ```yaml
 version: "3.9"
@@ -61,16 +58,16 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
 
-  backend:
-    build: ../apps/backend
-    env_file: ../apps/backend/.env
+  api:
+    build: ../apps/api
+    env_file: ../.env
     depends_on: [db]
     ports: ["8000:8000"]
 
-  frontend:
-    build: ../apps/frontend
-    env_file: ../apps/frontend/.env
-    depends_on: [backend]
+  web:
+    build: ../apps/web
+    env_file: ../.env
+    depends_on: [api]
     ports: ["3000:3000"]
 
 volumes:
@@ -79,7 +76,7 @@ volumes:
 
 ---
 
-## 🔑 Backend env file (`apps/backend/.env`)
+## 🔑 Backend env file (`apps/api/.env`)
 
 ```
 DATABASE_URL=postgresql+asyncpg://app:app@db:5432/appdb
@@ -89,7 +86,7 @@ SESSION_SECRET=dev-session-secret
 
 ---
 
-## 🐍 Database session helper (`apps/backend/app/db/session.py`)
+## 🐍 Database session helper (`apps/api/app/db/session.py`)
 
 ```python
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -111,7 +108,7 @@ async def get_db():
 ## ▶️ Run the stack
 
 ```bash
-docker compose -f infra/docker-compose.yml up --build
+docker compose -f docker/docker-compose.dev.yml up --build
 ```
 
 You get:
@@ -158,7 +155,7 @@ You get:
 ## 🪄 Apply migrations (after Alembic init)
 
 ```bash
-cd apps/backend
+cd apps/api
 alembic upgrade head
 ```
 
@@ -171,8 +168,8 @@ Tables live inside the `db` container’s persistent volume `dbdata`.
 You now have a full **local stack**:
 
 * persistent Postgres
-* backend wired through `DATABASE_URL`
-* frontend on port 3000
+* FastAPI backend wired through `DATABASE_URL`
+* Next.js frontend on port 3000
 
 All ready for new models, migrations, and OAuth integration.
 ```
