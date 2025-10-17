@@ -1,6 +1,6 @@
 # SalesVision Dashboard
 
-This is a Next.js application for a sales analytics dashboard, built with Firebase Studio.
+This is a Next.js application for a sales analytics dashboard with a local-first development stack.
 
 ## Getting Started
 

@@ -25,13 +25,6 @@ import {
   FileClock,
   ShoppingBasket,
 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from './ui/sidebar';
 import {
@@ -179,22 +172,6 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                     </>
                 )}
             </nav>
-        </div>
-        <div className="mt-auto p-4">
-          <Card>
-            <CardHeader className="p-2 pt-0 md:p-4">
-              <CardTitle>Upgrade to Pro</CardTitle>
-              <CardDescription>
-                Unlock all features and get unlimited access to our support
-                team.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-              <Button size="sm" className="w-full">
-                Upgrade
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </Sidebar>
