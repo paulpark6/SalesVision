@@ -1,5 +1,13 @@
+.next
 node_modules
-.next/cache
+coverage
+dist
 .git
+.gitignore
 .vscode
+.DS_Store
 *.log
+*.local
+.env
+.env.*
+tsconfig.tsbuildinfo

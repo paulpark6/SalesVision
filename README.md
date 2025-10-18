@@ -72,12 +72,66 @@ Services started:
 
 Update environment values in `.env.example` (copy to `.env`) before running.
 
+## Front-end Overview
+
+The Next.js app lives in `apps/web` and follows an app router structure:
+
+- `src/app` hosts route segments and page components.
+- `src/components` provides reusable UI elements built on Radix UI.
+- `src/lib` contains data helpers and mock data (used by dashboard views).
+- `public/` (currently empty) is reserved for static assets such as favicons or Open Graph images.
+
+The project uses path aliases (`@/...`) defined in both `tsconfig.json` and `jsconfig.json`, so keep import casing consistent with the actual file paths (Linux builds are case sensitive).
+
 ## Deployment Notes
 
 - `apps/web/Dockerfile` builds the front-end container for Cloud Run.
 - `apps/api/Dockerfile` builds the FastAPI service.
 - Store migration files in `db/` and wire them into Cloud Build/Cloud Run jobs as needed.
 - Infrastructure configs remain under `infra/`; adjust paths to reference the new locations when you update Terraform or gcloud scripts.
+
+### Deploying `apps/web` to Cloud Run
+
+The commands below reproduce the deploy that produced the live service URL shown afterward. Run them from the repository root.
+
+```bash
+# 1. Build linux/amd64 image locally (needed on Apple Silicon)
+docker buildx build --platform linux/amd64 -t web-local apps/web --load
+
+# 2. (Optional) Smoke test locally
+docker run --rm -p 3000:8080 -e PORT=8080 --platform linux/amd64 web-local
+
+# 3. Tag and push to Artifact Registry
+PROJECT_ID=youngintlsaleswebapp
+REGION=us-central1
+REPO=salesvision-web
+IMAGE=frontend
+TAG="$(git rev-parse --short HEAD 2>/dev/null || date +%Y%m%d%H%M)-amd64"
+
+gcloud auth configure-docker $REGION-docker.pkg.dev
+docker tag web-local $REGION-docker.pkg.dev/$PROJECT_ID/$REPO/$IMAGE:$TAG
+docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO/$IMAGE:$TAG
+
+# 4. Deploy to Cloud Run
+gcloud run deploy salesvision-frontend \
+  --image $REGION-docker.pkg.dev/$PROJECT_ID/$REPO/$IMAGE:$TAG \
+  --region $REGION \
+  --allow-unauthenticated
+
+# 5. Retrieve service URL
+gcloud run services describe salesvision-frontend \
+  --region $REGION \
+  --format='value(status.url)'
+```
+
+If you rebuild with a different tag, re-run steps 3–5. Ensure the Cloud Run service has `PORT` injected (handled automatically) and that the container’s start script continues to bind to `0.0.0.0`.
+
+### Live Environment
+
+- **Cloud Run service**: `salesvision-frontend`
+- **URL**: https://salesvision-frontend-244979794407.us-central1.run.app
+
+Use this URL for smoke testing and to connect a custom domain through Cloud Run or Cloud DNS once you are ready.
 
 ## Next Steps
 

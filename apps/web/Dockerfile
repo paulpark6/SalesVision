@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-bookworm-slim AS base
+FROM node:18-bookworm-slim AS base
 WORKDIR /app
 
 FROM base AS deps
@@ -23,7 +23,7 @@ RUN npm ci --omit=dev
 
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
-COPY --from=build /app/next.config.ts ./next.config.ts
+COPY --from=build /app/next.config.js ./next.config.js
 COPY --from=build /app/tailwind.config.ts ./tailwind.config.ts
 COPY --from=build /app/postcss.config.mjs ./postcss.config.mjs
 COPY --from=build /app/components.json ./components.json
