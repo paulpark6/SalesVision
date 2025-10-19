@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/button';
 import { commissionData } from '@/lib/mock-data';
 
 type Sale = {
-  type: '수입' | '현지';
+  type: 'Imported' | 'Local';
   salePrice: number;
   costPrice: number;
   customerType: 'own' | 'transfer';
@@ -39,8 +39,8 @@ const calculateCommission = (sales: Sale[]) => {
   let totalSales = 0;
 
   // --- Imported Products Commission ---
-  const selfDevImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'own');
-  const transferredImportSales = sales.filter(s => s.type === '수입' && s.customerType === 'transfer');
+  const selfDevImportSales = sales.filter(s => s.type === 'Imported' && s.customerType === 'own');
+  const transferredImportSales = sales.filter(s => s.type === 'Imported' && s.customerType === 'transfer');
 
   // Self-developed customer rules for imported goods
   let selfDevImportTotal = 0;
@@ -63,8 +63,8 @@ const calculateCommission = (sales: Sale[]) => {
   });
 
   // --- Local Products Commission ---
-  const selfDevLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'own');
-  const transferredLocalSales = sales.filter(s => s.type === '현지' && s.customerType === 'transfer');
+  const selfDevLocalSales = sales.filter(s => s.type === 'Local' && s.customerType === 'own');
+  const transferredLocalSales = sales.filter(s => s.type === 'Local' && s.customerType === 'transfer');
 
   // Function to get commission rate for local products based on margin
   const getLocalCommissionRate = (salePrice: number, costPrice: number) => {
@@ -150,7 +150,7 @@ export default function CommissionsPage() {
             <CardHeader>
               <CardTitle>Commission Overview</CardTitle>
               <CardDescription>
-                오너(Admin)가 확정한 직원별 커미션 내역입니다. 관리자는 전체 직원의 커미션을 검토할 수 있습니다.
+                Owner-approved commission summary by employee. Managers can review payouts across the team.
               </CardDescription>
             </CardHeader>
             <CardContent>

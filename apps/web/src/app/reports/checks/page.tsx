@@ -118,16 +118,16 @@ export default function CheckReportPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">수표 결제 보고서</h1>
+                <h1 className="text-2xl font-semibold">Check Payments Report</h1>
                 <Button type="button" variant="outline" onClick={handleBack}>
                   Back to Dashboard
               </Button>
             </div>
           <Card>
             <CardHeader>
-              <CardTitle>수표 결제 내역</CardTitle>
+              <CardTitle>Check Payment Details</CardTitle>
               <CardDescription>
-                수취된 수표의 상세 내역입니다. 해당 내역은 관리자에게 보고되며, 오너(Admin)가 최종 확정합니다.
+                Detailed list of received checks. Records are reviewed by managers and finalized by the account owner.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -135,17 +135,17 @@ export default function CheckReportPage() {
               <Table className="min-w-max">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>수취일</TableHead>
-                    <TableHead>만기일</TableHead>
-                    {(role === 'admin' || role === 'manager') && <TableHead>영업담당자</TableHead>}
-                    <TableHead>고객</TableHead>
-                    <TableHead>발급은행</TableHead>
-                    <TableHead>수표번호</TableHead>
-                    <TableHead className="text-right">금액</TableHead>
-                    <TableHead>입금은행</TableHead>
-                    <TableHead>입금일자</TableHead>
-                    <TableHead>상태</TableHead>
-                    <TableHead>비고</TableHead>
+                    <TableHead>Receipt Date</TableHead>
+                    <TableHead>Due Date</TableHead>
+                    {(role === 'admin' || role === 'manager') && <TableHead>Salesperson</TableHead>}
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Issuing Bank</TableHead>
+                    <TableHead>Check Number</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Deposit Bank</TableHead>
+                    <TableHead>Deposit Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Notes</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

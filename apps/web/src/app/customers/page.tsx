@@ -209,7 +209,7 @@ export default function CustomersPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">고객 관리</h1>
+                <h1 className="text-2xl font-semibold">Customer Management</h1>
                 <div className="flex items-center gap-2">
                     <Button size="sm" variant="outline" className="h-8 gap-1" asChild>
                         <Link href="/customers/new">
@@ -246,9 +246,9 @@ export default function CustomersPage() {
             </div>
           <Card>
             <CardHeader>
-              <CardTitle>고객 목록</CardTitle>
+              <CardTitle>Customer List</CardTitle>
               <CardDescription>
-                담당 직원별 고객 목록, 매출 및 신용 현황입니다. 관리자만 고객 특성을 변경할 수 있습니다.
+                Customer roster with owner, sales performance, and credit status. Only admins can modify customer attributes.
               </CardDescription>
               <div className="flex items-end justify-between pt-2">
                 <div className="flex items-end gap-4">
@@ -273,7 +273,7 @@ export default function CustomersPage() {
                         </SelectTrigger>
                         <SelectContent>
                         {availableMonths.map(month => (
-                            <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
+                            <SelectItem key={month} value={String(month)}>Month {month}</SelectItem>
                         ))}
                         </SelectContent>
                     </Select>
@@ -282,7 +282,7 @@ export default function CustomersPage() {
                 {(role === 'manager' || role === 'employee' || role === 'admin') && (
                   <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4" />
-                      <Label htmlFor="my-customers-filter">{role === 'manager' ? '내 팀 고객만 보기' : '내 고객만 보기'}</Label>
+                      <Label htmlFor="my-customers-filter">{role === 'manager' ? 'Show my team only' : 'Show my customers only'}</Label>
                       <Switch
                           id="my-customers-filter"
                           checked={showMyCustomers}
@@ -297,14 +297,14 @@ export default function CustomersPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>담당 직원</TableHead>
-                    <TableHead>고객명</TableHead>
-                    <TableHead>등급</TableHead>
-                    <TableHead>고객 특성</TableHead>
-                    <TableHead className="text-right">당월 매출</TableHead>
-                    <TableHead className="text-right">월 평균 매출</TableHead>
-                    <TableHead className="text-right">연 매출 ({selectedYear})</TableHead>
-                    <TableHead className="text-right">신용 잔액</TableHead>
+                    <TableHead>Account Owner</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Grade</TableHead>
+                    <TableHead>Customer Type</TableHead>
+                    <TableHead className="text-right">Current Month Sales</TableHead>
+                    <TableHead className="text-right">Monthly Average</TableHead>
+                    <TableHead className="text-right">Annual Sales ({selectedYear})</TableHead>
+                    <TableHead className="text-right">Credit Balance</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

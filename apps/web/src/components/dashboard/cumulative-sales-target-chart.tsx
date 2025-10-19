@@ -14,10 +14,10 @@ import { cn } from '@/lib/utils';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 
 export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
-  const cardTitle = isTeamData ? '팀 9월 누적 매출 현황' : '9월 누적 매출 현황';
+  const cardTitle = isTeamData ? 'Team Cumulative Performance (September)' : 'Cumulative Performance (September)';
   const cardDescription = isTeamData 
-    ? '9월까지의 팀 전체 누적 매출과 연간 목표, 전년 실적을 비교합니다.' 
-    : '9월까지의 누적 매출과 연간 목표, 전년 실적을 비교합니다.';
+    ? 'Compare the team’s cumulative sales through September against annual goals and prior-year results.' 
+    : 'Compare cumulative sales through September to annual goals and prior-year results.';
 
   let cumulativeActual = 0;
   let cumulativeTarget = 0;
@@ -31,19 +31,19 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
 
 
   const chartData = [{
-    month: '9월 누적',
-    '목표': cumulativeTarget,
-    '실적': cumulativeActual,
-    '전년실적': cumulativeLastYear,
+    month: 'September Total',
+    Target: cumulativeTarget,
+    Actual: cumulativeActual,
+    'Prior Year': cumulativeLastYear,
   }];
   
   const achievementRate = cumulativeTarget > 0 ? (cumulativeActual / cumulativeTarget) * 100 : 0;
   const yoyGrowth = 7.8; // As requested
 
   const chartConfig = {
-    '목표': { label: '목표', color: 'hsl(var(--chart-1))' },
-    '실적': { label: '실적', color: 'hsl(var(--chart-2))' },
-    '전년실적': { label: '전년실적', color: 'hsl(var(--chart-3))' },
+    Target: { label: 'Target', color: 'hsl(var(--chart-1))' },
+    Actual: { label: 'Actual', color: 'hsl(var(--chart-2))' },
+    'Prior Year': { label: 'Prior Year', color: 'hsl(var(--chart-3))' },
   };
 
   const formatCurrencyLabel = (value: number) => `$${(value / 1000).toFixed(0)}K`;
@@ -61,13 +61,13 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
             <div className="flex justify-around text-center text-xs sm:text-sm font-bold h-12">
                 <div className="w-1/2 flex justify-center pr-4">
                     <div className="flex flex-col items-center">
-                        <span>목표 대비</span>
+                        <span>Target vs. Actual</span>
                         <span>{achievementRate.toFixed(1)}%</span>
                     </div>
                 </div>
                 <div className="w-1/2 flex justify-center pl-4">
                      <div className={cn("flex flex-col items-center", yoyGrowth >= 0 ? "text-green-600" : "text-red-600")}>
-                        <span>전년 대비 달성율</span>
+                        <span>Year-over-Year Growth</span>
                         <div className="flex items-center gap-1">
                             {yoyGrowth >= 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
                             <span>{yoyGrowth.toFixed(1)}%</span>
@@ -98,28 +98,28 @@ export function CumulativeSalesTargetChart({ isTeamData = false }: { isTeamData?
                   <Tooltip cursor={{ fill: 'transparent' }} content={<ChartTooltipContent hideLabel />} />
                   <Legend />
                    <Bar
-                    dataKey="목표"
-                    fill="var(--color-목표)"
+                    dataKey="Target"
+                    fill="var(--color-Target)"
                     radius={[4, 4, 0, 0]}
-                    name="목표"
+                    name="Target"
                   >
-                    <LabelList dataKey="목표" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
+                    <LabelList dataKey="Target" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
                   </Bar>
                   <Bar
-                    dataKey="실적"
-                    fill="var(--color-실적)"
+                    dataKey="Actual"
+                    fill="var(--color-Actual)"
                     radius={[4, 4, 0, 0]}
-                    name="실적"
+                    name="Actual"
                   >
-                     <LabelList dataKey="실적" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
+                     <LabelList dataKey="Actual" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
                   </Bar>
                    <Bar
-                    dataKey="전년실적"
-                    fill="var(--color-전년실적)"
+                    dataKey="Prior Year"
+                    fill="var(--color-Prior Year)"
                     radius={[4, 4, 0, 0]}
-                    name="전년실적"
+                    name="Prior Year"
                   >
-                    <LabelList dataKey="전년실적" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
+                    <LabelList dataKey="Prior Year" position="top" formatter={formatCurrencyLabel} className="font-semibold" />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>

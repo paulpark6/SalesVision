@@ -43,9 +43,9 @@ export function MonthlySalesDetailDialog({ isOpen, onOpenChange, monthData }: Mo
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
-          <DialogTitle>{monthData.month} 상세 매출 실적</DialogTitle>
+          <DialogTitle>{monthData.month} Sales Details</DialogTitle>
           <DialogDescription>
-            고객 및 제품별 매출 목표와 실적 상세 내역입니다.
+            Detailed breakdown of customer and product sales targets versus actuals.
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto pr-4">
@@ -60,8 +60,8 @@ export function MonthlySalesDetailDialog({ isOpen, onOpenChange, monthData }: Mo
                             <div className="w-full flex justify-between items-center pr-4">
                                 <span className="font-semibold">{customer.customerName}</span>
                                 <div className="flex items-center gap-4 text-sm">
-                                    <span>실적: {formatCurrency(totalCustomerActual)}</span>
-                                    <span>목표: {formatCurrency(totalCustomerTarget)}</span>
+                                    <span>Actual: {formatCurrency(totalCustomerActual)}</span>
+                                    <span>Target: {formatCurrency(totalCustomerTarget)}</span>
                                     <div className="flex items-center gap-2 w-32">
                                         <Progress value={customerAchievement} className="h-2 w-20" />
                                         <span className="text-xs font-medium">{customerAchievement.toFixed(1)}%</span>
@@ -73,10 +73,10 @@ export function MonthlySalesDetailDialog({ isOpen, onOpenChange, monthData }: Mo
                              <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>제품명</TableHead>
-                                        <TableHead className="text-right">매출 목표</TableHead>
-                                        <TableHead className="text-right">매출액</TableHead>
-                                        <TableHead className="w-[150px]">달성률</TableHead>
+                                        <TableHead>Product</TableHead>
+                                        <TableHead className="text-right">Sales Target</TableHead>
+                                        <TableHead className="text-right">Sales Amount</TableHead>
+                                        <TableHead className="w-[150px]">Achievement</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -104,8 +104,8 @@ export function MonthlySalesDetailDialog({ isOpen, onOpenChange, monthData }: Mo
             </Accordion>
         </div>
          <div className="mt-4 flex justify-end gap-6 font-bold text-base border-t pt-4">
-            <span>총 목표: {formatCurrency(totalMonthTarget)}</span>
-            <span>총 실적: {formatCurrency(totalMonthActual)}</span>
+            <span>Total Target: {formatCurrency(totalMonthTarget)}</span>
+            <span>Total Actual: {formatCurrency(totalMonthActual)}</span>
         </div>
       </DialogContent>
     </Dialog>

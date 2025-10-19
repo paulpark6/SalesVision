@@ -127,8 +127,8 @@ export default function NewSalePage() {
 
     if (isCustomerBlocked) {
         toast({
-          title: '승인 요청됨',
-          description: '해당 고객의 거래는 관리자 승인이 필요하여 요청이 전송되었습니다.',
+          title: 'Approval Requested',
+          description: 'This customer requires manager approval before a sale can be recorded.',
           variant: 'default'
         });
         return;
@@ -138,8 +138,8 @@ export default function NewSalePage() {
         const sum = (cashAmount || 0) + (creditAmount || 0);
         if (sum !== totalPrice) {
             toast({
-                title: '금액 불일치',
-                description: `총 가격(${totalPrice.toFixed(2)})과 결제 금액의 합(${sum.toFixed(2)})이 일치하지 않습니다.`,
+                title: 'Payment Mismatch',
+                description: `The total price (${totalPrice.toFixed(2)}) does not match the sum of payment amounts (${sum.toFixed(2)}).`,
                 variant: 'destructive'
             });
             return;
@@ -148,8 +148,8 @@ export default function NewSalePage() {
     
     if (needsApproval) {
         toast({
-          title: '승인 필요',
-          description: '특별 할인이 적용되어 관리자 승인이 필요합니다.',
+          title: 'Manager Approval Required',
+          description: 'A special discount was applied. Please request manager approval.',
           variant: 'destructive'
         });
         return;
@@ -193,50 +193,50 @@ export default function NewSalePage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="date">날짜</Label>
+                    <Label htmlFor="date">Date</Label>
                     <DatePicker />
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="saleOrReturn">매출 유형</Label>
+                    <Label htmlFor="saleOrReturn">Sale Type</Label>
                     <RadioGroup defaultValue="sale" id="saleOrReturn" className="flex items-center flex-wrap gap-x-4 gap-y-2 pt-2">
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="sale" id="sale" />
-                            <Label htmlFor="sale">매출</Label>
+                            <Label htmlFor="sale">Sale</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="return" id="return" />
-                            <Label htmlFor="return">리턴</Label>
+                            <Label htmlFor="return">Return</Label>
                         </div>
                         {role === 'admin' && (
                             <>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="lost" id="lost" />
-                                    <Label htmlFor="lost">분실</Label>
+                                    <Label htmlFor="lost">Lost</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="company-use" id="company-use" />
-                                    <Label htmlFor="company-use">회사사용</Label>
+                                    <Label htmlFor="company-use">Internal Use</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="broken" id="broken" />
-                                    <Label htmlFor="broken">파손</Label>
+                                    <Label htmlFor="broken">Broken</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="damaged" id="damaged" />
-                                    <Label htmlFor="damaged">손상</Label>
+                                    <Label htmlFor="damaged">Damaged</Label>
                                 </div>
                             </>
                         )}
                     </RadioGroup>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="invoiceNumber">인보이스 넘버</Label>
+                    <Label htmlFor="invoiceNumber">Invoice Number</Label>
                     <Input id="invoiceNumber" placeholder="Optional"/>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="productCategory">제품 구분</Label>
+                    <Label htmlFor="productCategory">Product Category</Label>
                     <Select name="productCategory" required>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
@@ -250,11 +250,11 @@ export default function NewSalePage() {
                     </Select>
                   </div>
                    <div className="space-y-2">
-                    <Label htmlFor="productCode">제품 코드</Label>
+                    <Label htmlFor="productCode">Product Code</Label>
                     <Input id="productCode" value={productCode} onChange={(e) => setProductCode(e.target.value)} placeholder="e.g., E-001" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="productDescription">제품 설명</Label>
+                    <Label htmlFor="productDescription">Product Description</Label>
                     <Combobox
                         items={products}
                         placeholder="Select product..."
@@ -277,11 +277,11 @@ export default function NewSalePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="customerCode">고객 코드</Label>
+                        <Label htmlFor="customerCode">Customer Code</Label>
                         <Input id="customerCode" value={customerCode} onChange={(e) => setCustomerCode(e.target.value)} placeholder="e.g., C-101" required />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="customerName">고객명</Label>
+                        <Label htmlFor="customerName">Customer Name</Label>
                         <Combobox
                             items={customers}
                             placeholder="Select customer..."
@@ -305,60 +305,60 @@ export default function NewSalePage() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="customerGrade">고객 등급</Label>
+                        <Label htmlFor="customerGrade">Customer Grade</Label>
                         <Input id="customerGrade" value={customerGrade} readOnly required />
                     </div>
                 </div>
                  {isCustomerBlocked && (
                     <Alert variant="destructive">
                         <TriangleAlert className="h-4 w-4" />
-                        <AlertTitle>거래 중지 고객</AlertTitle>
+                        <AlertTitle>Customer On Hold</AlertTitle>
                         <AlertDescription>
-                            이 고객은 1년 이상 연체된 미수금이 있어 거래가 중지되었습니다. 매출을 등록하려면 관리자 승인이 필요합니다.
+                            This customer has receivables overdue by more than one year. Manager approval is required before recording a sale.
                         </AlertDescription>
                     </Alert>
                  )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="quantity">수량</Label>
+                    <Label htmlFor="quantity">Quantity</Label>
                     <Input id="quantity" type="number" placeholder="e.g., 2" required min="1" onChange={handleQuantityChange} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price">가격</Label>
+                    <Label htmlFor="price">Unit Price</Label>
                     <Input id="price" type="number" value={price} placeholder="e.g., 1200" required min="0" step="0.01" onChange={handlePriceChange} />
                      {needsApproval && (
                       <p className="text-sm text-destructive font-medium pt-1">
-                        관리자 승인이 필요합니다.
+                        Manager approval is required.
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="totalPrice">총 가격</Label>
+                    <Label htmlFor="totalPrice">Total Price</Label>
                     <Input id="totalPrice" type="text" value={`$${totalPrice.toFixed(2)}`} readOnly className="bg-muted" />
                   </div>
                 </div>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     <div className="space-y-2">
-                        <Label htmlFor="paymentMethod">결제방법</Label>
+                        <Label htmlFor="paymentMethod">Payment Method</Label>
                         <Select name="paymentMethod" required onValueChange={setPaymentMethod}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select a payment method" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="credit">Credit (신용)</SelectItem>
-                                <SelectItem value="cash">Cash (현금)</SelectItem>
-                                <SelectItem value="check">Check (수표)</SelectItem>
-                                <SelectItem value="prepayment">Prepayment (선결제)</SelectItem>
-                                <SelectItem value="mixed-cash-credit">Cash + Credit (현금+신용)</SelectItem>
-                                <SelectItem value="mixed-cash-check">Cash + Check (현금+수표)</SelectItem>
-                                <SelectItem value="mixed-check-credit">Check + Credit (수표+신용)</SelectItem>
-                                <SelectItem value="mixed-other">Mixed (기타 혼합)</SelectItem>
+                                <SelectItem value="credit">Credit</SelectItem>
+                                <SelectItem value="cash">Cash</SelectItem>
+                                <SelectItem value="check">Check</SelectItem>
+                                <SelectItem value="prepayment">Prepayment</SelectItem>
+                                <SelectItem value="mixed-cash-credit">Cash + Credit</SelectItem>
+                                <SelectItem value="mixed-cash-check">Cash + Check</SelectItem>
+                                <SelectItem value="mixed-check-credit">Check + Credit</SelectItem>
+                                <SelectItem value="mixed-other">Mixed (Other)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="employee">직원</Label>
+                        <Label htmlFor="employee">Employee</Label>
                         <Select name="employee" value={employee} onValueChange={setEmployee} required disabled>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select an employee" />
@@ -377,7 +377,7 @@ export default function NewSalePage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                       {paymentMethod.includes('cash') && (
                           <div className="space-y-2">
-                              <Label htmlFor="cashAmount">현금 금액</Label>
+                              <Label htmlFor="cashAmount">Cash Amount</Label>
                               <Input id="cashAmount" type="number" placeholder="e.g., 1000" min="0" step="0.01" 
                                 onChange={(e) => setCashAmount(parseFloat(e.target.value) || 0)}
                               />
@@ -385,7 +385,7 @@ export default function NewSalePage() {
                       )}
                       {(paymentMethod.includes('credit') || paymentMethod.includes('check')) && (
                           <div className="space-y-2">
-                              <Label htmlFor="creditAmount">신용/수표 금액</Label>
+                              <Label htmlFor="creditAmount">Credit/Check Amount</Label>
                               <Input id="creditAmount" type="number" placeholder="e.g., 200" min="0" step="0.01" 
                                 onChange={(e) => setCreditAmount(parseFloat(e.target.value) || 0)}
                               />
@@ -393,7 +393,7 @@ export default function NewSalePage() {
                       )}
                       {showDueDate && (
                         <div className="space-y-2">
-                            <Label htmlFor="dueDate">결제 예정일</Label>
+                            <Label htmlFor="dueDate">Expected Payment Date</Label>
                             <DatePicker />
                         </div>
                       )}
@@ -403,7 +403,7 @@ export default function NewSalePage() {
                 {!isMixedPayment && showDueDate && (
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
-                            <Label htmlFor="dueDate">결제 예정일</Label>
+                            <Label htmlFor="dueDate">Expected Payment Date</Label>
                             <DatePicker />
                         </div>
                      </div>
@@ -412,11 +412,11 @@ export default function NewSalePage() {
                 {showCheckDetails && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t">
                         <div className="space-y-2 md:col-span-1">
-                            <Label htmlFor="issuingBank">발급은행</Label>
+                            <Label htmlFor="issuingBank">Issuing Bank</Label>
                             <Input id="issuingBank" placeholder="e.g., Bank of America" required={showCheckDetails} />
                         </div>
                         <div className="space-y-2 md:col-span-1">
-                            <Label htmlFor="checkNumber">수표번호</Label>
+                            <Label htmlFor="checkNumber">Check Number</Label>
                             <Input id="checkNumber" placeholder="e.g., 123456" required={showCheckDetails} />
                         </div>
                     </div>

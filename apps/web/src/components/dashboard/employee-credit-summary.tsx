@@ -22,9 +22,9 @@ export function EmployeeCreditSummary() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>팀원별 신용 판매 현황</CardTitle>
+        <CardTitle>Credit Exposure by Teammate</CardTitle>
         <CardDescription>
-          팀원별 현재 신용 판매 잔액입니다. 총 잔액: ${totalCredit.toLocaleString('en-US')}
+          Current credit balances by employee. Total outstanding: ${totalCredit.toLocaleString('en-US')}
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
@@ -33,7 +33,7 @@ export function EmployeeCreditSummary() {
                 <div className="flex justify-between items-center">
                     <div className='flex flex-col'>
                         <span className="text-sm font-medium">{employee.name}</span>
-                        <span className='text-xs text-muted-foreground'>{employee.count}건</span>
+                        <span className='text-xs text-muted-foreground'>{employee.count} invoices</span>
                     </div>
                     <span className="text-lg font-semibold">${employee.amount.toLocaleString('en-US')}</span>
                 </div>

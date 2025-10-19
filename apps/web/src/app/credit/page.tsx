@@ -41,9 +41,9 @@ type CollectionStatus = 'pending' | 'confirmed' | 'rejected' | 'none';
 type CustomerCredit = {
   customerName: string;
   employeeId: string;
-  nearing: number; // 만기 전
-  due: number; // 도래 예정 (2주 내)
-  overdue: number; // 만기 후
+  nearing: number; // pre-due
+  due: number; // due within 2 weeks
+  overdue: number; // past due
   total: number;
   collectedAmount: number;
   collectionDate?: Date;
@@ -186,8 +186,8 @@ export default function CreditReportPage() {
     const customer = customerCreditData.find(c => c.customerName === customerName);
     if (!customer || !customer.collectedAmount || !customer.collectionDate) {
         toast({
-            title: '입력 오류',
-            description: '수금액과 수금일을 모두 입력해야 합니다.',
+          title: 'Input Error',
+          description: 'Please provide both the collected amount and date.',
             variant: 'destructive',
         });
         return;
@@ -195,16 +195,16 @@ export default function CreditReportPage() {
 
     setCustomerCreditData(prev => prev.map(c => c.customerName === customerName ? { ...c, collectionStatus: 'pending'} : c));
     toast({
-        title: '제출 완료',
-        description: '수금 내역이 관리자에게 보고되었습니다.',
+        title: 'Submission Complete',
+        description: 'Collection details have been sent to the manager.',
     });
   }
   
   const handleApprovalAction = (customerName: string, action: 'confirmed' | 'rejected') => {
     setCustomerCreditData(prev => prev.map(c => c.customerName === customerName ? { ...c, collectionStatus: action } : c));
     toast({
-        title: `수금 내역 ${action === 'confirmed' ? '확정' : '반려'}`,
-        description: `해당 고객의 수금 내역이 ${action === 'confirmed' ? '확정' : '반려'}되었습니다.`,
+        title: `Collection ${action === 'confirmed' ? 'Approved' : 'Rejected'}`,
+        description: `This customer's collection has been ${action === 'confirmed' ? 'approved' : 'rejected'}.`,
     });
   };
 
@@ -237,14 +237,14 @@ export default function CreditReportPage() {
               </div>
                <Card>
                   <CardHeader>
-                      <CardTitle>고객별 신용 현황</CardTitle>
+                      <CardTitle>Customer Credit Status</CardTitle>
                       <CardDescription>
-                          전체 고객의 신용 잔액을 만기 상태별로 요약합니다. 연체 금액을 클릭하여 상세 내역을 확인하세요.
+                          Summary of all customer credit balances by aging status. Select an overdue amount to view details.
                       </CardDescription>
                        {role === 'admin' && (
                           <div className="flex items-center space-x-2 pt-4">
                               <Users className="h-4 w-4" />
-                              <Label htmlFor="my-collections-filter">내 수금내역만 보기</Label>
+                              <Label htmlFor="my-collections-filter">Show only my collections</Label>
                               <Switch
                                   id="my-collections-filter"
                                   checked={showMyCollections}
@@ -258,14 +258,14 @@ export default function CreditReportPage() {
                         <Table className="min-w-max">
                         <TableHeader>
                             <TableRow>
-                            <TableHead>고객명</TableHead>
-                            <TableHead className="text-right">만기 전</TableHead>
-                            <TableHead className="text-right">도래 예정 (2주 내)</TableHead>
-                            <TableHead className="text-right">연체</TableHead>
-                            <TableHead className="w-[150px]">수금액</TableHead>
-                            <TableHead className="w-[200px]">수금일</TableHead>
-                            <TableHead className="text-center w-[180px]">상태</TableHead>
-                            <TableHead className="text-right">총 신용 잔액</TableHead>
+                            <TableHead>Customer</TableHead>
+                            <TableHead className="text-right">Pre-Due</TableHead>
+                            <TableHead className="text-right">Due (14 Days)</TableHead>
+                            <TableHead className="text-right">Overdue</TableHead>
+                            <TableHead className="w-[150px]">Collected Amount</TableHead>
+                            <TableHead className="w-[200px]">Collection Date</TableHead>
+                            <TableHead className="text-center w-[180px]">Status</TableHead>
+                            <TableHead className="text-right">Total Credit Balance</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -321,7 +321,7 @@ export default function CreditReportPage() {
                                                 </Button>
                                             </div>
                                         ) : role !== 'admin' && customer.collectionStatus === 'none' && customer.collectedAmount > 0 ? (
-                                            <Button size="sm" className="h-7" onClick={() => handleSubmitForApproval(customer.customerName)}>확인</Button>
+                                            <Button size="sm" className="h-7" onClick={() => handleSubmitForApproval(customer.customerName)}>Submit</Button>
                                         ) : null}
                                     </div>
                                 </TableCell>
@@ -331,7 +331,7 @@ export default function CreditReportPage() {
                         </TableBody>
                         <TableFooter>
                             <TableRow>
-                            <TableCell className="font-bold">총계</TableCell>
+                            <TableCell className="font-bold">Total</TableCell>
                             <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
                             <TableCell className="text-right font-bold">
                                  <Badge variant="default" className="bg-yellow-500/80 hover:bg-yellow-500/90 text-black">
@@ -351,8 +351,8 @@ export default function CreditReportPage() {
                       </div>
                       {role === 'admin' && !showMyCollections && (
                         <div className="flex justify-end gap-6 font-bold text-base mt-6 pr-4 border-t pt-4">
-                            <span>본인 수금 합계: {formatCurrency(totalMyCollections)}</span>
-                            <span>전체 수금 합계: {formatCurrency(totalAllCollections)}</span>
+                            <span>My collection total: {formatCurrency(totalMyCollections)}</span>
+                            <span>All collections total: {formatCurrency(totalAllCollections)}</span>
                         </div>
                       )}
                   </CardContent>

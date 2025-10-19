@@ -53,29 +53,29 @@ export default function EmployeeDetailPage() {
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
-                    <h1 className="text-2xl font-semibold">{employeeName} - 9월 실적</h1>
+                    <h1 className="text-2xl font-semibold">{employeeName} - September Performance</h1>
                 </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                  <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">9월 매출</CardTitle>
+                        <CardTitle className="text-sm font-medium">September Sales</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">${salesTargetData.current.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">전월 대비 +15%</p>
+                        <p className="text-xs text-muted-foreground">Up 15% vs. last month</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">9월 목표 달성률</CardTitle>
+                        <CardTitle className="text-sm font-medium">September Target Achievement</CardTitle>
                         <Target className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{((salesTargetData.current / salesTargetData.target) * 100).toFixed(1)}%</div>
-                        <p className="text-xs text-muted-foreground">목표: ${salesTargetData.target.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">Target: ${salesTargetData.target.toLocaleString()}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -84,17 +84,17 @@ export default function EmployeeDetailPage() {
                 <SalesTargetChart />
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle>고객별 매출 현황</CardTitle>
+                        <CardTitle>Sales by Customer</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className='w-[120px]'>고객명</TableHead>
-                                    <TableHead className="text-right">매출 목표</TableHead>
-                                    <TableHead className="text-right">매출액</TableHead>
-                                    <TableHead className='w-[150px]'>달성률</TableHead>
+                                    <TableHead className='w-[120px]'>Customer</TableHead>
+                                    <TableHead className="text-right">Sales Target</TableHead>
+                                    <TableHead className="text-right">Sales Amount</TableHead>
+                                    <TableHead className='w-[150px]'>Achievement</TableHead>
                                     <TableHead>
                                         <span className="sr-only">Actions</span>
                                     </TableHead>

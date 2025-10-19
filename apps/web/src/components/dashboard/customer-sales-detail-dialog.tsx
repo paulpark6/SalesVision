@@ -33,19 +33,19 @@ export function CustomerSalesDetailDialog({ isOpen, onOpenChange, customerName, 
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle>{customerName} - 제품별 매출 실적</DialogTitle>
+          <DialogTitle>{customerName} - Sales by Product</DialogTitle>
           <DialogDescription>
-            해당 고객의 제품별 매출 목표와 실적 상세 내역입니다.
+            Detailed breakdown of product-level targets and actuals for this customer.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>제품명</TableHead>
-                <TableHead className="text-right">매출 목표</TableHead>
-                <TableHead className="text-right">매출액</TableHead>
-                <TableHead className="w-[150px]">달성률</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead className="text-right">Sales Target</TableHead>
+                <TableHead className="text-right">Sales Amount</TableHead>
+                <TableHead className="w-[150px]">Achievement</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -71,7 +71,7 @@ export function CustomerSalesDetailDialog({ isOpen, onOpenChange, customerName, 
               ) : (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center">
-                    매출 데이터가 없습니다.
+                    No sales data available.
                   </TableCell>
                 </TableRow>
               )}

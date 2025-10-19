@@ -69,19 +69,19 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>연체 상세 내역: {customerName}</DialogTitle>
+          <DialogTitle>Overdue Details: {customerName}</DialogTitle>
           <DialogDescription>
-            선택한 고객의 연체된 금액을 기간별로 분류하여 표시합니다.
+            Displays the selected customer's overdue balances grouped by aging bucket.
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto pr-4">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>연체 기간</TableHead>
-                <TableHead>인보이스 ID</TableHead>
-                <TableHead>만기일</TableHead>
-                <TableHead className="text-right">금액</TableHead>
+                <TableHead>Aging Bucket</TableHead>
+                <TableHead>Invoice ID</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -90,7 +90,7 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
                     <React.Fragment key={bucket}>
                         <TableRow className="bg-muted/50 font-semibold">
                             <TableCell colSpan={3}>
-                                {bucket === '>90' ? '90일 초과' : `${bucket}일`}
+                                {bucket === '>90' ? 'Over 90 Days' : `${bucket} Days`}
                             </TableCell>
                             <TableCell className="text-right">{formatCurrency(data.total)}</TableCell>
                         </TableRow>
@@ -108,7 +108,7 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
             </TableBody>
             <TableFooter>
                 <TableRow>
-                    <TableCell colSpan={3} className="text-right font-bold">총 연체 금액</TableCell>
+                    <TableCell colSpan={3} className="text-right font-bold">Total Overdue Amount</TableCell>
                     <TableCell className="text-right font-bold">{formatCurrency(totalOverdue)}</TableCell>
                 </TableRow>
             </TableFooter>

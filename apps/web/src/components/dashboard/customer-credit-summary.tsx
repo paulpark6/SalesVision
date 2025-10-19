@@ -80,21 +80,21 @@ export function CustomerCreditSummary() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>고객별 미수금 요약</CardTitle>
+        <CardTitle>Customer Credit Overview</CardTitle>
         <CardDescription>
-          고객별 미수금 현황을 만기 상태에 따라 요약합니다.
+          Outstanding balances by customer, grouped by aging status.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>고객명</TableHead>
-              <TableHead>담당자</TableHead>
-              <TableHead className="text-right">만기 전</TableHead>
-              <TableHead className="text-right">만기 임박</TableHead>
-              <TableHead className="text-right">연체</TableHead>
-              <TableHead className="text-right">총 미수금</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Account Owner</TableHead>
+              <TableHead className="text-right">Pre-Due</TableHead>
+              <TableHead className="text-right">Due (14 Days)</TableHead>
+              <TableHead className="text-right">Overdue</TableHead>
+              <TableHead className="text-right">Total Outstanding</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -121,7 +121,7 @@ export function CustomerCreditSummary() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={2} className="font-bold">총계</TableCell>
+              <TableCell colSpan={2} className="font-bold">Total</TableCell>
               <TableCell className="text-right font-bold">{formatCurrency(grandTotals.nearing)}</TableCell>
               <TableCell className="text-right font-bold">{formatCurrency(grandTotals.due)}</TableCell>
               <TableCell className="text-right font-bold">{formatCurrency(grandTotals.overdue)}</TableCell>

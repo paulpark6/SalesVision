@@ -39,19 +39,19 @@ export function CollectionPlanDialog({ isOpen, onOpenChange, payment, onSave }: 
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>수금 계획 관리</DialogTitle>
+          <DialogTitle>Collection Plan</DialogTitle>
           <DialogDescription>
-            {payment.customer.name} (${payment.amount.toFixed(2)})에 대한 수금 계획/활동 내용을 입력하고 제출합니다.
+            Provide or update the collection plan for {payment.customer.name} (${payment.amount.toFixed(2)}).
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid w-full gap-2">
-            <Label htmlFor="collection-plan">수금 활동 내용</Label>
+            <Label htmlFor="collection-plan">Collection Notes</Label>
             <Textarea
               id="collection-plan"
               value={plan}
               onChange={(e) => setPlan(e.target.value)}
-              placeholder="예: 8월 15일까지 입금 요청 예정"
+              placeholder="e.g., Requesting payment by August 15"
               rows={4}
             />
           </div>
@@ -60,7 +60,7 @@ export function CollectionPlanDialog({ isOpen, onOpenChange, payment, onSave }: 
           <DialogClose asChild>
             <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="button" onClick={handleSaveClick}>계획 제출</Button>
+          <Button type="button" onClick={handleSaveClick}>Submit Plan</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

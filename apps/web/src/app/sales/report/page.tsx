@@ -75,27 +75,27 @@ export default function SalesReportPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold">9월 매출 실적 보고서</h1>
+            <h1 className="text-2xl font-semibold">September Sales Performance Report</h1>
             <Button type="button" variant="outline" onClick={handleBack}>
               Back to Dashboard
             </Button>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>고객별 매출 목표 및 실적 비교</CardTitle>
+              <CardTitle>Customer Targets vs. Actuals</CardTitle>
               <CardDescription>
-                9월에 설정된 고객별 매출 목표와 실제 달성 실적을 비교합니다.
+                Compare each customer’s September target to actual performance.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    { (role === 'admin' || role === 'manager') && <TableHead>담당 직원</TableHead> }
-                    <TableHead>고객명</TableHead>
-                    <TableHead className="text-right">매출 목표 (9월)</TableHead>
-                    <TableHead className="text-right">매출 실적 (9월)</TableHead>
-                    <TableHead className="w-[200px]">달성률</TableHead>
+                    { (role === 'admin' || role === 'manager') && <TableHead>Account Owner</TableHead> }
+                    <TableHead>Customer</TableHead>
+                    <TableHead className="text-right">September Target</TableHead>
+                    <TableHead className="text-right">September Actual</TableHead>
+                    <TableHead className="w-[200px]">Achievement</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -125,13 +125,13 @@ export default function SalesReportPage() {
               </Table>
               <div className="flex justify-end gap-6 font-bold text-lg mt-6 pr-4">
                   <div>
-                      <span>총 목표: {formatCurrency(totalTarget)}</span>
+                      <span>Total Target: {formatCurrency(totalTarget)}</span>
                   </div>
                   <div>
-                      <span>총 실적: {formatCurrency(totalActual)}</span>
+                      <span>Total Actual: {formatCurrency(totalActual)}</span>
                   </div>
                    <div>
-                      <span>총 달성률: {totalAchievement.toFixed(1)}%</span>
+                      <span>Overall Achievement: {totalAchievement.toFixed(1)}%</span>
                   </div>
               </div>
             </CardContent>

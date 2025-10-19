@@ -85,9 +85,9 @@ export default function CumulativeReportPage() {
   const totalYoyGrowth = totalLastYear > 0 ? ((totalActual - totalLastYear) / totalLastYear) * 100 : (totalActual > 0 ? 100 : 0);
   
   const chartConfig = {
-      cumulativeActual: { label: '실적', color: 'hsl(var(--chart-2))' },
-      cumulativeTarget: { label: '목표', color: 'hsl(var(--chart-1))' },
-      cumulativeLastYear: { label: '전년실적', color: 'hsl(var(--chart-3))' },
+      cumulativeActual: { label: 'Actual', color: 'hsl(var(--chart-2))' },
+      cumulativeTarget: { label: 'Target', color: 'hsl(var(--chart-1))' },
+      cumulativeLastYear: { label: 'Prior Year', color: 'hsl(var(--chart-3))' },
   };
   
   const handleMonthClick = (month: string) => {
@@ -108,16 +108,16 @@ export default function CumulativeReportPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold">연간 누적 매출 보고서</h1>
+            <h1 className="text-2xl font-semibold">Annual Cumulative Sales Report</h1>
             <Button type="button" variant="outline" onClick={handleBack}>
               Back to Dashboard
             </Button>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>월별 누적 실적 비교</CardTitle>
+              <CardTitle>Monthly Cumulative Comparison</CardTitle>
               <CardDescription>
-                당해년도 누적 목표, 누적 실적, 전년 동기간 누적 실적을 월별로 비교합니다. 각 월을 클릭하여 상세 내역을 확인하세요.
+                Compare this year’s cumulative targets and results to the prior year, month by month.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -138,9 +138,9 @@ export default function CumulativeReportPage() {
                             />
                             <Tooltip content={<ChartTooltipContent />} />
                             <Legend />
-                            <Bar dataKey="cumulativeTarget" fill="var(--color-cumulativeTarget)" radius={[4, 4, 0, 0]} name="목표" />
-                            <Bar dataKey="cumulativeActual" fill="var(--color-cumulativeActual)" radius={[4, 4, 0, 0]} name="실적" />
-                            <Bar dataKey="cumulativeLastYear" fill="var(--color-cumulativeLastYear)" radius={[4, 4, 0, 0]} name="전년실적" />
+                            <Bar dataKey="cumulativeTarget" fill="var(--color-cumulativeTarget)" radius={[4, 4, 0, 0]} name="Target" />
+                            <Bar dataKey="cumulativeActual" fill="var(--color-cumulativeActual)" radius={[4, 4, 0, 0]} name="Actual" />
+                            <Bar dataKey="cumulativeLastYear" fill="var(--color-cumulativeLastYear)" radius={[4, 4, 0, 0]} name="Prior Year" />
                         </BarChart>
                     </ResponsiveContainer>
                 </ChartContainer>
@@ -148,12 +148,12 @@ export default function CumulativeReportPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>월</TableHead>
-                    <TableHead className="text-right">누적 목표</TableHead>
-                    <TableHead className="text-right">누적 실적 (당해)</TableHead>
-                    <TableHead className="text-right">누적 실적 (전년)</TableHead>
-                    <TableHead className="w-[200px]">목표 달성률</TableHead>
-                    <TableHead className="w-[200px]">전년 대비 성장률</TableHead>
+                    <TableHead>Month</TableHead>
+                    <TableHead className="text-right">Cumulative Target</TableHead>
+                    <TableHead className="text-right">Cumulative Actual (This Year)</TableHead>
+                    <TableHead className="text-right">Cumulative Actual (Prior Year)</TableHead>
+                    <TableHead className="w-[200px]">Target Achievement</TableHead>
+                    <TableHead className="w-[200px]">Year-Over-Year Growth</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

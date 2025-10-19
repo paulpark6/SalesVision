@@ -18,9 +18,9 @@ import { Progress } from '../ui/progress';
 
 export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean }) {
   if (isTeamData) {
-    const totalTarget = salesComparisonData.find(d => d.name === '9월 누적 목표')?.jane! + salesComparisonData.find(d => d.name === '9월 누적 목표')?.alex! + salesComparisonData.find(d => d.name === '9월 누적 목표')?.john!;
-    const totalActual = salesComparisonData.find(d => d.name === '9월 누적 실적')?.jane! + salesComparisonData.find(d => d.name === '9월 누적 실적')?.alex! + salesComparisonData.find(d => d.name === '9월 누적 실적')?.john!;
-    const totalLastYear = salesComparisonData.find(d => d.name === '전년 동기 실적')?.jane! + salesComparisonData.find(d => d.name === '전년 동기 실적')?.alex! + salesComparisonData.find(d => d.name === '전년 동기 실적')?.john!;
+    const totalTarget = salesComparisonData.find(d => d.name === 'September Cumulative Target')?.jane! + salesComparisonData.find(d => d.name === 'September Cumulative Target')?.alex! + salesComparisonData.find(d => d.name === 'September Cumulative Target')?.john!;
+    const totalActual = salesComparisonData.find(d => d.name === 'September Cumulative Actual')?.jane! + salesComparisonData.find(d => d.name === 'September Cumulative Actual')?.alex! + salesComparisonData.find(d => d.name === 'September Cumulative Actual')?.john!;
+    const totalLastYear = salesComparisonData.find(d => d.name === 'Prior Year Cumulative Actual')?.jane! + salesComparisonData.find(d => d.name === 'Prior Year Cumulative Actual')?.alex! + salesComparisonData.find(d => d.name === 'Prior Year Cumulative Actual')?.john!;
 
     const achievementRate = (totalActual / totalTarget) * 100;
     const yoyGrowth = ((totalActual - totalLastYear) / totalLastYear) * 100;
@@ -42,30 +42,30 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
     return (
       <Card>
         <CardHeader>
-          <CardTitle>9월 팀 매출 현황</CardTitle>
-          <CardDescription>팀의 9월 목표, 실적, 전년 동기 실적을 비교합니다.</CardDescription>
+          <CardTitle>September Team Performance</CardTitle>
+          <CardDescription>Compare the team’s September targets, actuals, and prior-year results.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm font-medium">9월 달성률</span>
+              <span className="text-sm font-medium">September Achievement Rate</span>
               <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
             </div>
             <Progress value={achievementRate} />
             <div className="text-xs text-muted-foreground">
-              실적: ${totalActual.toLocaleString()} / 목표: ${totalTarget.toLocaleString()}
+              Actual: ${totalActual.toLocaleString()} / Target: ${totalTarget.toLocaleString()}
             </div>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">전년 동월 대비</span>
+              <span className="text-sm font-medium">Year-Over-Year Change</span>
               <span className={`text-sm font-bold ${yoyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {yoyGrowth >= 0 ? '+' : ''}{yoyGrowth.toFixed(1)}%
               </span>
             </div>
              <div className="text-xs text-muted-foreground flex justify-between">
-              <span>올해: ${totalActual.toLocaleString()}</span>
-              <span>작년: ${totalLastYear.toLocaleString()}</span>
+              <span>This year: ${totalActual.toLocaleString()}</span>
+              <span>Last year: ${totalLastYear.toLocaleString()}</span>
             </div>
           </div>
           <ChartContainer config={chartConfig} className="h-[350px] w-full">
@@ -121,26 +121,26 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
   const achievementRate = (current / target) * 100;
   
   const chartConfig = {
-    sales: { label: '매출', color: 'hsl(var(--chart-2))' },
-    target: { label: '목표', color: 'hsl(var(--chart-1))' },
+    sales: { label: 'Sales', color: 'hsl(var(--chart-2))' },
+    target: { label: 'Target', color: 'hsl(var(--chart-1))' },
   };
   
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>9월 매출 현황</CardTitle>
-        <CardDescription>월간 매출 목표 달성률을 나타냅니다.</CardDescription>
+        <CardTitle>September Performance</CardTitle>
+        <CardDescription>Monthly sales target attainment.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">9월 달성률</span>
+            <span className="text-sm font-medium">September Achievement Rate</span>
             <span className="text-sm font-medium">{achievementRate.toFixed(1)}%</span>
           </div>
           <Progress value={achievementRate} />
           <div className="text-xs text-muted-foreground">
-            실적: ${current.toLocaleString()} / 목표: ${target.toLocaleString()}
+            Actual: ${current.toLocaleString()} / Target: ${target.toLocaleString()}
           </div>
         </div>
         <ChartContainer config={chartConfig} className="h-[200px] w-full">
@@ -163,8 +163,8 @@ export function SalesTargetChart({ isTeamData = false }: { isTeamData?: boolean 
               <Tooltip content={<ChartTooltipContent />} />
               <Legend />
               <ReferenceLine y={45000} label={{ value: "Company Target", position: 'insideTopLeft', fill: 'hsl(var(--foreground))', fontSize: 12 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
-              <Bar dataKey="target" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="목표" />
-              <Bar dataKey="sales" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="매출" />
+              <Bar dataKey="target" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} name="Target" />
+              <Bar dataKey="sales" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} name="Sales" />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>

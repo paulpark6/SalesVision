@@ -137,20 +137,20 @@ export default function CashReportPage() {
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">주별 현금 결제 보고서</h1>
+                <h1 className="text-2xl font-semibold">Weekly Cash Collections Report</h1>
                 <Button type="button" variant="outline" onClick={handleBack}>
                   Back to Dashboard
               </Button>
             </div>
           <Card>
             <CardHeader>
-              <CardTitle>주간 현금 결제 내역</CardTitle>
+              <CardTitle>Weekly Cash Collection Summary</CardTitle>
               <CardDescription>
-                주별 현금 결제 합계 및 상세 내역입니다. 현금 출처는 '현금 판매'와 '신용 수금'으로 구분됩니다.
+                Review weekly cash totals and drill into daily activity. Sources are categorized as Cash Sales or Credit Collection.
               </CardDescription>
                <div className="flex items-end gap-4 pt-2">
                 <div className="grid gap-2">
-                    <Label htmlFor="date">조회 기간</Label>
+                    <Label htmlFor="date">Date Range</Label>
                     <div className="flex items-center gap-2">
                         <DatePicker />
                         <span>~</span>
@@ -158,7 +158,7 @@ export default function CashReportPage() {
                     </div>
                 </div>
                 <Button>
-                    조회
+                    Apply
                 </Button>
               </div>
             </CardHeader>
@@ -166,9 +166,9 @@ export default function CashReportPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">주</TableHead>
-                    <TableHead className="text-right">주간 합계</TableHead>
-                    <TableHead className="text-right">누적 합계</TableHead>
+                    <TableHead className="w-[250px]">Week</TableHead>
+                    <TableHead className="text-right">Weekly Total</TableHead>
+                    <TableHead className="text-right">Cumulative Total</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -200,10 +200,10 @@ export default function CashReportPage() {
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                  { (role === 'admin' || role === 'manager') && <TableHead>담당 직원</TableHead> }
-                                                  <TableHead>고객명</TableHead>
-                                                  <TableHead>구분</TableHead>
-                                                  <TableHead className="text-right">금액</TableHead>
+                                                  { (role === 'admin' || role === 'manager') && <TableHead>Employee</TableHead> }
+                                                  <TableHead>Customer</TableHead>
+                                                  <TableHead>Source</TableHead>
+                                                  <TableHead className="text-right">Amount</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -228,7 +228,7 @@ export default function CashReportPage() {
                 </TableBody>
                  <TableFooter>
                     <TableRow>
-                        <TableCell className="font-bold">총 합계</TableCell>
+                        <TableCell className="font-bold">Grand Total</TableCell>
                         <TableCell className="text-right font-bold" colSpan={2}>
                             {formatCurrency(Object.values(weeklyGroupedSales).reduce((sum, week) => sum + week.total, 0))}
                         </TableCell>

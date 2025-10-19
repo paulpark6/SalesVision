@@ -115,7 +115,7 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
                 </NavCollapsible>
                 
                 <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                    매출 목표
+                    Sales Targets
                 </NavLink>
 
                  <NavCollapsible title="Reports" icon={<FileText className="h-4 w-4" />}>

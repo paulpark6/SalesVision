@@ -50,18 +50,18 @@ export function DuePaymentsTable() {
         const overduePayments = duePaymentsData
             .filter(p => getStatus(p.dueDate) === 'overdue')
             .map(p => ({
-                '담당자': p.employee,
-                '고객명': p.customer.name,
-                '고객 이메일': p.customer.email,
-                '만기일': p.dueDate,
-                '금액': p.amount,
-                '수금 활동 내용': p.collectionPlan || '없음',
+                'Account Owner': p.employee,
+                'Customer': p.customer.name,
+                'Customer Email': p.customer.email,
+                'Due Date': p.dueDate,
+                'Amount': p.amount,
+                'Collection Notes': p.collectionPlan || 'None',
             }));
 
         if (overduePayments.length === 0) {
             toast({
-                title: '연체 내역 없음',
-                description: '내보낼 연체된 결제 항목이 없습니다.',
+                title: 'No Overdue Records',
+                description: 'There are no overdue invoices to export.',
             });
             return;
         }
@@ -78,8 +78,8 @@ export function DuePaymentsTable() {
         document.body.removeChild(link);
         
         toast({
-            title: '다운로드 시작',
-            description: '연체 내역 CSV 파일이 다운로드됩니다.',
+            title: 'Download Started',
+            description: 'The overdue detail CSV file is downloading.',
         });
     };
     
@@ -89,8 +89,8 @@ export function DuePaymentsTable() {
         );
         setSelectedPayment(null);
         toast({
-            title: "수금 계획 제출 완료",
-            description: "수금 계획이 관리자에게 성공적으로 제출되었습니다.",
+            title: 'Collection Plan Submitted',
+            description: 'The collection plan has been sent to the manager.',
         })
     };
 
@@ -100,9 +100,9 @@ export function DuePaymentsTable() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>연체 및 만기 도래 미수금</CardTitle>
+          <CardTitle>Overdue & Upcoming Receivables</CardTitle>
           <CardDescription>
-            연체되었거나 곧 만기가 도래하는 미수금 목록입니다.
+            Track invoices that are overdue or approaching their due date.
           </CardDescription>
         </div>
         <Button size="sm" variant="outline" className="ml-auto gap-1" onClick={handleExportOverdue}>
@@ -116,11 +116,11 @@ export function DuePaymentsTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Customer</TableHead>
-              <TableHead>담당자</TableHead>
-              <TableHead>만기일</TableHead>
-              <TableHead className="text-right">금액</TableHead>
-              <TableHead>상태</TableHead>
-              <TableHead>수금 계획</TableHead>
+              <TableHead>Account Owner</TableHead>
+              <TableHead>Due Date</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Collection Plan</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
