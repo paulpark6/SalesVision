@@ -1,0 +1,7 @@
+employeeId,type,salePrice,costPrice,customerType
+mgr-001,Imported,12000,0,own
+mgr-001,Imported,9000,0,transfer
+mgr-001,Local,8000,6000,own
+emp-002,Imported,7000,0,own
+emp-002,Local,6000,5200,transfer
+emp-002,Local,5000,3500,own

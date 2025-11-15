@@ -1,0 +1,5 @@
+[
+  { "id": "C-101", "customerName": "Acme Corp", "salesTarget": 15000, "salesAmount": 14000 },
+  { "id": "C-102", "customerName": "Globex Inc", "salesTarget": 12000, "salesAmount": 10600 },
+  { "id": "C-103", "customerName": "Soylent Co", "salesTarget": 11000, "salesAmount": 9000 }
+]

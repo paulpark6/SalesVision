@@ -1,0 +1,13 @@
+month,customerName,productName,target,actual
+January,Acme Corp,Widget A,6000,5400
+January,Acme Corp,Widget B,6000,5600
+January,Globex Inc,Widget B,5000,4600
+January,Globex Inc,Gadget C,4000,3800
+February,Acme Corp,Widget A,7000,6600
+February,Acme Corp,Widget B,5000,4800
+February,Soylent Co,Gadget C,3000,2800
+February,Soylent Co,Widget A,4000,3500
+March,Globex Inc,Widget B,6000,5400
+March,Globex Inc,Gadget C,5000,4700
+March,Soylent Co,Gadget C,4000,3900
+March,Soylent Co,Widget A,3000,3100

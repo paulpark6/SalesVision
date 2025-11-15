@@ -1,0 +1,4 @@
+id,receiptDate,dueDate,salesperson,customerName,issuingBank,checkNumber,amount,depositBank,depositDate,status,notes
+cp-001,2024-09-05,2024-10-05,Jane Smith,Acme Corp,Bank of America,100245,2100,Chase,2024-09-06,Pending,First installment
+cp-002,2024-09-10,2024-10-10,Alex Lee,Globex Inc,Wells Fargo,100312,980,Chase,2024-09-11,Confirmed,On time
+cp-003,2024-09-12,2024-09-30,John Doe,Soylent Co,Citibank,100401,530,BoA,2024-09-14,Rejected,Signature mismatch

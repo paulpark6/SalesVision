@@ -1,0 +1,6 @@
+[
+  { "value": "owner", "label": "Owner", "name": "Owner", "role": "admin", "manager": null },
+  { "value": "mgr-001", "label": "Jane Smith", "name": "Jane Smith", "role": "manager", "manager": "owner" },
+  { "value": "emp-001", "label": "John Doe", "name": "John Doe", "role": "employee", "manager": "mgr-001" },
+  { "value": "emp-002", "label": "Alex Lee", "name": "Alex Lee", "role": "employee", "manager": "mgr-001" }
+]

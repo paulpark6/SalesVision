@@ -1,0 +1,4 @@
+id,employeeName,customerName,source,amount,date
+cs-001,Jane Smith,Acme Corp,Cash Sales,1250,2024-09-02
+cs-002,Alex Lee,Globex Inc,Credit Collection,780,2024-09-03
+cs-003,John Doe,Soylent Co,Cash Sales,560,2024-09-04

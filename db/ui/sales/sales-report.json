@@ -1,0 +1,5 @@
+[
+  { "employeeName": "Jane Smith", "customerName": "Acme Corp", "customerCode": "C-101", "target": 12000, "actual": 11500 },
+  { "employeeName": "Alex Lee", "customerName": "Globex Inc", "customerCode": "C-102", "target": 9000, "actual": 8600 },
+  { "employeeName": "John Doe", "customerName": "Soylent Co", "customerCode": "C-103", "target": 11000, "actual": 9800 }
+]

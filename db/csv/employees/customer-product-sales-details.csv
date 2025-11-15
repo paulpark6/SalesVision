@@ -1,0 +1,7 @@
+customerId,productName,salesTarget,salesAmount
+C-101,Widget A,8000,7600
+C-101,Widget B,7000,6400
+C-102,Widget B,7000,6200
+C-102,Gadget C,5000,4400
+C-103,Gadget C,6000,5000
+C-103,Widget A,5000,4000

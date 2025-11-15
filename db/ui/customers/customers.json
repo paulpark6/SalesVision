@@ -1,0 +1,5 @@
+[
+  { "label": "Acme Corp", "value": "C-101", "grade": "A" },
+  { "label": "Globex Inc", "value": "C-102", "grade": "B" },
+  { "label": "Soylent Co", "value": "C-103", "grade": "A" }
+]
