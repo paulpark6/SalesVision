@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace nextn",
+    "build:data": "npm run build:data --workspace nextn",
     "build:web": "npm run build --workspace nextn",
     "lint:web": "npm run lint --workspace nextn"
   }
