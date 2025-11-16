@@ -1,6 +1,6 @@
 ## Current State
 
-✅ **Cloud SQL Instance**: `sales-vision-db` (POSTGRES_15, us-central1)
+✅ **Cloud SQL Instance**: `sales-vision-db` (POSTGRES_15, us-central1) \\
 ✅ **Database**: `salesvision` created
 ✅ **Connection Name**: `youngintlsaleswebapp:us-central1:sales-vision-db`
 ✅ **Secret Manager**: DATABASE_URL stored (version 1)
