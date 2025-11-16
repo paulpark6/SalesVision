@@ -1,7 +1,7 @@
 # Sales Vision Project - Main Status Tracker
 
 **Last Updated:** 2025-11-15
-**Overall Progress:** 35% (Frontend complete, Backend/DB not started)
+**Overall Progress:** 45% (Frontend complete, Database tables created, relationships pending)
 
 ---
 
@@ -11,11 +11,11 @@
 |-----------|--------|----------|-------|
 | **Frontend** | ✅ LIVE | 100% | Deployed on Cloud Run, 22 pages, static data |
 | **Backend API** | ❌ SKELETON | 5% | Only health endpoints, 68 endpoints needed |
-| **Database** | ❌ NOT BUILT | 0% | Schema documented, Cloud SQL not created |
+| **Database** | ⚠️ PENDING RELATIONSHIPS | 85% | 14 tables created, foreign keys not defined |
 | **Auth System** | ⚠️ INSECURE | 30% | Client-side only, IAP planned |
 | **Data Pipeline** | ✅ WORKING | 100% | CSV→JSON transformation functional |
 
-**Critical Gap:** Entire backend API and database layer don't exist. Frontend works with static data only.
+**Critical Gap:** Backend API doesn't exist (only health checks). Database ready, frontend needs API integration.
 
 **Next Milestone:** Build database foundation + core API (Weeks 1-4)
 
@@ -66,34 +66,39 @@
 
 ---
 
-### Database (Cloud SQL PostgreSQL) ❌
-**Status:** NOT CREATED - zero exists
-**Planned:** 15 tables, relationships defined
+### Database (Cloud SQL PostgreSQL) ⚠️
+**Status:** TABLES CREATED - Relationships pending
+**Tech:** PostgreSQL 15, SQLAlchemy 2.0, Alembic
 **Current State:**
-- ❌ Cloud SQL instance (not provisioned)
-- ❌ Database schema (not created)
-- ❌ Alembic migrations (not initialized)
-- ❌ SQLAlchemy models (not coded)
-- ❌ Connection code (not implemented)
-- ❌ Seed data scripts (not written)
-- ✅ Schema documented (`databasedescption.md`)
+- ✅ Cloud SQL instance (sales-vision-db, us-central1)
+- ✅ Database created (salesvision)
+- ✅ Connection string in Secret Manager (DATABASE_URL)
+- ✅ Alembic migrations initialized and applied
+- ✅ SQLAlchemy models (14/14 built)
+- ✅ Schema applied (all 14 tables created)
+- ✅ Migration generated (f99bd1eb4948)
+- ✅ Cloud SQL Proxy configured for local dev
+- ✅ Database connectivity tested and verified
+- ⚠️ **Foreign key relationships NOT defined** - Tables exist independently
+- ❌ Seed data (optional, not loaded)
 
-**Tables Needed (15):**
-1. users (authentication/authorization)
-2. clients (company customers)
-3. products (inventory)
-4. sales (transactions)
-5. credit_accounts (payment tracking)
-6. employees (staff data)
-7. competitors (market intel)
-8. contracts (agreements)
-9. opportunities (sales pipeline)
-10. inventory (stock levels)
-11. marketing (campaigns)
-12. credit_transactions (payment history)
-13. audit_log (compliance)
-14. sessions (user sessions)
-15. roles (RBAC)
+**⚠️ ACTION REQUIRED:** User must specify foreign key relationships between tables to create a proper relational database before building backend API.
+
+**Tables Created (14):**
+1. ✅ users - Authentication/authorization
+2. ✅ employees - Staff data
+3. ✅ clients - Company customers
+4. ✅ products - Inventory items
+5. ✅ sales - Transactions
+6. ✅ credits - Payment tracking
+7. ✅ overdue_collections - Overdue payments
+8. ✅ commissions - Employee commissions
+9. ✅ price_lists - Product pricing by grade
+10. ✅ stocks - Inventory tracking
+11. ✅ monthly_sales_targets - Sales targets
+12. ✅ expenditures - Company costs
+13. ✅ cash_flows - Cash flow tracking
+14. ✅ cheques - Cheque payment tracking
 
 **Tracked in:** `databasedescption.md`, `DataPlan.md`
 
@@ -150,24 +155,25 @@
 
 ## 🚀 Priority Task List
 
-### Phase 1: Database Foundation (Weeks 1-2) ❌
+### Phase 1: Database Foundation (Weeks 1-2) ✅
 **Objective:** Create and populate Cloud SQL database
+**Status:** COMPLETE
 
 **Tasks:**
-- [ ] 1.1 - Provision Cloud SQL PostgreSQL instance
-- [ ] 1.2 - Configure VPC connector for Cloud Run access
-- [ ] 1.3 - Initialize Alembic in `/apps/api`
-- [ ] 1.4 - Build 15 SQLAlchemy models (`/apps/api/app/models/`)
-- [ ] 1.5 - Generate initial Alembic migration
-- [ ] 1.6 - Apply migration to create schema
-- [ ] 1.7 - Write CSV→PostgreSQL seed scripts
-- [ ] 1.8 - Seed database with test data
-- [ ] 1.9 - Test local database connectivity
-- [ ] 1.10 - Document connection strings (use Secret Manager)
+- [x] 1.1 - Provision Cloud SQL PostgreSQL instance
+- [x] 1.2 - Configure VPC connector for Cloud Run access (using direct connection)
+- [x] 1.3 - Initialize Alembic in `/apps/api`
+- [x] 1.4 - Build 14 SQLAlchemy models (`/apps/api/app/models/`)
+- [x] 1.5 - Generate initial Alembic migration
+- [x] 1.6 - Apply migration to create schema
+- [ ] 1.7 - Write CSV→PostgreSQL seed scripts (optional - skipped)
+- [ ] 1.8 - Seed database with test data (optional - skipped)
+- [x] 1.9 - Test local database connectivity
+- [x] 1.10 - Document connection strings (use Secret Manager)
 
-**Blockers:** None - can start immediately
-**Estimated Time:** 10-14 days
-**Update:** `databasedescption.md` Current State section
+**Blockers:** None
+**Completion Date:** 2025-11-15
+**Updated:** `databasedescption.md`, `PROJECT_STATUS.md`, `backendAPIPlan.md`
 
 ---
 

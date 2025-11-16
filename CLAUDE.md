@@ -14,6 +14,8 @@
 
 ## Plan Files Reference Map & Edit Rules
 
+make sure to update PROJECT_STATUS.md file as we go too.
+
 ### backendAPIPlan.md → `/backend` changes
 **When to update**: Any change to `/backend` folder
 **What to update**:
