@@ -1,6 +1,22 @@
 [
-  { "name": "Week 1", "target": 10000, "sales": 8200 },
-  { "name": "Week 2", "target": 20000, "sales": 17500 },
-  { "name": "Week 3", "target": 30000, "sales": 25500 },
-  { "name": "Week 4", "target": 45000, "sales": 28000 }
+  {
+    "name": "Week 1",
+    "target": 10000,
+    "sales": 8200
+  },
+  {
+    "name": "Week 2",
+    "target": 20000,
+    "sales": 17500
+  },
+  {
+    "name": "Week 3",
+    "target": 30000,
+    "sales": 25500
+  },
+  {
+    "name": "Week 4",
+    "target": 45000,
+    "sales": 28000
+  }
 ]

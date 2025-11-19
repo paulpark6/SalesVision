@@ -5,15 +5,31 @@
       {
         "customerName": "Acme Corp",
         "products": [
-          { "productName": "Widget A", "target": 6000, "actual": 5400 },
-          { "productName": "Widget B", "target": 6000, "actual": 5600 }
+          {
+            "productName": "Widget A",
+            "target": 6000,
+            "actual": 5400
+          },
+          {
+            "productName": "Widget B",
+            "target": 6000,
+            "actual": 5600
+          }
         ]
       },
       {
         "customerName": "Globex Inc",
         "products": [
-          { "productName": "Widget B", "target": 5000, "actual": 4600 },
-          { "productName": "Gadget C", "target": 4000, "actual": 3800 }
+          {
+            "productName": "Widget B",
+            "target": 5000,
+            "actual": 4600
+          },
+          {
+            "productName": "Gadget C",
+            "target": 4000,
+            "actual": 3800
+          }
         ]
       }
     ]
@@ -24,15 +40,31 @@
       {
         "customerName": "Acme Corp",
         "products": [
-          { "productName": "Widget A", "target": 7000, "actual": 6600 },
-          { "productName": "Widget B", "target": 5000, "actual": 4800 }
+          {
+            "productName": "Widget A",
+            "target": 7000,
+            "actual": 6600
+          },
+          {
+            "productName": "Widget B",
+            "target": 5000,
+            "actual": 4800
+          }
         ]
       },
       {
         "customerName": "Soylent Co",
         "products": [
-          { "productName": "Gadget C", "target": 3000, "actual": 2800 },
-          { "productName": "Widget A", "target": 4000, "actual": 3500 }
+          {
+            "productName": "Gadget C",
+            "target": 3000,
+            "actual": 2800
+          },
+          {
+            "productName": "Widget A",
+            "target": 4000,
+            "actual": 3500
+          }
         ]
       }
     ]
@@ -43,15 +75,31 @@
       {
         "customerName": "Globex Inc",
         "products": [
-          { "productName": "Widget B", "target": 6000, "actual": 5400 },
-          { "productName": "Gadget C", "target": 5000, "actual": 4700 }
+          {
+            "productName": "Widget B",
+            "target": 6000,
+            "actual": 5400
+          },
+          {
+            "productName": "Gadget C",
+            "target": 5000,
+            "actual": 4700
+          }
         ]
       },
       {
         "customerName": "Soylent Co",
         "products": [
-          { "productName": "Gadget C", "target": 4000, "actual": 3900 },
-          { "productName": "Widget A", "target": 3000, "actual": 3100 }
+          {
+            "productName": "Gadget C",
+            "target": 4000,
+            "actual": 3900
+          },
+          {
+            "productName": "Widget A",
+            "target": 3000,
+            "actual": 3100
+          }
         ]
       }
     ]

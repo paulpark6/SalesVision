@@ -1,5 +1,23 @@
 [
-  { "customer": { "name": "Acme Corp", "email": "ap@acme.com" }, "amount": 1250 },
-  { "customer": { "name": "Globex Inc", "email": "billing@globex.com" }, "amount": 980 },
-  { "customer": { "name": "Soylent Co", "email": "ap@soylent.co" }, "amount": 1430 }
+  {
+    "customer": {
+      "name": "Acme Corp",
+      "email": "ap@acme.com"
+    },
+    "amount": 1250
+  },
+  {
+    "customer": {
+      "name": "Globex Inc",
+      "email": "billing@globex.com"
+    },
+    "amount": 980
+  },
+  {
+    "customer": {
+      "name": "Soylent Co",
+      "email": "ap@soylent.co"
+    },
+    "amount": 1430
+  }
 ]

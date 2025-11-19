@@ -11,10 +11,13 @@ async function readCsv(csvPath) {
   const csv = await readFile(csvAbs, 'utf8');
   const parsed = papa.parse(csv, { header: true, skipEmptyLines: true });
   if (parsed.errors?.length) {
-    const first = parsed.errors[0];
-    console.error(`CSV parse error in ${csvPath}:`, first);
-    process.exitCode = 1;
-    return [];
+    // Only fail on critical errors, not delimiter detection
+    const criticalErrors = parsed.errors.filter(e => e.code !== 'UndetectableDelimiter');
+    if (criticalErrors.length) {
+      console.error(`CSV parse error in ${csvPath}:`, criticalErrors[0]);
+      process.exitCode = 1;
+      return [];
+    }
   }
   return parsed.data;
 }
@@ -29,15 +32,16 @@ async function csvToJsonFile(csvPath, jsonPath, rowMap) {
 }
 
 async function main() {
-  const root = path.join('..', '..', '..');
+  const root = path.join('..', '..');  // Go up 2 levels from apps/web to project root
   const csvRoot = (...p) => path.join(root, 'db', 'csv', ...p);
   const uiRoot = (...p) => path.join(root, 'db', 'ui', ...p);
 
   // Dashboard
   // overview
   {
-    const [row] = await readCsv(csvRoot('dashboard', 'overview.csv'));
-    const json = { totalRevenue: Number(row.totalRevenue) || 0 };
+    const rows = await readCsv(csvRoot('dashboard', 'overview.csv'));
+    const [row] = rows;
+    const json = { totalRevenue: Number(row?.totalRevenue) || 0 };
     const out = uiRoot('dashboard', 'overview.json');
     await ensureDir(path.dirname(out));
     await writeFile(out, JSON.stringify(json, null, 2) + '\n');

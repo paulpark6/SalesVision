@@ -3,18 +3,48 @@
     "employeeId": "mgr-001",
     "employeeName": "Jane Smith",
     "sales": [
-      { "type": "Imported", "salePrice": 12000, "costPrice": 0, "customerType": "own" },
-      { "type": "Imported", "salePrice": 9000, "costPrice": 0, "customerType": "transfer" },
-      { "type": "Local", "salePrice": 8000, "costPrice": 6000, "customerType": "own" }
+      {
+        "type": "Imported",
+        "salePrice": 12000,
+        "costPrice": 0,
+        "customerType": "own"
+      },
+      {
+        "type": "Imported",
+        "salePrice": 9000,
+        "costPrice": 0,
+        "customerType": "transfer"
+      },
+      {
+        "type": "Local",
+        "salePrice": 8000,
+        "costPrice": 6000,
+        "customerType": "own"
+      }
     ]
   },
   {
     "employeeId": "emp-002",
     "employeeName": "Alex Lee",
     "sales": [
-      { "type": "Imported", "salePrice": 7000, "costPrice": 0, "customerType": "own" },
-      { "type": "Local", "salePrice": 6000, "costPrice": 5200, "customerType": "transfer" },
-      { "type": "Local", "salePrice": 5000, "costPrice": 3500, "customerType": "own" }
+      {
+        "type": "Imported",
+        "salePrice": 7000,
+        "costPrice": 0,
+        "customerType": "own"
+      },
+      {
+        "type": "Local",
+        "salePrice": 6000,
+        "costPrice": 5200,
+        "customerType": "transfer"
+      },
+      {
+        "type": "Local",
+        "salePrice": 5000,
+        "costPrice": 3500,
+        "customerType": "own"
+      }
     ]
   }
 ]

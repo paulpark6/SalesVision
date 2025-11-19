@@ -7,11 +7,22 @@
     "customerGrade": "A",
     "customerType": "own",
     "monthlySales": [
-      { "month": 8, "actual": 12500, "average": 9800 },
-      { "month": 9, "actual": 14200, "average": 10100 }
+      {
+        "month": 8,
+        "actual": 12500,
+        "average": 9800
+      },
+      {
+        "month": 9,
+        "actual": 14200,
+        "average": 10100
+      }
     ],
     "yearlySales": [
-      { "year": 2024, "amount": 128000 }
+      {
+        "year": 2024,
+        "amount": 128000
+      }
     ],
     "creditBalance": 3200,
     "contact": {
@@ -31,11 +42,22 @@
     "customerGrade": "B",
     "customerType": "transfer",
     "monthlySales": [
-      { "month": 8, "actual": 7800, "average": 7200 },
-      { "month": 9, "actual": 8600, "average": 7350 }
+      {
+        "month": 8,
+        "actual": 7800,
+        "average": 7200
+      },
+      {
+        "month": 9,
+        "actual": 8600,
+        "average": 7350
+      }
     ],
     "yearlySales": [
-      { "year": 2024, "amount": 92000 }
+      {
+        "year": 2024,
+        "amount": 92000
+      }
     ],
     "creditBalance": 1450,
     "contact": {
@@ -55,11 +77,22 @@
     "customerGrade": "A",
     "customerType": "pending",
     "monthlySales": [
-      { "month": 8, "actual": 5200, "average": 5000 },
-      { "month": 9, "actual": 6100, "average": 5050 }
+      {
+        "month": 8,
+        "actual": 5200,
+        "average": 5000
+      },
+      {
+        "month": 9,
+        "actual": 6100,
+        "average": 5050
+      }
     ],
     "yearlySales": [
-      { "year": 2024, "amount": 68000 }
+      {
+        "year": 2024,
+        "amount": 68000
+      }
     ],
     "creditBalance": 980,
     "contact": {

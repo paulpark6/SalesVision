@@ -1,8 +1,8 @@
 """Employee model."""
 from datetime import datetime
-from sqlalchemy import String, DateTime
+from sqlalchemy import String, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional # ❗ Added Optional
 
 from app.db.base import Base
 
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from app.models.monthly_sales_target import MonthlySalesTarget
     from app.models.cash import Cash
     from app.models.cheque import Cheque
+    from app.models.user import User  # ❗ Import User for the relationship
 
 
 class Employee(Base):
@@ -24,7 +25,10 @@ class Employee(Base):
     __tablename__ = "employees"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    
+    # This is the unique column that the User table references
     staff_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
+    
     position: Mapped[str] = mapped_column(String(100), nullable=True)  # manager, staff
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     division: Mapped[str] = mapped_column(String(100), nullable=True)  # sales, internal work
@@ -36,7 +40,14 @@ class Employee(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    # Relationships
+    # relationship to User table
+    user_profile: Mapped["User"] = relationship(
+        "User", 
+        back_populates="employee", # Points back to the 'employee' property in User
+        uselist=False
+    )
+
+    # relationships to other models
     sales: Mapped[List["Sale"]] = relationship("Sale", foreign_keys="Sale.staff", back_populates="employee")
     credits: Mapped[List["Credit"]] = relationship("Credit", foreign_keys="Credit.staff", back_populates="employee")
     overdue_collections: Mapped[List["OverdueCollection"]] = relationship("OverdueCollection", foreign_keys="OverdueCollection.staff", back_populates="employee")

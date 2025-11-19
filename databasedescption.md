@@ -130,7 +130,7 @@
 
 | Column Name | Column Description | Values / Data Type | Relationship |
 |---|---|---|---|
-| staff number | to login | String | None |
+| staff number | to login | String | user.employee_id |
 | position | manager,staff | String | None |
 | Staff | Name of employee managing this client | String | None |
 | division | which part staffs work: sales and internal work | String | None |

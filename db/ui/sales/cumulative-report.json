@@ -1,6 +1,26 @@
 [
-  { "month": "January", "target": 12000, "actual": 11000, "lastYear": 9000 },
-  { "month": "February", "target": 24000, "actual": 22000, "lastYear": 18000 },
-  { "month": "March", "target": 36000, "actual": 33500, "lastYear": 27000 },
-  { "month": "April", "target": 45000, "actual": 40000, "lastYear": 35000 }
+  {
+    "month": "January",
+    "target": 12000,
+    "actual": 11000,
+    "lastYear": 9000
+  },
+  {
+    "month": "February",
+    "target": 24000,
+    "actual": 22000,
+    "lastYear": 18000
+  },
+  {
+    "month": "March",
+    "target": 36000,
+    "actual": 33500,
+    "lastYear": 27000
+  },
+  {
+    "month": "April",
+    "target": 45000,
+    "actual": 40000,
+    "lastYear": 35000
+  }
 ]

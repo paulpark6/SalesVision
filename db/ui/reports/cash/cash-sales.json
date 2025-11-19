@@ -1,5 +1,26 @@
 [
-  { "id": "cs-001", "employeeName": "Jane Smith", "customerName": "Acme Corp", "source": "Cash Sales", "amount": 1250, "date": "2024-09-02" },
-  { "id": "cs-002", "employeeName": "Alex Lee", "customerName": "Globex Inc", "source": "Credit Collection", "amount": 780, "date": "2024-09-03" },
-  { "id": "cs-003", "employeeName": "John Doe", "customerName": "Soylent Co", "source": "Cash Sales", "amount": 560, "date": "2024-09-04" }
+  {
+    "id": "cs-001",
+    "employeeName": "Jane Smith",
+    "customerName": "Acme Corp",
+    "source": "Cash Sales",
+    "amount": 1250,
+    "date": "2024-09-02"
+  },
+  {
+    "id": "cs-002",
+    "employeeName": "Alex Lee",
+    "customerName": "Globex Inc",
+    "source": "Credit Collection",
+    "amount": 780,
+    "date": "2024-09-03"
+  },
+  {
+    "id": "cs-003",
+    "employeeName": "John Doe",
+    "customerName": "Soylent Co",
+    "source": "Cash Sales",
+    "amount": 560,
+    "date": "2024-09-04"
+  }
 ]
