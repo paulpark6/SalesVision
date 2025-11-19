@@ -1,10 +1,10 @@
 ## Current State
 
-✅ **Cloud SQL Instance**: `sales-vision-db` (POSTGRES_15, us-central1)
+✅ **Cloud SQL Instance**: `sales-Vision-db` (POSTGRES_15, us-central1)
 
-✅ **Database**: `salesvision` created
+✅ **Database**: `salesVision` created
 
-✅ **Connection Name**: `youngintlsaleswebapp:us-central1:sales-vision-db`
+✅ **Connection Name**: `youngintlsaleswebapp:us-central1:sales-Vision-db`
 
 ✅ **Secret Manager**: DATABASE_URL stored (version 1)
 
@@ -52,56 +52,62 @@
 
 ---
 
-### 1. Sales (Data Description Sales VIsion - Sales.csv)
+### 1. Sales (Data Description Sales Vision - Sales.csv)
 
 > **Purpose:** To look at the sales record to see the total revenue and performance of each staff.[1]
 
+Only CEO can see this data
+
 | Column Name | Column Description | Values / Data Type | Relationship |
 |---|---|---|---|
+| SaleNum | Unique identifier for a sale, Primary Key | Integer | None |
 | iventoryinout | The inventory management system requires defining stock status as sales, returns, intgernal use ,broken, damage, missing | String | None |
-| ProductCode | Unique product code for each product | String | products.product_code |
-| ProductDescription | Description of code description | String | None |
-| ProductCategory | Categories will increase, but currently there are: Oil, Tire, Filter, Others | String | None |
-| Invoice | invoice number (given values from tax office). | String | None |
+| ProductCode | Unique product code for each product | String | Product.ProductCode |
+| ProductDescription | Description of code description | String | Product.ProductDescription |
+| ProductCategory | Categories will increase, but currently there are: Oil, Tire, Filter, Others | String | Product.ProductCategory |
+| InvoiceNum | invoice number (given values from tax office). | String | None |
 | Date | dd/mm/yy | Date | None |
-| Quantity | Quantity of product | Integer | None |
-| ClientGrade | 3 different category: A, B, C where A is the biggest and C is the lowest | String | None |
-| ClientNumber | Unique client number for each client name | String | clients.client_number |
-| ClientName | Name of client | String | None |
-| Staff | Name of employee managing this client | String | employees.name |
-| UnitPrice | Price of product per unit | Decimal | None |
+| Quantity | Quantity of sold product | Integer | None |
+| ClientGrade | 3 different category: A, B, C where A is the biggest and C is the lowest | String | Client.ClientGrade |
+| ClientNumber | Unique client number for each client name | String | Client.ClientNumber |
+| ClientName | Name of client | String | Client.ClientName |
+| Staff | Name of employee managing this client | String | Employee.name |
+| UnitPrice | Price of product per unit | Decimal | Product.unitcost |
 | Amount | Total amount of product = UnitPrice x Quantity | Decimal | None |
 | PaymentType | Category value showing which type of payment: Cash, Credit, Cheque | String | None |
 
-### 2. Credit (Data Description Sales VIsion - Credit.csv)
+### 2. Credit (Data Description Sales Vision - Credit.csv)
 
-> **Purpose:** To see if client paid for the product or not.[1]
+> **Purpose:** To see if client paid for the product or not.[1] (Payment Type Table.)
 
 | Column Name | Column Description | Values / Data Type | Relationship |
 |---|---|---|---|
 | Date | dd/mm/yy | Date | None |
-| ClientNumber | Unique client number for each client name | String | clients.client_number |
-| ClientName | Name of client | String | None |
-| Staff | Name of employee managing this client | String | employees.name |
-| PaymentStatuts | Status of payment: Credit -> Client took product and did not pay yet... Pay -> Client has paid for product | String | None |
+| CreditID | Primary Key | Integer | None |
+| ClientNumber | Unique client number for each client name | String | Client.ClientNumber |
+| ClientName | Name of client | String | Client.ClientName |
+| Staff | Name of employee managing this client | String | Employee.name |
+| PaymentStatus | Status of payment: Credit -> Client took product and did not pay yet... Pay -> Client has paid for product | String | None |
 | CreditAmount | Amount that needs to be paid from client | Decimal | None |
 | CreditPaymentType | Categorical column: Cheque, Cash, SetOff, penalty, mix | String | None |
 | CreditDueDate | CreditPeriod (dd/mm/yy) | Date | None |
+| SalesNum | Specific refece to specific sale in sales table | Date | None |
 
-### 3. OverdueCollection (Data Description Sales VIsion - OverdueCollection.csv)
+### 3. OverdueCollection (Data Description Sales Vision - OverdueCollection.csv)
 
 > **Purpose:** to show the overdue status to make action to collect.[1]
 
 | Column Name | Column Description | Values / Data Type | Relationship |
 |---|---|---|---|
 | Date | dd/mm/yy | Date | None |
-| ClientName | Name of client | String | clients.client_name |
-| Staff | Name of employee managing this client | String | employees.name |
+| ClientName | Name of client | String | Client.ClientName |
+| Staff | Name of employee managing this client | String | Employees.name |
 | CreditPeriod | Number of days the client requested to pay for the product | Integer | None |
 | CreditAmount | Amount that needs to be paid from client | Integer | None |
-| action | staffs have to describe their actions on saturday | String | None |
+| action | description of staff's attempt to get money from client | String | None |
+| CreditID | Primary Key | Integer | None |
 
-### 4. Client (Data Description Sales VIsion - Client.csv)
+### 4. Client (Data Description Sales Vision - Client.csv)
 
 > **Purpose:** to establish a comprehensive client management protocol by accurately determining both the client's size/segment and our own company's sales scale, while also ensuring an accessible emergency contact system for immediate resolution.[1]
 
@@ -124,7 +130,7 @@
 | yearlyamount | total sales amount of the previous year | Decimal | None |
 | information | staff describe: number of commercial vehicle,product specification,quantity per month | String | None |
 
-### 5. Employee (Data Description Sales VIsion - Employee.csv)
+### 5. Employee (Data Description Sales Vision - Employee.csv)
 
 > **Purpose:** to clarify roles and activities to effectively integrate with the sales system.[1]
 
@@ -133,14 +139,14 @@
 | staff number | to login | String | user.employee_id |
 | position | manager,staff | String | None |
 | Staff | Name of employee managing this client | String | None |
-| division | which part staffs work: sales and internal work | String | None |
+| diVision | which part staffs work: sales and internal work | String | None |
 | workingstart | when he starts his work | String (likely Date) | None |
 | phonenumber | call to him to cummunicate | String | None |
 | emergencycontact | name and (relationship) | String | None |
 | emergencycall | point of contact for emergency company communications when the primary employee is unreachable. | String | None |
 | whatsapps | text/call to him to cummunicate | String | None |
 
-### 6. Commission (Data Description Sales VIsion - commission.csv)
+### 6. Commission (Data Description Sales Vision - commission.csv)
 
 > **Purpose:** to provide the commission to the staff depend on their sales,productclaaification and client type.[1]
 
@@ -149,7 +155,7 @@
 | staff number | to login | String | employees.staff_number |
 | position | manager,staff | String | None |
 | Staff | Name of employee managing this client | String | employees.name |
-| division | which part staffs work: sales and internal work | String | None |
+| diVision | which part staffs work: sales and internal work | String | None |
 | commission | according to sales, company provide commission | Decimal | None |
 | monthlyreview | everymonth after closing sales of the month | Decimal | None |
 | Classification | where is from: import or local purchaising | String | None |
@@ -158,7 +164,7 @@
 | localproduct | Base on the percentage of margin: (selling price -purchasing cost)/selling price... | Decimal | None |
 | clinettransfercalculation | transfer clients for import product - 1%; Transfer clients for Local product -50% of localproduct margin | Decimal | None |
 
-### 7. Product (Data Description Sales VIsion - Product.csv)
+### 7. Product (Data Description Sales Vision - Product.csv)
 
 > **Purpose:** to set the appropriate product quantity and cost for every product name.[1]
 
@@ -173,7 +179,7 @@
 | amount-credit | If it is credit, how muc | Decimal | None |
 | uploadDate | the cost can vary by date: dd/mm/yy | Date | None |
 
-### 8. Price List (Data Description Sales VIsion - price list.csv)
+### 8. Price List (Data Description Sales Vision - price list.csv)
 
 > **Purpose:** To show the specific pricing for all available products, segmented by each client grade.[1]
 
@@ -184,7 +190,7 @@
 | clientgrade | 4 grade ( A,B,C and enduser) | String | None |
 | price | sellin price - according to client grade for each product name | Decimal | None |
 
-### 9. Stock (Data Description Sales VIsion - Stock.csv)
+### 9. Stock (Data Description Sales Vision - Stock.csv)
 
 > **Purpose:** to verify the current stock availability for new orders and to identify any discrepancies or missing inventory units.[1]
 
@@ -199,7 +205,7 @@
 | checkDate | dd/mm/yy | Date | None |
 | monthlyreview | mostly check it monthly and report it (designated date) | String | None |
 
-### 10. Monthly Sales Target (Data Description Sales VIsion - monthly sales target.csv)
+### 10. Monthly Sales Target (Data Description Sales Vision - monthly sales target.csv)
 
 > **Purpose:** to input sales target in the subject month.[1]
 
@@ -214,7 +220,7 @@
 | salesmonthlytarget | Sales plan for the products and quantity in the subject Month which is choosen | Decimal | None |
 | companytarget | company give the target yearly so it is automatically divided into 12 months | Decimal | None |
 
-### 11. Expenditure (Data Description Sales VIsion - expenditure.csv)
+### 11. Expenditure (Data Description Sales Vision - expenditure.csv)
 
 > **Purpose:** to display the total monthly expenditure, including the costs associated with locally purchased products.[1]
 
@@ -228,7 +234,7 @@
 | Receipt Availability | to prove the pay,ent - yes or No | String | None |
 | cost | pay for payment way - purchaising and espenditure | Decimal | None |
 
-### 12. Cash (Data Description Sales VIsion - Cash.csv)
+### 12. Cash (Data Description Sales Vision - Cash.csv)
 
 > **Purpose:** How much cash flow is generated from operations like sales , collections and others? [1]
 
@@ -244,7 +250,7 @@
 | paymentexpenditure | expenditure ( salary,company disposable items, delivery cost,sales support,commission,fuel,car repair,company tool&machine,electricity,water,rental fee,other) | Decimal | None |
 | weeklyreview | frequecy of report - weekly check the status(designated date) | String | None |
 
-### 13. Cheque (Data Description Sales VIsion - Cheque.csv)
+### 13. Cheque (Data Description Sales Vision - Cheque.csv)
 
 > **Purpose:** To monitor the cashing of a checque and, in the event of rejection, initiate follow-up procedures.[1]
 
