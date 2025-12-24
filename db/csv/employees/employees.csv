@@ -3,3 +3,4 @@ owner,Owner,Owner,admin,
 mgr-001,Jane Smith,Jane Smith,manager,owner
 emp-001,John Doe,John Doe,employee,mgr-001
 emp-002,Alex Lee,Alex Lee,employee,mgr-001
+emp-test-api,API Test,API Test,employee,mgr-001

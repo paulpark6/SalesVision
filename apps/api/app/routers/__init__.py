@@ -1,5 +1,5 @@
 """API routers for the SalesVision backend."""
 
-from . import health
+from . import health, employees
 
-__all__ = ["health"]
+__all__ = ["health", "employees"]

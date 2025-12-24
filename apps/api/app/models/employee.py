@@ -51,7 +51,7 @@ class Employee(Base):
     sales: Mapped[List["Sale"]] = relationship("Sale", foreign_keys="Sale.staff", back_populates="employee")
     credits: Mapped[List["Credit"]] = relationship("Credit", foreign_keys="Credit.staff", back_populates="employee")
     overdue_collections: Mapped[List["OverdueCollection"]] = relationship("OverdueCollection", foreign_keys="OverdueCollection.staff", back_populates="employee")
-    commissions: Mapped[List["Commission"]] = relationship("Commission", foreign_keys="Commission.staff", back_populates="employee")
+    commissions: Mapped[List["Commission"]] = relationship("Commission", foreign_keys="Commission.staff_number", back_populates="employee")
     monthly_targets: Mapped[List["MonthlySalesTarget"]] = relationship("MonthlySalesTarget", foreign_keys="MonthlySalesTarget.staff", back_populates="employee")
     cash_flows: Mapped[List["Cash"]] = relationship("Cash", foreign_keys="Cash.staff", back_populates="employee")
     cheques: Mapped[List["Cheque"]] = relationship("Cheque", foreign_keys="Cheque.staff", back_populates="employee")

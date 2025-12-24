@@ -20,8 +20,9 @@ class OverdueCollection(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     date: Mapped[str] = mapped_column(String(50), nullable=True, index=True)
-    client_name: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("clients.client_name"), nullable=True, index=True)
-    staff: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("employees.name"), nullable=True, index=True)
+    client_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
+    client_number: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("clients.client_number"), nullable=True, index=True)
+    staff: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
     credit_period: Mapped[int] = mapped_column(Integer, nullable=True)
     credit_amount: Mapped[int] = mapped_column(Integer, nullable=True)
     action: Mapped[str] = mapped_column(Text, nullable=True)

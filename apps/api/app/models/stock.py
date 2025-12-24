@@ -1,9 +1,13 @@
 """Stock/Inventory model."""
 from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, DateTime, Numeric, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Optional, TYPE_CHECKING
 
 from app.db.base import Base
+
+if TYPE_CHECKING:
+    from app.models.product import Product
 
 
 class Stock(Base):
@@ -15,7 +19,7 @@ class Stock(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     product_category: Mapped[str] = mapped_column(String(100), nullable=True, index=True)
-    product_code: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    product_code: Mapped[str] = mapped_column(String(50), ForeignKey("products.product_code"), nullable=False, index=True)
     product_description: Mapped[str] = mapped_column(String(500), nullable=True)
     average_sales_quantity: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
     stock_quantity: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
@@ -24,6 +28,9 @@ class Stock(Base):
     monthly_review: Mapped[str] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Relationships
+    product: Mapped[Optional["Product"]] = relationship("Product", back_populates="stocks")
 
     def __repr__(self) -> str:
         return f"<Stock(id={self.id}, product={self.product_code}, quantity={self.stock_quantity})>"

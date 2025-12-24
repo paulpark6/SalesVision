@@ -28,11 +28,10 @@ class Sale(Base):
     client_grade: Mapped[str] = mapped_column(String(10), nullable=True)
 
     # Foreign key to clients
+    client_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
     client_number: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("clients.client_number"), nullable=True, index=True)
-    client_name: Mapped[str] = mapped_column(String(255), nullable=True, index=True)
-
     # Foreign key to employees
-    staff: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("employees.name"), nullable=True, index=True)
+    staff: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
 
     unit_price: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
     amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)

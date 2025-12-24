@@ -52,10 +52,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted/40">
-       <div className="flex items-center gap-2 font-semibold mb-4">
-            <LineChart className="h-8 w-8 text-primary" />
-            <span className="text-2xl">SalesVision</span>
-        </div>
+      <div className="flex items-center gap-2 font-semibold mb-4">
+        <LineChart className="h-8 w-8 text-primary" />
+        <span className="text-2xl">SalesVision</span>
+      </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -72,17 +72,17 @@ export default function LoginPage() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" required defaultValue="password" />
           </div>
-           <div className="grid gap-2">
+          <div className="grid gap-2">
             <Label htmlFor="role">Role</Label>
             <Select name="role" value={role} onValueChange={setRole} required>
-                <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="director">Director</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="staff">Staff</SelectItem>
-                </SelectContent>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="director">Director</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="staff">Staff</SelectItem>
+              </SelectContent>
             </Select>
           </div>
         </CardContent>
@@ -90,12 +90,7 @@ export default function LoginPage() {
           <Button className="w-full" onClick={handleLogin}>
             Sign in
           </Button>
-           <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="underline">
-                Sign up
-              </Link>
-            </div>
+
         </CardFooter>
       </Card>
     </div>

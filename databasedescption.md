@@ -14,7 +14,8 @@
 
 ✅ **Schema Applied**: All 14 tables created successfully in Cloud SQL
 
-✅ **Cloud SQL Proxy**: Configured for local development
+✅ **Cloud SQL Proxy**: Configured for local development targeting Cloud SQL.
+✅ **Docker PostgreSQL**: Configured for local development targeting Local DB (faster/offline).
 
 ✅ **Database Connectivity**: Tested and verified
 
@@ -146,7 +147,7 @@ Only CEO can see this data
 | emergencycall | point of contact for emergency company communications when the primary employee is unreachable. | String | None |
 | whatsapps | text/call to him to cummunicate | String | None |
 
-### 6. Commission (Data Description Sales Vision - commission.csv)
+### 6. `Commission` (Data Description Sales Vision - commission.csv)
 
 > **Purpose:** to provide the commission to the staff depend on their sales,productclaaification and client type.[1]
 
@@ -155,7 +156,7 @@ Only CEO can see this data
 | staff number | to login | String | employees.staff_number |
 | position | manager,staff | String | None |
 | Staff | Name of employee managing this client | String | employees.name |
-| diVision | which part staffs work: sales and internal work | String | None |
+| division | which part staffs work: sales and internal work | String | None |
 | commission | according to sales, company provide commission | Decimal | None |
 | monthlyreview | everymonth after closing sales of the month | Decimal | None |
 | Classification | where is from: import or local purchaising | String | None |
@@ -267,3 +268,8 @@ Only CEO can see this data
 | chequeamount | amount on the cheque | Decimal | None |
 | Approval status | bank approval status ; approval, reject( re issue the cheque, cash pay, re-deposit)... | String | None |
 | weeklyreview | weekly check the status | String | None |
+
+
+
+### Reference this:
+https://dbdiagram.io/d/SalesVisionData-Model-691d3e936735e11170770c8f

@@ -26,7 +26,7 @@ class Credit(Base):
     client_name: Mapped[str] = mapped_column(String(255), nullable=True, index=True)
 
     # Foreign key to employees
-    staff: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("employees.name"), nullable=True, index=True)
+    staff: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
     payment_status: Mapped[str] = mapped_column(String(50), nullable=True)  # Credit, Pay
     credit_amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
     credit_payment_type: Mapped[str] = mapped_column(String(50), nullable=True)  # Cheque, Cash, SetOff, penalty, mix

@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { apiClient } from '@/lib/api-client';
 
 export default function NewEmployeePage() {
   const { toast } = useToast();
@@ -33,25 +34,46 @@ export default function NewEmployeePage() {
     }
   }, [auth, router]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Here you would typically handle the form submission,
-    // e.g., send data to your backend API to create a new employee.
+    const formData = new FormData(event.currentTarget);
+    const name = formData.get('employeeName') as string;
+    const value = formData.get('employeeId') as string;
 
-    toast({
-      title: 'Employee Registered',
-      description: 'The new employee has been successfully registered.',
-    });
-    router.push('/admin'); // Redirect to manager dashboard
+    try {
+      await apiClient('/employees', {
+        method: 'POST',
+        body: JSON.stringify({
+          value,
+          label: name,
+          name,
+          role: 'employee',
+          manager: auth?.userId,
+        }),
+      });
+
+      toast({
+        title: 'Employee Registered',
+        description: 'The new employee has been successfully registered.',
+      });
+      router.push('/admin');
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Registration Failed',
+        description: error instanceof Error ? error.message : 'Unknown error',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleCancel = () => {
     router.push('/admin');
   };
-  
+
   // Render nothing or a loading spinner while checking auth
   if (!role || role !== 'manager') {
-    return null; 
+    return null;
   }
 
   return (
@@ -73,6 +95,7 @@ export default function NewEmployeePage() {
                   <Label htmlFor="employeeName">Name</Label>
                   <Input
                     id="employeeName"
+                    name="employeeName"
                     placeholder="e.g., John Doe"
                     required
                   />
@@ -81,6 +104,7 @@ export default function NewEmployeePage() {
                   <Label htmlFor="employeeId">Employee ID</Label>
                   <Input
                     id="employeeId"
+                    name="employeeId"
                     placeholder="e.g., EMP-004"
                     required
                   />

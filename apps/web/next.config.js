@@ -37,6 +37,9 @@ const nextConfig = {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       '@': path.resolve(__dirname, 'src'),
+      '@db': require('fs').existsSync(path.resolve(__dirname, 'db'))
+        ? path.resolve(__dirname, 'db')
+        : path.resolve(__dirname, '../../db'),
     };
     config.resolve.extensions = Array.from(
       new Set([...(config.resolve.extensions || []), '.ts', '.tsx'])
