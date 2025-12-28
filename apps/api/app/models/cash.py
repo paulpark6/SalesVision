@@ -1,6 +1,6 @@
 """Cash flow model."""
-from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric, ForeignKey
+from datetime import date, datetime
+from sqlalchemy import String, DateTime, Numeric, ForeignKey, Date, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 
@@ -9,32 +9,36 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.client import Client
     from app.models.employee import Employee
+    from app.models.sale import Sale
 
 
 class Cash(Base):
     """
     Cash flow tracking.
-    Maps to Cash.csv data.
+    Maps to CashFlows.csv data.
     """
     __tablename__ = "cash_flows"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    date: Mapped[str] = mapped_column(String(50), nullable=True, index=True)  # Date string from CSV
-    client_name: Mapped[str] = mapped_column(String(255), nullable=True, index=True)
-    client_number: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("clients.client_number"), nullable=True, index=True)
-    staff: Mapped[str] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
-    cash_origin: Mapped[str] = mapped_column(String(100), nullable=True)  # sales, collection, transfer, others
-    cash_amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    payment: Mapped[str] = mapped_column(String(100), nullable=True)
-    payment_product: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    payment_expenditure: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    weekly_review: Mapped[str] = mapped_column(String(100), nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
+    
+    # Matching schema naming
+    client_id: Mapped[int] = mapped_column(Integer, ForeignKey("clients.id"), nullable=False, index=True)
+    employee_id: Mapped[int] = mapped_column(Integer, ForeignKey("employees.id"), nullable=False, index=True)
+    
+    cash_origin: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    cash_amount: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    
+    # Link to sale
+    sale_num: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("sales.sale_num"), nullable=True, index=True)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     # Relationships
-    client: Mapped[Optional["Client"]] = relationship("Client", back_populates="cash_flows")
-    employee: Mapped[Optional["Employee"]] = relationship("Employee", foreign_keys=[staff], back_populates="cash_flows")
+    client: Mapped["Client"] = relationship("Client", back_populates="cash_flows")
+    employee: Mapped["Employee"] = relationship("Employee", foreign_keys=[employee_id], back_populates="cash_flows")
+    sale: Mapped[Optional["Sale"]] = relationship("Sale", back_populates="cash_flows")
 
     def __repr__(self) -> str:
-        return f"<Cash(id={self.id}, date={self.date}, amount={self.cash_amount})>"
+        return f"<Cash(id={self.id}, amount={self.cash_amount})>"

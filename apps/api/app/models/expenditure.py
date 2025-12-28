@@ -1,6 +1,6 @@
 """Expenditure model."""
-from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric, ForeignKey
+from datetime import date, datetime
+from sqlalchemy import String, DateTime, Numeric, ForeignKey, Boolean, Date, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 
@@ -12,19 +12,24 @@ if TYPE_CHECKING:
 
 class Expenditure(Base):
     """
-    Company expenditures and costs.
-    Maps to expenditure.csv data.
+    Business expenditures and costs.
+    Maps to Expenditures.csv data.
     """
     __tablename__ = "expenditures"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    date: Mapped[str] = mapped_column(String(50), nullable=True, index=True)  # Date string from CSV
-    payment_way: Mapped[str] = mapped_column(String(100), nullable=True)
-    product_code: Mapped[str] = mapped_column(String(50), ForeignKey("products.product_code"), nullable=True, index=True)
-    product_description: Mapped[str] = mapped_column(String(500), nullable=True)
-    expenditure_category: Mapped[str] = mapped_column(String(100), nullable=True, index=True)  # salary, delivery cost, etc.
-    receipt_availability: Mapped[str] = mapped_column(String(10), nullable=True)  # yes, no
-    cost: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
+    
+    # Matching schema naming
+    payment_method: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # Cash, Bank, etc.
+    payment_amount: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    expenditure_description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    
+    # Boolean type as requested in schema
+    receipt_availability: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    
+    product_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("products.id"), nullable=True, index=True)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
@@ -32,4 +37,4 @@ class Expenditure(Base):
     product: Mapped[Optional["Product"]] = relationship("Product", back_populates="expenditures")
 
     def __repr__(self) -> str:
-        return f"<Expenditure(id={self.id}, category={self.expenditure_category}, cost={self.cost})>"
+        return f"<Expenditure(id={self.id}, amount={self.payment_amount}, method={self.payment_method})>"

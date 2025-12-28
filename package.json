@@ -6,6 +6,10 @@
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace nextn",
+    "dev:api": "cd apps/api && source venv/bin/activate && uvicorn app.main:app --reload --port 8000",
+    "dev:db": "docker-compose up db -d",
+    "dev:proxy:cloud-dev": "./apps/api/cloud-sql-proxy youngintlsaleswebapp:us-central1:sales-vision-db --port 5433",
+    "dev:proxy:cloud-prod": "./apps/api/cloud-sql-proxy youngintlsaleswebapp:us-central1:sales-vision-db --port 5432",
     "build:data": "npm run build:data --workspace nextn",
     "build:web": "npm run build --workspace nextn",
     "lint:web": "npm run lint --workspace nextn"

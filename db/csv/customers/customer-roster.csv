@@ -1,4 +1,0 @@
-employee,employeeId,customerName,customerCode,customerGrade,customerType,creditBalance,contact_name,contact_position,contact_phone,contact_address,contact_email,companyOverview
-Jane Smith,mgr-001,Acme Corp,C-101,A,own,3200,Mary Johnson,AP Manager,+1-555-0101,"100 Main St, City, ST",ap@acme.com,Leading distributor in the region.
-Alex Lee,emp-002,Globex Inc,C-102,B,transfer,1450,Kevin Park,Director,+1-555-0145,"200 Commerce Ave, City, ST",billing@globex.com,Consumer electronics wholesaler.
-John Doe,emp-001,Soylent Co,C-103,A,pending,980,Chris Miller,AP Specialist,+1-555-0177,"300 Industrial Rd, City, ST",ap@soylent.co,Food products manufacturer.

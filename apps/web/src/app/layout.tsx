@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster"
+import { MonthFilterProvider } from '@/contexts/month-filter-context';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -26,9 +27,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn('min-h-screen bg-background font-body antialiased', inter.variable)}>
-        {children}
-        <Toaster />
+      <body className={cn('min-h-screen bg-background font-body antialiased', inter.variable)} suppressHydrationWarning>
+        <MonthFilterProvider>
+          {children}
+          <Toaster />
+        </MonthFilterProvider>
       </body>
     </html>
   );

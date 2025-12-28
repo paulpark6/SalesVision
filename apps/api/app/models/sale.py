@@ -1,48 +1,55 @@
-"""Sale model."""
-from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric, Integer, ForeignKey
+from datetime import date, datetime
+from typing import Optional, List, TYPE_CHECKING
+from sqlalchemy import String, DateTime, Numeric, Integer, ForeignKey, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import Optional
 
 from app.db.base import Base
+from app.models.mixins import AuditMixin
+
+if TYPE_CHECKING:
+    from app.models.product import Product
+    from app.models.client import Client
+    from app.models.employee import Employee
+    from app.models.credit import Credit
+    from app.models.cheque import Cheque
+    from app.models.cash import Cash
 
 
-class Sale(Base):
+class Sale(Base, AuditMixin):
     """
     Sales transactions.
     Maps to Sales.csv data.
     """
     __tablename__ = "sales"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    inventory_in_out: Mapped[str] = mapped_column(String(50), nullable=True)  # sales, returns, internal use, etc.
+    sale_num: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    inventory_status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # sales, returns, etc.
 
     # Foreign key to products
-    product_code: Mapped[str] = mapped_column(String(50), ForeignKey("products.product_code"), nullable=False, index=True)
-    product_description: Mapped[str] = mapped_column(String(500), nullable=True)
-    product_category: Mapped[str] = mapped_column(String(100), nullable=True)
-
-    invoice: Mapped[str] = mapped_column(String(100), nullable=True, index=True)
-    date: Mapped[str] = mapped_column(String(50), nullable=True, index=True)  # Date string from CSV
-    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
-    client_grade: Mapped[str] = mapped_column(String(10), nullable=True)
-
+    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"), nullable=False, index=True)
+    
+    invoice_num: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, index=True)
+    sale_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
+    quantity: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    
     # Foreign key to clients
-    client_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
-    client_number: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("clients.client_number"), nullable=True, index=True)
+    client_id: Mapped[int] = mapped_column(Integer, ForeignKey("clients.id"), nullable=False, index=True)
+    
     # Foreign key to employees
-    staff: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
+    employee_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("employees.id"), nullable=True, index=True)
 
-    unit_price: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    payment_type: Mapped[str] = mapped_column(String(50), nullable=True)  # Cash, Credit, Cheque
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    unit_price: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    sale_amount: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    payment_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # Cash, Credit, Cheque
 
     # Relationships
     product: Mapped["Product"] = relationship("Product", back_populates="sales")
-    client: Mapped[Optional["Client"]] = relationship("Client", back_populates="sales")
-    employee: Mapped[Optional["Employee"]] = relationship("Employee", foreign_keys=[staff], back_populates="sales")
+    client: Mapped["Client"] = relationship("Client", back_populates="sales")
+    employee: Mapped[Optional["Employee"]] = relationship("Employee", foreign_keys=[employee_id], back_populates="sales")
+    
+    credits: Mapped[List["Credit"]] = relationship("Credit", back_populates="sale")
+    cheques: Mapped[List["Cheque"]] = relationship("Cheque", back_populates="sale")
+    cash_flows: Mapped[List["Cash"]] = relationship("Cash", back_populates="sale")
 
     def __repr__(self) -> str:
-        return f"<Sale(id={self.id}, invoice={self.invoice}, client={self.client_name}, amount={self.amount})>"
+        return f"<Sale(sale_num={self.sale_num}, invoice={self.invoice_num}, amount={self.sale_amount})>"

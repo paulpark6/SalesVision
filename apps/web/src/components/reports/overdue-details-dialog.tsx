@@ -20,7 +20,16 @@ import {
   TableFooter,
 } from "@/components/ui/table";
 import { differenceInDays, parseISO } from 'date-fns';
-import type { DuePayment } from "@/lib/mock-data";
+// import type { DuePayment } from "@/lib/mock-data";
+export interface DuePayment {
+  id: string;
+  employee: string;
+  employeeId?: string;
+  customer: { name: string; email: string };
+  dueDate: string;
+  amount: number;
+  collectionPlan?: string;
+}
 
 type OverdueDetailsDialogProps = {
   isOpen: boolean;
@@ -30,17 +39,17 @@ type OverdueDetailsDialogProps = {
 };
 
 const getOverdueBucket = (dueDate: string): '1-30' | '31-90' | '>90' => {
-    const due = parseISO(dueDate);
-    const today = new Date();
-    const daysOverdue = differenceInDays(today, due);
+  const due = parseISO(dueDate);
+  const today = new Date();
+  const daysOverdue = differenceInDays(today, due);
 
-    if (daysOverdue <= 30) return '1-30';
-    if (daysOverdue <= 90) return '31-90';
-    return '>90';
+  if (daysOverdue <= 30) return '1-30';
+  if (daysOverdue <= 90) return '31-90';
+  return '>90';
 };
 
 const formatCurrency = (amount: number) => {
-    return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payments }: OverdueDetailsDialogProps) {
@@ -59,10 +68,10 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
         buckets[bucket].items.push(payment);
       }
     });
-    
+
     return buckets;
   }, [payments]);
-  
+
   const totalOverdue = payments.reduce((acc, p) => acc + p.amount, 0);
 
   return (
@@ -87,30 +96,30 @@ export function OverdueDetailsDialog({ isOpen, onOpenChange, customerName, payme
             <TableBody>
               {Object.entries(bucketedPayments).map(([bucket, data]) => (
                 data.items.length > 0 && (
-                    <React.Fragment key={bucket}>
-                        <TableRow className="bg-muted/50 font-semibold">
-                            <TableCell colSpan={3}>
-                                {bucket === '>90' ? 'Over 90 Days' : `${bucket} Days`}
-                            </TableCell>
-                            <TableCell className="text-right">{formatCurrency(data.total)}</TableCell>
-                        </TableRow>
-                        {data.items.map(item => (
-                            <TableRow key={item.id}>
-                                <TableCell></TableCell>
-                                <TableCell>{item.id}</TableCell>
-                                <TableCell>{item.dueDate}</TableCell>
-                                <TableCell className="text-right">{formatCurrency(item.amount)}</TableCell>
-                            </TableRow>
-                        ))}
-                    </React.Fragment>
+                  <React.Fragment key={bucket}>
+                    <TableRow className="bg-muted/50 font-semibold">
+                      <TableCell colSpan={3}>
+                        {bucket === '>90' ? 'Over 90 Days' : `${bucket} Days`}
+                      </TableCell>
+                      <TableCell className="text-right">{formatCurrency(data.total)}</TableCell>
+                    </TableRow>
+                    {data.items.map(item => (
+                      <TableRow key={item.id}>
+                        <TableCell></TableCell>
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell>{item.dueDate}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(item.amount)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </React.Fragment>
                 )
               ))}
             </TableBody>
             <TableFooter>
-                <TableRow>
-                    <TableCell colSpan={3} className="text-right font-bold">Total Overdue Amount</TableCell>
-                    <TableCell className="text-right font-bold">{formatCurrency(totalOverdue)}</TableCell>
-                </TableRow>
+              <TableRow>
+                <TableCell colSpan={3} className="text-right font-bold">Total Overdue Amount</TableCell>
+                <TableCell className="text-right font-bold">{formatCurrency(totalOverdue)}</TableCell>
+              </TableRow>
             </TableFooter>
           </Table>
         </div>

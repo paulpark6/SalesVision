@@ -9,43 +9,77 @@
 
 | Component | Status | Progress | Key Insight |
 |-----------|--------|----------|-------------|
-| **Frontend** | ✅ COMPLETE | 100% | Deployed on Cloud Run. Fully functional UI with static data. |
-| **Data Pipeline** | ✅ COMPLETE | 100% | CSV-to-JSON transformation working perfectly. |
-| **Database** | ⚠️ PENDING | 15% | Tables created in Cloud SQL, but no relationships or data connections. |
-| **Backend API** | ❌ NOT STARTED | 5% | Skeleton only. Needs 68+ endpoints implementing. |
-| **Auth** | ⚠️ INSECURE | 30% | Client-side only. Needs Google IAP + Backend integration. |
+| **Frontend** | ✅ COMPLETE | 100% | Deployed on Cloud Run. Fully functional UI with API integration. |
+| **Data Pipeline** | ✅ COMPLETE | 100% | CSV-to-JSON transformation deprecated in favor of DB. |
+| **Database** | ✅ COMPLETE | 100% | Cloud SQL instance active, Schema defined, Foreign Keys linked, Data seeded. |
+| **Backend API** | ✅ ACTIVE | 75% | Core CRUD logic implemented for 14+ modules. |
+| **Auth** | ⚠️ IN PROGRESS | 60% | Backend middleware ready. Syncing with Frontend roles. |
 
 ---
 
 ## 🗓️ 8-Week Timeline (Roadmap)
 
-### Phase 1: Foundation (Weeks 1-2)
-**Focus**: Database & Basic Connectivity
-*   [x] **Infrastructure**: Set up Cloud SQL & Cloud Run.
-*   [ ] **Database**: Define Foreign Keys & Relationships in PostgreSQL.
-*   [ ] **API**: Connect FastAPI to Database.
-*   [ ] **Seed Data**: Migrate CSV data to PostgreSQL.
+### Phase 1: Local Development (Weeks 1-2)
+**Goal**: fast innovation loop using **Sales Vision Dev** database.
+*   [x] **Infrastructure**: Create `sales_vision_dev` database on Cloud SQL.
+*   [x] **Connectivity**: Install `cloud_sql_proxy` to connect localhost to Cloud DB.
+*   [x] **Development**: Run `npm run dev` (Frontend on **Port 9002**) and `uvicorn` (Backend) locally.
+*   [x] **Testing**: Verify changes immediately against the Dev DB.
 
-### Phase 2: Core Features (Weeks 3-4)
-**Focus**: CRUD Operations (Create, Read, Update, Delete)
-*   [ ] **Sales Module**: Create/Edit sales via API.
-*   [ ] **Customers Module**: Manage customer data.
-*   [ ] **Product Catalog**: Product & Pricing management.
-*   [ ] **Integration**: Connect Frontend forms to Backend APIs.
+### Phase 2: Packaging (Week 3)
+**Goal**: Containerize the application for consistency.
+*   [x] **Docker**: Create `Dockerfile` for Backend API.
+*   [x] **Build**: Verify Docker build works locally.
+*   [x] **Push**: Push images to Google Artifact Registry.
 
-### Phase 3: Advanced Logic & Auth (Weeks 5-6)
-**Focus**: Business Rules & Security
-*   [ ] **Security**: Implement Google IAP (Identity Aware Proxy).
-*   [ ] **Commissions**: Implement commission calculation logic.
-*   [ ] **RBAC**: Enforce Admin vs Manager vs Employee roles on the server.
-*   [ ] **Inventory**: Stock tracking and auto-updates.
+### Phase 3: Deployment (Week 4)
+**Goal**: Deploy to a serverless environment.
+*   [x] **Deploy**: Deploy Backend to Cloud Run (`sales-api`).
+*   [x] **Connect**: Configure Cloud Run to talk to `sales_vision` (Prod DB).
+*   [x] **Frontend**: Deploy Frontend to Cloud Run (`sales-web`).
 
-### Phase 4: Polish & Deploy (Weeks 7-8)
-**Focus**: Production Readiness
-*   [ ] **Testing**: End-to-end verification.
-*   [ ] **Security Audit**: Review permissions and audit logs.
-*   [ ] **Final Deployment**: Deploy fully integrated system to Cloud Run.
-*   [ ] **Go Live**: User verification. **DEADLINE: FEB 1**.
+### Phase 4: Security (Week 5)
+**Goal**: Secure the application with Identity.
+*   [ ] **IAP**: Enable Identity-Aware Proxy (Google Sign-In).
+*   [ ] **Access**: Restrict access to `@yourcompany.com` emails.
+*   [ ] **Verification**: Ensure only authenticated traffic reaches the API.
+
+---
+
+## 🧪 Testing & Environment Strategy
+
+### Environments & Databases
+
+| Environment | Application Location | Database Used | purpose |
+| :--- | :--- | :--- | :--- |
+| **Development** | **Your Laptop** (`localhost`) | **`sales_vision_dev`** | Safe playground. Sandbox data. Messy experiments allowed. |
+| **Production** | **Google Cloud Run** | **`sales_vision`** | Real business data. Stable. Protected by IAP. |
+
+> [!NOTE]
+> **Why two databases?**
+> Both live in the *same* Cloud SQL Instance (`sales-vision-db`) to save money, but they are different "files".
+> *   **Dev DB**: You can delete tables, add fake data, and break things without affecting the business.
+> *   **Prod DB**: The "Source of Truth" for the company.
+
+### How to Test
+
+#### 1. Testing "Dev" (While you code)
+*   **Database**: `sales_vision_dev` (Cloud SQL Development DB)
+*   **Proxy Command**: `./apps/api/cloud-sql-proxy youngintlsaleswebapp:us-central1:sales-vision-db --port 5433`
+*   **Backend**: `npm run dev:api` (Runs on port 8000)
+*   **Frontend**: `npm run dev` (Runs on **Port 9002**)
+    > [!IMPORTANT]
+    > **ALWAYS use Port 9002** (`http://localhost:9002`) for local development.
+    > **DO NOT use Port 3002** or other random ports, as they may not be configured correctly.
+*   **Access**: `http://localhost:9002`
+*   **Data**: Writes to `sales_vision_dev`. Safe to mess up.
+
+#### 2. Testing "Production" (Real Data)
+*   **Database**: `sales_vision` (Cloud SQL Production DB)
+*   **Proxy Command**: `./apps/api/cloud-sql-proxy youngintlsaleswebapp:us-central1:sales-vision-db --port 5432`
+    *   *Note: You must change `.env` to point to port 5432 and DB `sales_vision` to test locally, OR use the deployed details.*
+*   **Deployed App**: Access via `https://sales-vision-app.a.run.app`
+*   **Data**: Writes to `sales_vision`. **BE CAREFUL**. This is real business data.
 
 ---
 
@@ -88,16 +122,16 @@ graph TD
 *   **Role**: User Interface.
 *   **Action**: Needs to be updated to fetch data from API instead of local JSON files.
 
-#### 2. Backend (To Build)
+#### 2. Backend (Implemented/Active)
 *   **Tech**: FastAPI (Python).
 *   **Role**: Business Logic & Data Gateway.
-*   **Action**: Needs to implement REST endpoints for Sales, Customers, Employees, etc.
+*   **Action**: CORE CRUD endpoints implemented; focus shifted to advanced logic and role synchronization.
 
-#### 3. Database (To Configure)
+#### 3. Database (Completed)
 *   **Tech**: PostgreSQL on Cloud SQL (Production), Docker PostgreSQL (Local).
 *   **Tools**: SQLAlchemy (ORM), Alembic (Migrations).
 *   **Role**: Source of Truth.
-*   **Action**: Needs Foreign Key relationships defined and data migrated from CSVs.
+*   **Action**: Foreign Key relationships defined and data migrated from CSVs.
 
 ---
 
@@ -106,21 +140,21 @@ graph TD
 ### Front End
 *   **Goal**: Deployed, containerized Next.js app.
 *   **Status**: **DONE**.
-*   **Next**: Integrate with Backend API.
+*   **Next**: Synchronize form fields with Backend API.
 
 ### Back End
 *   **Goal**: Deployed FastAPI service on Cloud Run.
-*   **Status**: **PENDING**.
-*   **Next**: Build API routers and connect to DB.
+*   **Status**: **ACTIVE**.
+*   **Next**: Finalize business logic and role-based access.
 
 ### Database
 *   **Goal**: Hosted PostgreSQL on Cloud SQL.
-*   **Status**: **PARTIAL**. (Instance exists, tables exist, but logic missing).
-*   **Next**: Define relationships and migrate data.
+*   **Status**: **DONE**.
+*   **Next**: Maintain schema via migrations.
 
 ### Authentication
 *   **Goal**: Secure, identity-based access.
-*   **Status**: **PARTIAL**. (Client-side mock auth).
+*   **Status**: **IN PROGRESS**. (Backend middleware ready, UI synchronization pending).
 *   **Next**: Migrate to Google IAP + Backend Session Management.
 
 ---

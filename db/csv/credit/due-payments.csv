@@ -1,4 +1,0 @@
-id,employee,customer_name,customer_email,dueDate,amount,collectionPlan
-dp-001,Jane Smith,Acme Corp,ap@acme.com,2025-01-15,3200,
-dp-002,Alex Lee,Globex Inc,billing@globex.com,2024-09-28,1450,Call AP on Friday
-dp-003,John Doe,Soylent Co,ap@soylent.co,2024-10-12,980,

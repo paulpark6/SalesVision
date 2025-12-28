@@ -1,53 +1,47 @@
-
 import Link from 'next/link';
 import * as React from 'react';
 import {
-  Bell,
-  Home,
-  LineChart,
-  Package,
-  ShoppingCart,
-  Users,
-  CreditCard,
-  Truck,
-  BadgePercent,
-  Boxes,
-  ChevronDown,
-  UserPlus,
-  User,
-  Target,
-  PlusCircle,
-  FileText,
-  AreaChart,
-  BarChart,
-  DollarSign,
-  Landmark,
-  FileClock,
-  ShoppingBasket,
+    LayoutDashboard,
+    Bell,
+    LineChart,
+    Package,
+    ShoppingCart,
+    Users,
+    CreditCard,
+    BadgePercent,
+    Boxes,
+    ChevronDown,
+    User,
+    Target,
+    FileText,
+    DollarSign,
+    Landmark,
+    FileClock,
+    Clock,
+    Search,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sidebar } from './ui/sidebar';
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Sidebar, SidebarHeader, SidebarContent } from './ui/sidebar';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
-function NavLink({ href, children, icon, className }: { href: string; children: React.ReactNode, icon: React.ReactNode, className?: string }) {
+function NavLink({ href, children, icon }: { href: string; children: React.ReactNode, icon: React.ReactNode }) {
     const pathname = usePathname();
-    const isActive = pathname === href;
+    const isActive = pathname === href || pathname.startsWith(href + '/');
 
     return (
         <Link
             href={href}
             className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                isActive && "bg-muted text-primary",
-                className
+                isActive && "bg-muted text-primary"
             )}
-            >
+        >
             {icon}
             {children}
         </Link>
@@ -55,125 +49,134 @@ function NavLink({ href, children, icon, className }: { href: string; children: 
 }
 
 function NavCollapsible({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
-    const pathname = usePathname();
-    const childHrefs = React.Children.toArray(children).map((child: any) => child.props.href);
-    const isActive = childHrefs.some(href => pathname.startsWith(href));
+    const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-        <Collapsible defaultOpen={isActive}>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
             <CollapsibleTrigger asChild>
-                <div className={cn(
-                    "flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary cursor-pointer",
-                    isActive && "text-primary"
-                    )}>
+                <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
                     <div className="flex items-center gap-3">
                         {icon}
                         {title}
                     </div>
-                    <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-                </div>
+                    <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                </button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="pl-9 space-y-1 mt-1">
+            <CollapsibleContent className="pl-6 space-y-1">
                 {children}
             </CollapsibleContent>
         </Collapsible>
     )
 }
 
-
 export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' }) {
-  const dashboardUrl = role === 'admin' ? '/dashboard' : '/admin';
+    // const dashboardUrl = role === 'admin' ? '/admin' : role === 'manager' ? '/manager' : '/staff';
 
-  return (
-    <Sidebar>
-      <div className="flex h-full max-h-screen flex-col gap-2">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href={dashboardUrl} className="flex items-center gap-2 font-semibold">
-                <LineChart className="h-6 w-6" />
-                <span className="">SalesVision</span>
-            </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                <Bell className="h-4 w-4" />
-                <span className="sr-only">Toggle notifications</span>
-            </Button>
-        </div>
-        <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                <NavLink href={dashboardUrl} icon={<Home className="h-4 w-4" />}>
-                    Dashboard
-                </NavLink>
-                <NavLink href="/sales/new" icon={<ShoppingCart className="h-4 w-4" />}>
-                    Add Sale
-                </NavLink>
-                 <NavCollapsible title="Customers" icon={<Users className="h-4 w-4" />}>
-                     <NavLink href="/customers" icon={<User className="h-4 w-4" />}>
-                        Customer List
+    return (
+        <Sidebar>
+            <SidebarHeader className="border-b h-14 lg:h-[60px] px-4 lg:px-6 flex flex-row items-center">
+                <Link href="/sales" className="flex items-center gap-2 font-semibold">
+                    <LineChart className="h-6 w-6" />
+                    <span>SalesVision</span>
+                </Link>
+                <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+                    <Bell className="h-4 w-4" />
+                </Button>
+            </SidebarHeader>
+            <SidebarContent>
+                <nav className="grid items-start px-2 py-4 text-sm font-medium lg:px-4">
+                    <NavLink href="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />}>
+                        Dashboard
                     </NavLink>
-                     <NavLink href="/customers/new" icon={<UserPlus className="h-4 w-4" />}>
-                        Add Customer
-                    </NavLink>
-                </NavCollapsible>
-                
-                <NavLink href="/sales/target" icon={<Target className="h-4 w-4" />}>
-                    Sales Targets
-                </NavLink>
 
-                 <NavCollapsible title="Reports" icon={<FileText className="h-4 w-4" />}>
-                     <NavLink href="/sales/report" icon={<BarChart className="h-4 w-4" />}>
-                        Sales Report
+                    <NavLink href="/sales" icon={<ShoppingCart className="h-4 w-4" />}>
+                        Sales
                     </NavLink>
-                     <NavLink href="/sales/cumulative-report" icon={<AreaChart className="h-4 w-4" />}>
-                        Cumulative Report
+
+                    <div className="mt-4 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Data Tables
+                    </div>
+
+                    {/* Admin & Manager: Employees */}
+                    {(role === 'admin' || role === 'manager') && (
+                        <NavLink href="/employees" icon={<User className="h-4 w-4" />}>
+                            Employees
+                        </NavLink>
+                    )}
+
+                    {/* All roles: Customers */}
+                    <NavLink href="/customers" icon={<Users className="h-4 w-4" />}>
+                        Customers
                     </NavLink>
-                    <NavLink href="/credit" icon={<CreditCard className="h-4 w-4" />}>
-                        Credit Report
+
+                    {/* All roles: Products */}
+                    <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
+                        Products
                     </NavLink>
-                    <NavLink href="/reports/cash" icon={<DollarSign className="h-4 w-4" />}>
-                        Cash Report
+
+
+                    {/* All roles: Cash */}
+                    <NavLink href="/cash" icon={<Landmark className="h-4 w-4" />}>
+                        Cash
                     </NavLink>
-                    <NavLink href="/reports/checks" icon={<Landmark className="h-4 w-4" />}>
-                        Check Report
+
+                    {/* All roles: Cheques */}
+                    <NavLink href="/cheques" icon={<FileClock className="h-4 w-4" />}>
+                        Cheques
                     </NavLink>
-                </NavCollapsible>
-                 
-                 {(role === 'admin' || role === 'manager') && (
-                    <NavCollapsible title="Purchases" icon={<ShoppingBasket className="h-4 w-4" />}>
-                        {role === 'manager' && (
-                            <NavLink href="/purchases/new" icon={<PlusCircle className="h-4 w-4" />}>
-                                Register Local Purchase
+
+                    {/* All roles: Commissions */}
+                    <NavLink href="/commissions" icon={<BadgePercent className="h-4 w-4" />}>
+                        Commissions
+                    </NavLink>
+
+                    {/* All roles: Credits */}
+                    <NavLink href="/credits" icon={<CreditCard className="h-4 w-4" />}>
+                        Credits
+                    </NavLink>
+
+                    {/* Admin only: Expenditures */}
+                    {role === 'admin' && (
+                        <NavLink href="/expenditures" icon={<DollarSign className="h-4 w-4" />}>
+                            Expenditures
+                        </NavLink>
+                    )}
+
+                    {/* All roles: Stocks */}
+                    <NavLink href="/stocks" icon={<Boxes className="h-4 w-4" />}>
+                        Stocks
+                    </NavLink>
+
+                    {/* Admin only: Price Lists */}
+                    {role === 'admin' && (
+                        <NavLink href="/price-lists" icon={<FileText className="h-4 w-4" />}>
+                            Price Lists
+                        </NavLink>
+                    )}
+
+                    {/* All roles: Sales Targets */}
+                    <NavLink href="/targets" icon={<Target className="h-4 w-4" />}>
+                        Sales Targets
+                    </NavLink>
+
+                    {/* All roles: Overdue */}
+                    <NavLink href="/overdue" icon={<Clock className="h-4 w-4" />}>
+                        Overdue
+                    </NavLink>
+
+                    {/* Admin & Manager: Inspection Tool */}
+                    {(role === 'admin' || role === 'manager') && (
+                        <>
+                            <div className="mt-4 mb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                Admin Tools
+                            </div>
+                            <NavLink href="/inspection" icon={<Search className="h-4 w-4" />}>
+                                Database Inspection
                             </NavLink>
-                        )}
-                        {role === 'admin' && (
-                            <NavLink href="/imports/new" icon={<Truck className="h-4 w-4" />}>
-                                Register Product Import
-                            </NavLink>
-                        )}
-                    </NavCollapsible>
-                 )}
-
-                {(role === 'admin' || role === 'manager') && (
-                    <>
-                        <NavLink href="/inventory" icon={<Boxes className="h-4 w-4" />}>
-                            Inventory
-                        </NavLink>
-                        <NavLink href="/commissions" icon={<BadgePercent className="h-4 w-4" />}>
-                            Commissions
-                        </NavLink>
-                    </>
-                )}
-                {role === 'admin' && (
-                    <>
-                        <NavLink href="/products" icon={<Package className="h-4 w-4" />}>
-                            Products
-                        </NavLink>
-                        <NavLink href="#" icon={<LineChart className="h-4 w-4" />}>
-                            Analytics
-                        </NavLink>
-                    </>
-                )}
-            </nav>
-        </div>
-      </div>
-    </Sidebar>
-  );
+                        </>
+                    )}
+                </nav>
+            </SidebarContent>
+        </Sidebar>
+    );
 }

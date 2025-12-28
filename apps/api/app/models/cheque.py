@@ -1,6 +1,5 @@
-"""Cheque tracking model."""
-from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric, ForeignKey
+from datetime import date, datetime
+from sqlalchemy import String, DateTime, Numeric, ForeignKey, Date, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 
@@ -9,6 +8,7 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.client import Client
     from app.models.employee import Employee
+    from app.models.sale import Sale
 
 
 class Cheque(Base):
@@ -18,25 +18,32 @@ class Cheque(Base):
     """
     __tablename__ = "cheques"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    receipt_date: Mapped[str] = mapped_column(String(50), nullable=True, index=True)  # Date string from CSV
-    due_date: Mapped[str] = mapped_column(String(50), nullable=True, index=True)  # Date string from CSV
-    client_name: Mapped[str] = mapped_column(String(255), nullable=True, index=True)
-    client_number: Mapped[Optional[str]] = mapped_column(String(50), ForeignKey("clients.client_number"), nullable=True, index=True)
-    staff: Mapped[str] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
-    issue_bank: Mapped[str] = mapped_column(String(255), nullable=True)
-    cheque_number: Mapped[str] = mapped_column(String(100), nullable=True, unique=True, index=True)
-    deposit_bank: Mapped[str] = mapped_column(String(255), nullable=True)
-    deposit_date: Mapped[str] = mapped_column(String(50), nullable=True)  # Date string from CSV
-    cheque_amount: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    approval_status: Mapped[str] = mapped_column(String(100), nullable=True)  # approval, reject
-    weekly_review: Mapped[str] = mapped_column(String(100), nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    receipt_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
+    due_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
+    
+    # Matching schema naming: client_id and staff_id
+    client_id: Mapped[int] = mapped_column(Integer, ForeignKey("clients.id"), nullable=False, index=True)
+    employee_id: Mapped[int] = mapped_column(Integer, ForeignKey("employees.id"), nullable=False, index=True)
+    
+    issue_bank: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    number_of_cheque: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
+    deposit_bank: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    deposit_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    cheque_amount: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    approval_status: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # approval, reject
+    weekly_review: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    
+    # Foreign key to sales for linkage
+    sale_num: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("sales.sale_num"), nullable=True, index=True)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     # Relationships
-    client: Mapped[Optional["Client"]] = relationship("Client", back_populates="cheques")
-    employee: Mapped[Optional["Employee"]] = relationship("Employee", foreign_keys=[staff], back_populates="cheques")
+    client: Mapped["Client"] = relationship("Client", back_populates="cheques")
+    employee: Mapped["Employee"] = relationship("Employee", foreign_keys=[employee_id], back_populates="cheques")
+    sale: Mapped[Optional["Sale"]] = relationship("Sale", back_populates="cheques")
 
     def __repr__(self) -> str:
-        return f"<Cheque(id={self.id}, number={self.cheque_number}, client={self.client_name}, amount={self.cheque_amount})>"
+        return f"<Cheque(id={self.id}, number={self.number_of_cheque}, amount={self.cheque_amount})>"

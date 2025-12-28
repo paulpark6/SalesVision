@@ -1,6 +1,5 @@
-"""Monthly sales target model."""
-from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric, ForeignKey
+from datetime import date, datetime
+from sqlalchemy import String, DateTime, Numeric, ForeignKey, Date, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 
@@ -18,21 +17,21 @@ class MonthlySalesTarget(Base):
     """
     __tablename__ = "monthly_sales_targets"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    product_code: Mapped[str] = mapped_column(String(50), ForeignKey("products.product_code"), nullable=True, index=True)
-    product_description: Mapped[str] = mapped_column(String(500), nullable=True)
-    staff: Mapped[str] = mapped_column(String(50), ForeignKey("employees.staff_number"), nullable=True, index=True)
-    sales_amount_minus_3_month: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    sales_amount_minus_2_month: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    sales_amount_minus_1_month: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    sales_monthly_target: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    company_target: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"), nullable=False, index=True)
+    employee_id: Mapped[int] = mapped_column(Integer, ForeignKey("employees.id"), nullable=False, index=True)
+    
+    input_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    target_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    sales_monthly_target: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    company_target: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), nullable=True)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     # Relationships
-    product: Mapped[Optional["Product"]] = relationship("Product", back_populates="monthly_targets")
-    employee: Mapped[Optional["Employee"]] = relationship("Employee", foreign_keys=[staff], back_populates="monthly_targets")
+    product: Mapped["Product"] = relationship("Product", back_populates="monthly_targets")
+    employee: Mapped["Employee"] = relationship("Employee", foreign_keys=[employee_id], back_populates="monthly_targets")
 
     def __repr__(self) -> str:
-        return f"<MonthlySalesTarget(id={self.id}, product={self.product_code}, staff={self.staff})>"
+        return f"<MonthlySalesTarget(id={self.id}, product_id={self.product_id}, employee_id={self.employee_id})>"
