@@ -5,7 +5,7 @@ WORKDIR /app
 
 FROM base AS deps
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm ci
+RUN npm install
 
 FROM base AS build
 COPY apps/web/package.json apps/web/package-lock.json ./
@@ -13,8 +13,8 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy the web app source
 COPY apps/web .
 # Copy the database files required by the prebuild script
-COPY db ./db
-RUN ln -s /app/db /db
+# COPY db ./db
+# RUN ln -s /app/db /db
 RUN npm run build
 
 FROM base AS runner
@@ -23,7 +23,7 @@ ENV PORT=8080
 ENV HOST=0.0.0.0
 
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
