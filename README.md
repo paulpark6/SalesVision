@@ -2,11 +2,6 @@
 
 > **Sales Vision is a secure, role-based sales management platform that helps organizations streamline transaction tracking and ensure data integrity across Admin, Manager, and Staff levels.**
 
-## Demo & Run Locally
-
-![Demo Dashboard](https://via.placeholder.com/800x450.png?text=Sales+Vision+Dashboard+Demo)
-*(Note: Replace with actual demo GIF/Screenshot)*
-
 ### Run Locally (Developer Mode)
 
 Since this project consists of a Database, Backend API, and Frontend, you will need to run them in separate terminals.
