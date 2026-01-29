@@ -7,22 +7,36 @@
 ![Demo Dashboard](https://via.placeholder.com/800x450.png?text=Sales+Vision+Dashboard+Demo)
 *(Note: Replace with actual demo GIF/Screenshot)*
 
-### Run Locally
+### Run Locally (Developer Mode)
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/paulpark6/SalesVision.git
-    cd "Sales Vision Project"
-    ```
+Since this project consists of a Database, Backend API, and Frontend, you will need to run them in separate terminals.
 
-2.  **Start the application**
-    ```bash
-    docker-compose up --build
-    ```
+#### 1. Start the Database
+Ensure **Docker Desktop** is running.
+```bash
+# Terminal 1
+docker-compose up -d db
+```
 
-3.  **Access the application**
-    -   Web Interface: [http://localhost:3000](http://localhost:3000)
-    -   API Documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
+#### 2. Start the Backend API
+```bash
+# Terminal 2
+cd apps/api
+python3 -m venv venv           # Create virtual env
+source venv/bin/activate       # Activate (Windows: venv\Scripts\activate)
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+*API Docs will be available at [http://localhost:8000/docs](http://localhost:8000/docs)*
+
+#### 3. Start the Frontend
+```bash
+# Terminal 3
+cd apps/web
+npm install
+npm run dev
+```
+*Web App will be at [http://localhost:9002](http://localhost:9002)*
 
 ## Impact
 
