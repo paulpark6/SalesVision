@@ -1,5 +1,7 @@
 """FastAPI entrypoint for the SalesVision backend."""
 
+import os
+
 from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +17,9 @@ app = FastAPI(
     description="Backend services for SalesVision planner.",
     version="0.1.0",
     redirect_slashes=False,
+    # Interactive docs/schema list every endpoint; only expose them in development
+    **({} if os.getenv("APP_ENV", "production") == "development"
+       else {"docs_url": None, "redoc_url": None, "openapi_url": None}),
 )
 
 # Configure CORS
@@ -54,5 +59,4 @@ app.include_router(analytics.router)
 @app.get("/", tags=["root"])
 async def root() -> dict[str, str]:
     """Simple root endpoint for smoke testing."""
-    # Debug: Print all routes
     return {"status": "ok"}

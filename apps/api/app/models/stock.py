@@ -27,6 +27,8 @@ class Stock(Base):
     monthly_review_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     monthly_review_desc: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     stock_status: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
     # Relationships
     product: Mapped["Product"] = relationship("Product", back_populates="stocks")

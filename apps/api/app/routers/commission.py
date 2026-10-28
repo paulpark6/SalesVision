@@ -37,7 +37,7 @@ def read_commissions(
     # Month Filtering
     if months:
         month_list = [m.strip() for m in months.split(',')]
-        query = query.filter(func.substr(Commission.date, 1, 7).in_(month_list))
+        query = query.filter(func.to_char(Commission.date, 'YYYY-MM').in_(month_list))
     
     if current_user.role == UserRole.ADMIN:
         # Admin sees all

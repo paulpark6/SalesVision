@@ -9,6 +9,7 @@ from app.schemas.sale import Sale as SaleSchema, SaleCreate, SaleUpdate
 from app.core.deps import get_current_user
 from app.models.user import User, UserRole
 from app.models.employee import Employee
+from app.core.permissions import require_roles, ADMIN, MANAGER, STAFF, scope, check_owner
 from app.models.product import Product
 from app.models.client import Client
 
@@ -47,37 +48,23 @@ def read_sales(
             from sqlalchemy import or_
             query = query.filter(or_(*conditions))
     
-    # RBAC Filtering
-    if current_user.role == UserRole.ADMIN:
-        pass # See all
-    elif current_user.role == UserRole.MANAGER:
-        # See self + direct reports
-        if current_user.employee_id:
-            reports_subquery = db.query(Employee.id).filter(
-                (Employee.manager_id == current_user.employee_id) | 
-                (Employee.id == current_user.employee_id)
-            )
-            query = query.filter(Sale.employee_id.in_(reports_subquery))
-    else:
-        # Staff: See own only
-        if current_user.employee_id:
-            query = query.filter(Sale.employee_id == current_user.employee_id)
-            
+    query = scope(query, Sale.employee_id, current_user, db)
     sales = query.offset(skip).limit(limit).all()
     return sales
 
 @router.get("/{sale_num}", response_model=SaleSchema)
-def read_sale(sale_num: int, db: Session = Depends(get_db)):
+def read_sale(sale_num: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     sale = db.query(Sale).filter(Sale.sale_num == sale_num).first()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
+    check_owner(sale.employee_id, current_user, db)
     return sale
 
 @router.post("", response_model=SaleSchema, status_code=status.HTTP_201_CREATED)
 def create_sale(
     sale: SaleCreate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(ADMIN, MANAGER, STAFF))
 ):
     # 1. Resolve Product
     if sale.product_code:
@@ -120,6 +107,7 @@ def create_sale(
     
     if not target_employee_id:
         raise HTTPException(status_code=400, detail="Current user is not linked to an employee")
+    check_owner(target_employee_id, current_user, db)
 
     # 4. Create Sale
     sale_data = sale.model_dump(exclude={'product_code', 'client_number', 'staff_number'})
@@ -138,37 +126,22 @@ def create_sale(
     db.refresh(db_sale)
     return db_sale
 
-@router.put("/{sale_id}", response_model=SaleSchema)
+@router.put("/{sale_num}", response_model=SaleSchema)
 def update_sale(
-    sale_id: int, 
+    sale_num: int, 
     sale_update: SaleUpdate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(ADMIN, MANAGER, STAFF))
 ):
-    db_sale = db.query(Sale).filter(Sale.id == sale_id).first()
+    db_sale = db.query(Sale).filter(Sale.sale_num == sale_num).first()
     if db_sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
-    
-    # Security: Hierarchical Check for Modification
-    if current_user.role == UserRole.STAFF:
-        # Staff can only edit their own sales
-        if db_sale.employee_id != current_user.employee_id:
-            raise HTTPException(status_code=403, detail="Not authorized to edit this sale")
-    elif current_user.role == UserRole.MANAGER:
-        # Managers can edit own sales OR sales of their reports
-        is_own = db_sale.employee_id == current_user.employee_id
-        is_report = False
-        if not is_own:
-            # Check if staff reporting to manager
-            sales_staff = db.query(Employee).filter(Employee.id == db_sale.employee_id).first()
-            if sales_staff and sales_staff.manager_id == current_user.employee_id:
-                is_report = True
-        
-        if not (is_own or is_report):
-             raise HTTPException(status_code=403, detail="Not authorized to edit this sale (not a direct report)")
+    check_owner(db_sale.employee_id, current_user, db)
 
     # Perform Update
     update_data = sale_update.model_dump(exclude_unset=True)
+    if 'employee_id' in update_data:
+        check_owner(update_data['employee_id'], current_user, db)
     for key, value in update_data.items():
         setattr(db_sale, key, value)
     
@@ -184,27 +157,12 @@ def update_sale(
 def delete_sale(
     sale_num: int, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(ADMIN, MANAGER))
 ):
     db_sale = db.query(Sale).filter(Sale.sale_num == sale_num).first()
     if db_sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
-    
-    # Security: Only Admin and Managers can delete? Or same rules as update?
-    # Let's enforce: Admins can delete anything. Managers can delete their team's. Staff CANNOT delete.
-    if current_user.role == UserRole.STAFF:
-        raise HTTPException(status_code=403, detail="Staff cannot delete sales records. Request a manager.")
-        
-    if current_user.role == UserRole.MANAGER:
-        is_own = db_sale.employee_id == current_user.employee_id
-        is_report = False
-        if not is_own:
-             sales_staff = db.query(Employee).filter(Employee.id == db_sale.employee_id).first()
-             if sales_staff and sales_staff.manager_id == current_user.employee_id:
-                is_report = True
-        
-        if not (is_own or is_report):
-             raise HTTPException(status_code=403, detail="Not authorized to delete this sale")
+    check_owner(db_sale.employee_id, current_user, db)
 
     db.delete(db_sale)
     db.commit()

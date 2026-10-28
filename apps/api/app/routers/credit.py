@@ -7,7 +7,8 @@ from app.db.session import get_db
 from app.models.credit import Credit
 from app.schemas.credit import Credit as CreditSchema, CreditCreate, CreditUpdate
 from app.core.deps import get_current_user
-from app.models.user import User, UserRole
+from app.models.user import User
+from app.core.permissions import require_roles, ADMIN, MANAGER, scope, check_owner
 
 router = APIRouter(
     prefix="/credits",
@@ -26,7 +27,7 @@ def read_credits(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Get credits - All roles can view all credits.
+    Get credits - Scoped by hierarchy.
     """
     query = db.query(Credit)
     
@@ -47,6 +48,7 @@ def read_credits(
             from sqlalchemy import or_
             query = query.filter(or_(*conditions))
     
+    query = scope(query, Credit.employee_id, current_user, db)
     credits = query.offset(skip).limit(limit).all()
     return credits
 
@@ -57,10 +59,11 @@ def read_credit(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Get specific credit - All roles can view."""
+    """Get specific credit - Scoped by hierarchy."""
     credit = db.query(Credit).filter(Credit.credit_id == credit_id).first()
     if credit is None:
         raise HTTPException(status_code=404, detail="Credit not found")
+    check_owner(credit.employee_id, current_user, db)
     return credit
 
 
@@ -68,15 +71,11 @@ def read_credit(
 def create_credit(
     credit: CreditCreate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(ADMIN, MANAGER))
 ):
     """Create credit - Admin and Manager only."""
-    if current_user.role == UserRole.STAFF:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Staff cannot create credit records"
-        )
     
+    check_owner(credit.employee_id, current_user, db)
     db_credit = Credit(**credit.model_dump())
     db.add(db_credit)
     db.commit()
@@ -89,20 +88,18 @@ def update_credit(
     credit_id: int, 
     credit_update: CreditUpdate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(ADMIN, MANAGER))
 ):
     """Update credit - Admin and Manager only."""
-    if current_user.role == UserRole.STAFF:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Staff cannot update credit records"
-        )
     
     db_credit = db.query(Credit).filter(Credit.credit_id == credit_id).first()
     if db_credit is None:
         raise HTTPException(status_code=404, detail="Credit not found")
+    check_owner(db_credit.employee_id, current_user, db)
     
     update_data = credit_update.model_dump(exclude_unset=True)
+    if 'employee_id' in update_data:
+        check_owner(update_data['employee_id'], current_user, db)
     for key, value in update_data.items():
         setattr(db_credit, key, value)
     
@@ -116,18 +113,14 @@ def update_credit(
 def delete_credit(
     credit_id: int, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_roles(ADMIN, MANAGER))
 ):
     """Delete credit - Admin and Manager only."""
-    if current_user.role == UserRole.STAFF:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Staff cannot delete credit records"
-        )
     
     db_credit = db.query(Credit).filter(Credit.credit_id == credit_id).first()
     if db_credit is None:
         raise HTTPException(status_code=404, detail="Credit not found")
+    check_owner(db_credit.employee_id, current_user, db)
     
     db.delete(db_credit)
     db.commit()

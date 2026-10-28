@@ -1,6 +1,6 @@
 """Commission model."""
-from datetime import datetime
-from sqlalchemy import String, DateTime, Numeric, ForeignKey, Integer
+from datetime import date, datetime
+from sqlalchemy import Date, String, DateTime, Numeric, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 
@@ -29,7 +29,7 @@ class Commission(Base):
     import_product: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
     local_product: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
     client_transfer_calculation: Mapped[float] = mapped_column(Numeric(15, 2), nullable=True)
-    date: Mapped[str] = mapped_column(String(10), nullable=True, index=True)  # YYYY-MM-DD
+    date: Mapped[Optional[date]] = mapped_column(Date, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 

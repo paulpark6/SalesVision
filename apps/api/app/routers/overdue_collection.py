@@ -7,6 +7,10 @@ from app.db.session import get_db
 from app.models.overdue_collection import OverdueCollection
 from app.schemas.overdue_collection import OverdueCollection as OverdueCollectionSchema, OverdueCollectionCreate, OverdueCollectionUpdate
 
+from app.models.user import User
+from app.core.deps import get_current_user
+from app.core.permissions import require_roles, ADMIN, MANAGER, scope, check_owner
+
 router = APIRouter(
     prefix="/overdue-collections",
     tags=["overdue-collections"],
@@ -19,7 +23,7 @@ def read_overdue_collections(
     skip: int = 0,
     limit: int = 100,
     months: Optional[str] = Query(None, description="Comma-separated list of months in YYYY-MM format"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     query = db.query(OverdueCollection)
 
@@ -40,18 +44,21 @@ def read_overdue_collections(
             from sqlalchemy import or_
             query = query.filter(or_(*conditions))
 
+    query = scope(query, OverdueCollection.employee_id, user, db)
     collections = query.offset(skip).limit(limit).all()
     return collections
 
 @router.get("/{collection_id}", response_model=OverdueCollectionSchema)
-def read_overdue_collection(collection_id: int, db: Session = Depends(get_db)):
+def read_overdue_collection(collection_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     collection = db.query(OverdueCollection).filter(OverdueCollection.id == collection_id).first()
     if collection is None:
         raise HTTPException(status_code=404, detail="Overdue Collection not found")
+    check_owner(collection.employee_id, user, db)
     return collection
 
 @router.post("/", response_model=OverdueCollectionSchema, status_code=status.HTTP_201_CREATED)
-def create_overdue_collection(collection: OverdueCollectionCreate, db: Session = Depends(get_db)):
+def create_overdue_collection(collection: OverdueCollectionCreate, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN, MANAGER))):
+    check_owner(collection.employee_id, user, db)
     db_collection = OverdueCollection(**collection.model_dump())
     db.add(db_collection)
     db.commit()
@@ -59,12 +66,15 @@ def create_overdue_collection(collection: OverdueCollectionCreate, db: Session =
     return db_collection
 
 @router.put("/{collection_id}", response_model=OverdueCollectionSchema)
-def update_overdue_collection(collection_id: int, collection_update: OverdueCollectionUpdate, db: Session = Depends(get_db)):
+def update_overdue_collection(collection_id: int, collection_update: OverdueCollectionUpdate, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN, MANAGER))):
     db_collection = db.query(OverdueCollection).filter(OverdueCollection.id == collection_id).first()
     if db_collection is None:
         raise HTTPException(status_code=404, detail="Overdue Collection not found")
+    check_owner(db_collection.employee_id, user, db)
     
     update_data = collection_update.model_dump(exclude_unset=True)
+    if 'employee_id' in update_data:
+        check_owner(update_data['employee_id'], user, db)
     for key, value in update_data.items():
         setattr(db_collection, key, value)
     
@@ -74,10 +84,11 @@ def update_overdue_collection(collection_id: int, collection_update: OverdueColl
     return db_collection
 
 @router.delete("/{collection_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_overdue_collection(collection_id: int, db: Session = Depends(get_db)):
+def delete_overdue_collection(collection_id: int, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN, MANAGER))):
     db_collection = db.query(OverdueCollection).filter(OverdueCollection.id == collection_id).first()
     if db_collection is None:
         raise HTTPException(status_code=404, detail="Overdue Collection not found")
+    check_owner(db_collection.employee_id, user, db)
     
     db.delete(db_collection)
     db.commit()

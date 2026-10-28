@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date as Date
 from decimal import Decimal
 
 class CommissionBase(BaseModel):
@@ -15,7 +15,7 @@ class CommissionBase(BaseModel):
     import_product: Optional[Decimal] = None
     local_product: Optional[Decimal] = None
     client_transfer_calculation: Optional[Decimal] = None
-    date: Optional[str] = None
+    date: Optional[Date] = None
 
 class CommissionCreate(CommissionBase):
     pass

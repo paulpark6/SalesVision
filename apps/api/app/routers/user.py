@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.db.session import get_db
-from app.core.deps import get_current_user
-from app.models.user import User
 from app.schemas.user import User as UserSchema, UserCreate, UserUpdate
+
+from app.models.user import User
+from app.core.deps import get_current_user
+from app.core.permissions import require_roles, ADMIN
 
 router = APIRouter(
     prefix="/users",
@@ -18,7 +20,7 @@ router = APIRouter(
 def read_users(
     skip: int = 0,
     limit: int = 100,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), _admin: User = Depends(require_roles(ADMIN))
 ):
     users = db.query(User).offset(skip).limit(limit).all()
     return users
@@ -31,14 +33,14 @@ def read_current_user(current_user: User = Depends(get_current_user)):
     return current_user
 
 @router.get("/{user_id}", response_model=UserSchema)
-def read_user(user_id: int, db: Session = Depends(get_db)):
+def read_user(user_id: int, db: Session = Depends(get_db), _admin: User = Depends(require_roles(ADMIN))):
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 @router.post("/", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(user: UserCreate, db: Session = Depends(get_db), _admin: User = Depends(require_roles(ADMIN))):
     # Check if email or employee_id already exists
     if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -52,7 +54,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 @router.put("/{user_id}", response_model=UserSchema)
-def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db), _admin: User = Depends(require_roles(ADMIN))):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -67,7 +69,7 @@ def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get
     return db_user
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
+def delete_user(user_id: int, db: Session = Depends(get_db), _admin: User = Depends(require_roles(ADMIN))):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")

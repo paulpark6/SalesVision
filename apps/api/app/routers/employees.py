@@ -31,11 +31,10 @@ def read_employees(
         pass
     elif current_user.role == UserRole.MANAGER:
         # Manager sees self + direct reports
-        if current_user.employee_id:
-            query = query.filter(
-                (Employee.manager_id == current_user.employee_id) | 
-                (Employee.staff_number == current_user.employee_id)
-            )
+        query = query.filter(
+            (Employee.manager_id == current_user.employee_id) | 
+            (Employee.id == current_user.employee_id)
+        )
     else:
         # Staff cannot access employee list
         raise HTTPException(
@@ -107,7 +106,7 @@ def create_employee(
         # Check for IntegrityError (Foreign Key violation usually)
         if "foreign key constraint" in str(e).lower():
              raise HTTPException(status_code=400, detail="Manager ID not found or other relationship issue")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Could not create employee")
         
     return db_employee
 

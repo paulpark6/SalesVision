@@ -41,7 +41,7 @@ def read_expenditures(
     # Month Filtering
     if months:
         month_list = [m.strip() for m in months.split(',')]
-        query = query.filter(func.substr(Expenditure.date, 1, 7).in_(month_list))
+        query = query.filter(func.to_char(Expenditure.date, 'YYYY-MM').in_(month_list))
 
     expenditures = query.offset(skip).limit(limit).all()
     return expenditures

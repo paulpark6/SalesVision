@@ -186,3 +186,6 @@ cython_debug/
 .vscode/
 .gcloud/ # or edit the file manually
 .gcloud/
+
+# Local Postgres data volume (docker-compose); never commit database files
+docker/data/

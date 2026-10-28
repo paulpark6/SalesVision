@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, date
 from decimal import Decimal
@@ -20,9 +20,9 @@ class SaleCreate(BaseModel):
     inventory_status: Optional[str] = None
     invoice_num: Optional[str] = None
     sale_date: Optional[date] = None
-    quantity: int
-    unit_price: Decimal
-    sale_amount: Decimal
+    quantity: int = Field(gt=0)
+    unit_price: Decimal = Field(ge=0)
+    sale_amount: Decimal = Field(ge=0)
     payment_type: Optional[str] = None
     
     # Accept codes (frontend) OR IDs (backend/legacy)

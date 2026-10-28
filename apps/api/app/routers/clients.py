@@ -6,6 +6,10 @@ from app.db.session import get_db
 from app.models.client import Client
 from app.schemas.client import Client as ClientSchema, ClientCreate, ClientUpdate
 
+from app.models.user import User
+from app.core.deps import get_current_user
+from app.core.permissions import require_roles, ADMIN, MANAGER
+
 router = APIRouter(
     prefix="/clients",
     tags=["clients"],
@@ -17,20 +21,20 @@ router = APIRouter(
 def read_clients(
     skip: int = 0,
     limit: int = 100,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     clients = db.query(Client).offset(skip).limit(limit).all()
     return clients
 
 @router.get("/{client_id}", response_model=ClientSchema)
-def read_client(client_id: int, db: Session = Depends(get_db)):
+def read_client(client_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     client = db.query(Client).filter(Client.id == client_id).first()
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     return client
 
 @router.post("/", response_model=ClientSchema, status_code=status.HTTP_201_CREATED)
-def create_client(client: ClientCreate, db: Session = Depends(get_db)):
+def create_client(client: ClientCreate, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN, MANAGER))):
     """Create client. client_number will be auto-generated."""
     db_client = Client(**client.model_dump())
     db.add(db_client)
@@ -45,7 +49,7 @@ def create_client(client: ClientCreate, db: Session = Depends(get_db)):
     return db_client
 
 @router.put("/{client_id}", response_model=ClientSchema)
-def update_client(client_id: int, client_update: ClientUpdate, db: Session = Depends(get_db)):
+def update_client(client_id: int, client_update: ClientUpdate, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN, MANAGER))):
     db_client = db.query(Client).filter(Client.id == client_id).first()
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -60,7 +64,7 @@ def update_client(client_id: int, client_update: ClientUpdate, db: Session = Dep
     return db_client
 
 @router.delete("/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_client(client_id: int, db: Session = Depends(get_db)):
+def delete_client(client_id: int, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN, MANAGER))):
     db_client = db.query(Client).filter(Client.id == client_id).first()
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")

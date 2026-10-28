@@ -21,7 +21,11 @@ from ..schemas.analytics import (
     DashboardSummary
 )
 
-router = APIRouter(prefix="/analytics", tags=["analytics"], redirect_slashes=False)
+from ..core.permissions import require_roles, ADMIN
+
+# Company-wide totals: admin only
+router = APIRouter(prefix="/analytics", tags=["analytics"], redirect_slashes=False,
+                   dependencies=[Depends(require_roles(ADMIN))])
 
 
 @router.get("/summary", response_model=DashboardSummary)

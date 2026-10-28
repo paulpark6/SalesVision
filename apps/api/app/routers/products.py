@@ -6,6 +6,10 @@ from app.db.session import get_db
 from app.models.product import Product
 from app.schemas.product import Product as ProductSchema, ProductCreate, ProductUpdate
 
+from app.models.user import User
+from app.core.deps import get_current_user
+from app.core.permissions import require_roles, ADMIN, MANAGER
+
 router = APIRouter(
     prefix="/products",
     tags=["products"],
@@ -17,20 +21,20 @@ router = APIRouter(
 def read_products(
     skip: int = 0,
     limit: int = 100,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     products = db.query(Product).offset(skip).limit(limit).all()
     return products
 
 @router.get("/{product_id}", response_model=ProductSchema)
-def read_product(product_id: int, db: Session = Depends(get_db)):
+def read_product(product_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
 
 @router.post("/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(product: ProductCreate, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN))):
     """Create product. product_code will be auto-generated."""
     db_product = Product(**product.model_dump())
     db.add(db_product)
@@ -45,7 +49,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     return db_product
 
 @router.put("/{product_id}", response_model=ProductSchema)
-def update_product(product_id: int, product_update: ProductUpdate, db: Session = Depends(get_db)):
+def update_product(product_id: int, product_update: ProductUpdate, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN))):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -60,7 +64,7 @@ def update_product(product_id: int, product_update: ProductUpdate, db: Session =
     return db_product
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(product_id: int, db: Session = Depends(get_db)):
+def delete_product(product_id: int, db: Session = Depends(get_db), user: User = Depends(require_roles(ADMIN))):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")

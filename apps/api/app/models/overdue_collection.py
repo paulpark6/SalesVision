@@ -1,5 +1,6 @@
 from datetime import date, datetime
-from sqlalchemy import String, DateTime, Integer, Text, ForeignKey, Date
+from decimal import Decimal
+from sqlalchemy import String, DateTime, Integer, Numeric, Text, ForeignKey, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, TYPE_CHECKING
 
@@ -29,7 +30,7 @@ class OverdueCollection(Base):
     
     # Matching schema fields
     credit_due_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    credit_amount: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    credit_amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(15, 2), nullable=True)
     action: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     
     # Foreign key to credits
