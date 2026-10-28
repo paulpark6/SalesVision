@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { apiClient } from '@/lib/api-client';
 import { ExcelGrid } from '@/components/shared/excel-grid';
@@ -25,7 +24,6 @@ interface Employee {
 }
 
 export default function EmployeesPage() {
-    const router = useRouter();
     const { auth } = useAuth();
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
@@ -46,12 +44,8 @@ export default function EmployeesPage() {
     };
 
     useEffect(() => {
-        if (auth && auth.role === 'employee') {
-            router.replace('/staff');
-            return;
-        }
         if (canView) loadData();
-    }, [auth, canView, router]);
+    }, [auth, canView]);
 
     const handleDelete = async (staffNumber: string) => {
         if (!confirm('Are you sure you want to delete this employee?')) return;

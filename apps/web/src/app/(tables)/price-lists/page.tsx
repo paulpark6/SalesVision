@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { apiClient } from '@/lib/api-client';
 import { ExcelGrid } from '@/components/shared/excel-grid';
@@ -19,7 +18,6 @@ interface PriceList {
 }
 
 export default function PriceListsPage() {
-    const router = useRouter();
     const { auth } = useAuth();
     const [prices, setPrices] = useState<PriceList[]>([]);
     const [loading, setLoading] = useState(true);
@@ -37,12 +35,8 @@ export default function PriceListsPage() {
     };
 
     useEffect(() => {
-        if (auth && auth.role !== 'admin') {
-            router.replace(auth.role === 'manager' ? '/manager' : '/staff');
-            return;
-        }
         if (auth?.role === 'admin') loadData();
-    }, [auth, router]);
+    }, [auth]);
 
     const handleAdd = async (newData: Partial<PriceList>) => {
         try {

@@ -70,7 +70,6 @@ function NavCollapsible({ title, icon, children }: { title: string; icon: React.
 }
 
 export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' }) {
-    // const dashboardUrl = role === 'admin' ? '/admin' : role === 'manager' ? '/manager' : '/staff';
 
     return (
         <Sidebar>
@@ -85,9 +84,11 @@ export function AppSidebar({ role }: { role: 'admin' | 'employee' | 'manager' })
             </SidebarHeader>
             <SidebarContent>
                 <nav className="grid items-start px-2 py-4 text-sm font-medium lg:px-4">
-                    <NavLink href="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />}>
-                        Dashboard
-                    </NavLink>
+                    {role === 'admin' && (
+                        <NavLink href="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />}>
+                            Dashboard
+                        </NavLink>
+                    )}
 
                     <NavLink href="/sales" icon={<ShoppingCart className="h-4 w-4" />}>
                         Sales
