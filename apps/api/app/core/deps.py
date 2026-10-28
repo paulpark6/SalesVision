@@ -1,54 +1,54 @@
-from typing import Generator, Optional
+from typing import Optional
 from fastapi import Depends, HTTPException, Header
-from sqlalchemy import text
+from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.user import User
-from app.models.employee import Employee
+import jwt
 import os
 
-def _verify_iap_jwt(token: str) -> str:
-    """Verify the signed IAP header; the plain email header is spoofable."""
-    audience = os.getenv("IAP_AUDIENCE")
-    if not audience:
-        raise HTTPException(status_code=500, detail="IAP_AUDIENCE not configured")
-    from google.auth.transport import requests as g_requests
-    from google.oauth2 import id_token
+_jwks: Optional[jwt.PyJWKClient] = None
+
+
+def _verify_supabase_jwt(token: str) -> str:
+    """Verify a Supabase Auth access token against the project's public signing keys."""
+    url = os.getenv("SUPABASE_URL", "").rstrip("/")
+    if not url:
+        raise HTTPException(status_code=500, detail="SUPABASE_URL not configured")
+    global _jwks
+    _jwks = _jwks or jwt.PyJWKClient(f"{url}/auth/v1/.well-known/jwks.json")
     try:
-        claims = id_token.verify_token(
-            token, g_requests.Request(), audience=audience,
-            certs_url="https://www.gstatic.com/iap/verify/public_key",
-        )
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid IAP token")
+        key = _jwks.get_signing_key_from_jwt(token).key
+        claims = jwt.decode(token, key, algorithms=["ES256", "RS256"],
+                            audience="authenticated", issuer=f"{url}/auth/v1")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    if not claims.get("email"):
+        raise HTTPException(status_code=401, detail="Invalid token")
     return claims["email"]
 
 
 def get_current_user(
     db: Session = Depends(get_db),
-    x_goog_iap_jwt_assertion: Optional[str] = Header(None),
+    authorization: Optional[str] = Header(None),
     x_mock_user_email: Optional[str] = Header(None)
 ) -> User:
     """
-    Get the current authenticated user from IAP headers or mock headers (dev).
+    Get the current user from the Supabase bearer token, or mock headers (dev).
     In development mode without headers, uses a default test user.
     """
     app_env = os.getenv("APP_ENV", "production")  # fail closed: unset env = production
 
-    if x_goog_iap_jwt_assertion:
-        email = _verify_iap_jwt(x_goog_iap_jwt_assertion)
+    if authorization and authorization.lower().startswith("bearer "):
+        email = _verify_supabase_jwt(authorization[7:])
     elif app_env == "development":
         # Dev only: mock header, else default test user
         email = x_mock_user_email or "admin@salesvision.com"
     else:
         raise HTTPException(status_code=401, detail="Missing authentication")
 
-    # Clean the email if it comes from IAP (e.g., "accounts.google.com:user@example.com")
-    if ":" in email:
-        email = email.split(":")[-1]
-
     # Look up user
-    user = db.query(User).filter(User.email == email).first()
+    user = db.query(User).filter(func.lower(User.email) == email.lower()).first()
     
     if not user:
         if app_env == "development":

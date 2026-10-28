@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 import os
 from dotenv import load_dotenv
 
@@ -38,7 +39,9 @@ connect_args = {}
 if DATABASE_URL and "localhost" not in DATABASE_URL and "127.0.0.1" not in DATABASE_URL and "sqlite" not in DATABASE_URL:
     connect_args["sslmode"] = "require"
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+# Serverless (Vercel): no pool per instance; Supabase's pooler (port 6543) does the pooling
+pool = {"poolclass": NullPool} if os.getenv("VERCEL") else {}
+engine = create_engine(DATABASE_URL, connect_args=connect_args, **pool)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():

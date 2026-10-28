@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import { LineChart, Shield, UserCog, User } from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
-    const { auth, login } = useAuth();
+    const { auth, error, login, loginWithPassword } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const isDev = process.env.NODE_ENV === 'development';
 
@@ -31,10 +34,15 @@ export default function LoginPage() {
         }
     };
 
-    const handleGoogleLogin = () => {
-        // In production, this would trigger Google OAuth via IAP
-        // For now, show dev mode options
-        alert('Google Sign-In is configured via Cloud IAP in production.');
+    const handlePasswordLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = new FormData(e.currentTarget);
+        setIsLoading(true);
+        try {
+            await loginWithPassword(String(form.get('email')), String(form.get('password')));
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -48,19 +56,36 @@ export default function LoginPage() {
                     </div>
                     <CardTitle className="text-2xl">SalesVision</CardTitle>
                     <CardDescription>
-                        {isDev ? 'Development Mode - Select a role to continue' : 'Sign in with your Google account'}
+                        {isDev ? 'Development Mode - Select a role to continue' : 'Sign in with your email and password'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {error && (
+                        <p className="text-sm text-destructive text-center">
+                            {error === 'User not registered in system' ? 'This account is not on the allowed list.' : error}
+                        </p>
+                    )}
                     {!isDev ? (
-                        <Button
-                            onClick={handleGoogleLogin}
-                            className="w-full"
-                            size="lg"
-                            disabled={isLoading}
-                        >
-                            Sign in with Google
-                        </Button>
+                        <>
+                        <form onSubmit={handlePasswordLogin} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" name="email" type="email" autoComplete="email" required />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">Password</Label>
+                                <Input id="password" name="password" type="password" autoComplete="current-password" required />
+                            </div>
+                            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                                Sign in
+                            </Button>
+                        </form>
+                        <p className="text-sm text-center">
+                            <Link href="/reset-password" className="text-muted-foreground hover:underline">
+                                Forgot password?
+                            </Link>
+                        </p>
+                        </>
                     ) : (
                         <>
                             <p className="text-xs text-muted-foreground text-center mb-4">

@@ -19,16 +19,18 @@ type AuthLoadingState = AuthState | undefined;
 
 
 import { apiClient } from '@/lib/api-client';
+import { supabase } from '@/lib/supabase';
 
 export function useAuth() {
   const [auth, setAuth] = useState<AuthLoadingState>(undefined);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchUser = useCallback(async () => {
     try {
       // Check for stored auth first
       let storedAuth = localStorage.getItem(AUTH_KEY);
 
-      // In production, we always try to fetch from API (IAP session).
+      // In production, we always try to fetch from API (Supabase session).
       // In development, we ONLY fetch if we have a stored choice, 
       // otherwise we redirect to /login to allow role selection.
       if (!storedAuth && process.env.NODE_ENV === 'development') {
@@ -51,8 +53,15 @@ export function useAuth() {
         setAuth(authData);
         localStorage.setItem(AUTH_KEY, JSON.stringify(authData));
       }
-    } catch (error) {
-      console.error("Failed to fetch user session", error);
+    } catch (err) {
+      console.error("Failed to fetch user session", err);
+      // Signed in to Supabase but not on the allowed list (or deactivated): end the session
+      const { data } = (await supabase?.auth.getSession()) ?? {};
+      if (data?.session) {
+        setError(err instanceof Error ? err.message : 'Access denied');
+        await supabase!.auth.signOut();
+      }
+      localStorage.removeItem(AUTH_KEY);
       setAuth(null);
     }
   }, []);
@@ -89,10 +98,25 @@ export function useAuth() {
   }, []);
 
 
-  const logout = useCallback(() => {
+  const loginWithPassword = useCallback(async (email: string, password: string) => {
+    setError(null);
+    if (!supabase) {
+      setError('Login is not configured');
+      return;
+    }
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      setError('Wrong email or password');
+      return;
+    }
+    await fetchUser();
+  }, [fetchUser]);
+
+  const logout = useCallback(async () => {
     localStorage.removeItem(AUTH_KEY);
+    await supabase?.auth.signOut();
     setAuth(null);
   }, []);
 
-  return { auth, login, logout };
+  return { auth, error, login, loginWithPassword, logout };
 }

@@ -93,7 +93,8 @@ assert call("GET", "/employees/", A).status_code == 403
 
 os.environ["APP_ENV"] = "production"
 assert call("GET", "/sales", ADMIN).status_code == 401, "prod ignores mock header"
-assert c.get("/sales", headers={"x-goog-authenticated-user-email": ADMIN}).status_code == 401, "unsigned IAP header"
+os.environ["SUPABASE_URL"] = "https://example.supabase.co"
+assert c.get("/sales", headers={"authorization": "Bearer forged"}).status_code == 401, "forged token"
 os.environ.pop("APP_ENV")
 assert c.get("/sales").status_code == 401, "unset APP_ENV fails closed"
 

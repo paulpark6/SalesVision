@@ -1,8 +1,7 @@
 // apps/web/src/lib/api-client.ts
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'; // Use proxy by default
+import { supabase } from '@/lib/supabase';
 
-// Key for storing auth in localStorage (must match use-auth.ts)
-const AUTH_KEY = 'salesvision_auth';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'; // Use proxy by default
 
 export async function apiClient<T>(
     endpoint: string,
@@ -10,14 +9,12 @@ export async function apiClient<T>(
 ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
 
+    const token = (await supabase?.auth.getSession())?.data.session?.access_token;
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
     };
-
-    // Real authentication headers go here (e.g., Authorization Bearer token)
-    // For now we keep the request without mock headers.
-
 
     const response = await fetch(url, {
         ...options,

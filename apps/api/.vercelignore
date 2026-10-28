@@ -1,0 +1,6 @@
+venv
+Create
+cloud-sql-proxy
+tests
+scripts
+*.py.bak
