@@ -52,7 +52,6 @@ export function SaleForm({ initialData, isEdit = false }: SaleFormProps) {
         }
     }, [initialData]);
 
-    const dashboardUrl = auth?.role === 'admin' ? '/admin' : auth?.role === 'manager' ? '/manager' : '/staff';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

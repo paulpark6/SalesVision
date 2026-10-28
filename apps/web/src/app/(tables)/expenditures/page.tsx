@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { useMonthFilter } from '@/contexts/month-filter-context';
 import { apiClient } from '@/lib/api-client';
@@ -24,7 +23,6 @@ interface Expenditure {
 }
 
 export default function ExpendituresPage() {
-    const router = useRouter();
     const { auth } = useAuth();
     const { selectedMonths } = useMonthFilter();
     const [expenditures, setExpenditures] = useState<Expenditure[]>([]);
@@ -46,12 +44,8 @@ export default function ExpendituresPage() {
     };
 
     useEffect(() => {
-        if (auth && auth.role !== 'admin') {
-            router.replace(auth.role === 'manager' ? '/manager' : '/staff');
-            return;
-        }
         if (auth?.role === 'admin') loadData();
-    }, [auth, router, selectedMonths]);
+    }, [auth, selectedMonths]);
 
     const handleAdd = async (newData: Partial<Expenditure>) => {
         try {
