@@ -74,3 +74,23 @@ do $$ declare r text; begin
   end loop;
 end $$;
 grant usage, select on all sequences in schema public to app_api;
+
+-- Sign-up allowlist: Supabase Auth calls this before creating any account
+-- (Dashboard → Authentication → Hooks → Before User Created → public.hook_signup_allowlist).
+-- Only active emails already in public.users can create an account.
+create or replace function public.hook_signup_allowlist(event jsonb) returns jsonb
+language sql stable security definer set search_path = '' as $$
+  select case when exists (
+    select 1 from public.users u
+    where lower(u.email) = lower(event->'user'->>'email') and u.is_active
+  ) then '{}'::jsonb
+  else jsonb_build_object('error', jsonb_build_object('http_code', 403, 'message', 'Sign-up is not allowed for this email'))
+  end
+$$;
+do $$ declare r text; begin
+  for r in select rolname from pg_roles where rolname in ('anon', 'authenticated', 'service_role', 'app_api') loop
+    execute format('revoke all on function public.hook_signup_allowlist(jsonb) from %I', r);
+  end loop;
+end $$;
+revoke all on function public.hook_signup_allowlist(jsonb) from public;
+grant execute on function public.hook_signup_allowlist(jsonb) to supabase_auth_admin;
