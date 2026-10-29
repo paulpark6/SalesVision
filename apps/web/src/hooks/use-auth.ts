@@ -21,12 +21,31 @@ type AuthLoadingState = AuthState | undefined;
 import { apiClient } from '@/lib/api-client';
 import { supabase } from '@/lib/supabase';
 
+const LEFT_AT_KEY = 'salesvision_left_at';
+// ponytail: only checked on page load; add a visibilitychange check if returning to an open tab should log out too
+const SESSION_TTL_MS = 30 * 60 * 1000;
+
+// Runs once per page load: if the user left the app more than SESSION_TTL_MS ago, end the session.
+// Skipped on /update-password so the reset-email link's session survives.
+const sessionCheck: Promise<void> = typeof window === 'undefined' ? Promise.resolve() : (async () => {
+  const leftAt = Number(localStorage.getItem(LEFT_AT_KEY));
+  localStorage.removeItem(LEFT_AT_KEY);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') localStorage.setItem(LEFT_AT_KEY, String(Date.now()));
+  });
+  if (leftAt && Date.now() - leftAt > SESSION_TTL_MS && window.location.pathname !== '/update-password') {
+    localStorage.removeItem(AUTH_KEY);
+    await supabase?.auth.signOut();
+  }
+})();
+
 export function useAuth() {
   const [auth, setAuth] = useState<AuthLoadingState>(undefined);
   const [error, setError] = useState<string | null>(null);
 
   const fetchUser = useCallback(async () => {
     try {
+      await sessionCheck;
       // Check for stored auth first
       let storedAuth = localStorage.getItem(AUTH_KEY);
 
@@ -34,11 +53,8 @@ export function useAuth() {
       // In development, we ONLY fetch if we have a stored choice, 
       // otherwise we redirect to /login to allow role selection.
       if (!storedAuth && process.env.NODE_ENV === 'development') {
-        const isLoginPage = window.location.pathname === '/login';
-        if (!isLoginPage) {
-          setAuth(null);
-          return;
-        }
+        setAuth(null);
+        return;
       }
 
       const user = await apiClient<{ role: 'admin' | 'manager' | 'staff' | 'employee'; email: string; organization_id: string; employee_id: number }>('/users/me');
@@ -92,9 +108,7 @@ export function useAuth() {
 
     const authData: AuthState = { role: finalRole, name, userId };
     localStorage.setItem(AUTH_KEY, JSON.stringify(authData));
-
-    // Trigger re-fetch/redirect
-    window.location.href = '/sales';
+    // No full-page reload here: it would count as leaving and end the session. The login page does router.push('/sales').
   }, []);
 
 
