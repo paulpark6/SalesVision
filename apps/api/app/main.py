@@ -28,6 +28,8 @@ origins = [
     "http://localhost:9002",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:9002",
+    # Deployed web app, comma-separated (e.g. https://sales-vision.vercel.app)
+    *[o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()],
 ]
 
 app.add_middleware(
